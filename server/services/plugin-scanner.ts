@@ -64,7 +64,9 @@ function getSkillsFromMarketplace(
     for (const pluginEntry of plugins) {
       if (!pluginEntry.skills) continue;
       for (const skillRelPath of pluginEntry.skills) {
-        const skillAbsPath = path.join(installPath, skillRelPath);
+        const skillAbsPath = path.resolve(installPath, skillRelPath);
+        const resolvedInstall = path.resolve(installPath);
+        if (!skillAbsPath.startsWith(resolvedInstall + path.sep)) continue;
         const skillMdPath = path.join(skillAbsPath, 'SKILL.md');
         if (fs.existsSync(skillMdPath)) {
           const parsed = parseSkillMd(skillMdPath);
