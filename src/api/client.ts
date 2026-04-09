@@ -22,6 +22,9 @@ export const enableSkill = (skillPath: string) =>
 export const disableSkill = (skillPath: string) =>
   apiFetch<any>(`${BASE}/skills/custom/disable/${skillPath}`, { method: 'POST' });
 
+export const deleteSkill = (skillPath: string) =>
+  apiFetch<{ ok: boolean; path: string }>(`${BASE}/skills/custom/delete/${skillPath}`, { method: 'DELETE' });
+
 export const fetchAnalysis = (source: string, name: string) =>
   apiFetch<any>(`${BASE}/analysis/${source}/${name}`);
 
