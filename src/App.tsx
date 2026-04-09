@@ -19,16 +19,36 @@ export default function App() {
   const [plugins, setPlugins] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
-  const loadCustomSkills = useCallback(
-    () => fetchCustomSkills().then((d) => setTree(d.tree)),
-    [],
-  );
-  const loadPluginSkills = useCallback(
-    () => fetchPluginSkills().then((d) => setPlugins(d.plugins)),
-    [],
-  );
+
+  const loadCustomSkills = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const d = await fetchCustomSkills();
+      setTree(d.tree);
+    } catch (err: any) {
+      setError(err.message || '加载失败');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadPluginSkills = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const d = await fetchPluginSkills();
+      setPlugins(d.plugins);
+    } catch (err: any) {
+      setError(err.message || '加载失败');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     loadSummary();
@@ -40,10 +60,15 @@ export default function App() {
   }, [tab]);
 
   const handleToggleSkill = async (skillPath: string, enable: boolean) => {
-    if (enable) await enableSkill(skillPath);
-    else await disableSkill(skillPath);
-    await loadCustomSkills();
-    await loadSummary();
+    setError(null);
+    try {
+      if (enable) await enableSkill(skillPath);
+      else await disableSkill(skillPath);
+      await loadCustomSkills();
+      await loadSummary();
+    } catch (err: any) {
+      setError(err.message || (enable ? '启用失败' : '禁用失败'));
+    }
   };
 
   const handleRefresh = async () => {
@@ -81,6 +106,15 @@ export default function App() {
 
       <main className="max-w-4xl mx-auto px-6 py-6 pb-20">
         <TabSwitch active={tab} onChange={setTab} />
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded mb-4 flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 ml-2">&times;</button>
+          </div>
+        )}
+        {loading && (
+          <div className="text-gray-400 text-sm py-4 text-center">加载中...</div>
+        )}
         {tab === 'custom' && (
           <DirTree nodes={tree} onToggle={handleToggleSkill} filter={search} />
         )}
