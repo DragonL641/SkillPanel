@@ -6,6 +6,7 @@ interface SkillMeta {
   description: string;
   enabled: boolean;
   hash: string;
+  absolutePath?: string;
 }
 
 interface TreeNode {
@@ -20,6 +21,7 @@ interface Props {
   nodes: TreeNode[];
   onToggle: (path: string, enable: boolean) => void;
   onBatchToggle?: (paths: string[], enable: boolean) => void;
+  onDelete?: (path: string) => void;
   filter?: string;
 }
 
@@ -46,11 +48,13 @@ function TreeNodeItem({
   node,
   onToggle,
   onBatchToggle,
+  onDelete,
   filter,
 }: {
   node: TreeNode;
   onToggle: (path: string, enable: boolean) => void;
   onBatchToggle?: (paths: string[], enable: boolean) => void;
+  onDelete?: (path: string) => void;
   filter?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -66,10 +70,12 @@ function TreeNodeItem({
           name: node.skill!.name,
           description: node.skill!.description,
           enabled: node.skill!.enabled,
+          absolutePath: node.skill!.absolutePath,
         }}
         path={node.path}
         source="custom"
         onToggle={onToggle}
+        onDelete={onDelete}
       />
     );
   }
@@ -117,6 +123,7 @@ function TreeNodeItem({
               node={child}
               onToggle={onToggle}
               onBatchToggle={onBatchToggle}
+              onDelete={onDelete}
               filter={filter}
             />
           ))}
@@ -126,7 +133,7 @@ function TreeNodeItem({
   );
 }
 
-export default function DirTree({ nodes, onToggle, onBatchToggle, filter }: Props) {
+export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filter }: Props) {
   if (!nodes.length) {
     return (
       <div className="text-gray-400 text-sm py-8 text-center">
@@ -143,6 +150,7 @@ export default function DirTree({ nodes, onToggle, onBatchToggle, filter }: Prop
           node={node}
           onToggle={onToggle}
           onBatchToggle={onBatchToggle}
+          onDelete={onDelete}
           filter={filter}
         />
       ))}
