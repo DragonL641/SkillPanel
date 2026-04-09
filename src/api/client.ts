@@ -37,3 +37,29 @@ export const saveConfig = (config: any) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config),
   });
+
+export const checkPluginUpdate = (pluginName: string) =>
+  apiFetch<{ hasUpdate: boolean; behindBy: number; currentCommit: string; error?: string }>(
+    `${BASE}/plugins/check-update/${pluginName}`,
+    { method: 'POST' },
+  );
+
+export const batchEnableSkills = (paths: string[]) =>
+  apiFetch<{ ok: boolean; succeeded: number; failed: Array<{ path: string; error: string }> }>(
+    `${BASE}/skills/custom/batch-enable`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths }),
+    },
+  );
+
+export const batchDisableSkills = (paths: string[]) =>
+  apiFetch<{ ok: boolean; succeeded: number; failed: Array<{ path: string; error: string }> }>(
+    `${BASE}/skills/custom/batch-disable`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths }),
+    },
+  );
