@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { scanCustomSkills } from '../services/skill-scanner.js';
 import { enableSkill, disableSkill } from '../services/skill-manager.js';
+import { getOrCompute, invalidate } from '../services/cache.js';
 
 const router = Router();
 
 router.get('/skills/custom', (_req, res) => {
   try {
-    const tree = scanCustomSkills();
+    const tree = getOrCompute('custom-skills', () => scanCustomSkills());
     res.json({ tree });
   } catch (err: any) {
     console.error('Failed to scan custom skills:', err);
@@ -25,6 +26,7 @@ router.post('/skills/custom/enable/{*skillPath}', (req, res) => {
 
   try {
     enableSkill(skillRelativePath);
+    invalidate();
     res.json({ ok: true, path: skillRelativePath });
   } catch (err: any) {
     console.error('Failed to enable skill:', err);
@@ -42,6 +44,7 @@ router.post('/skills/custom/disable/{*skillPath}', (req, res) => {
 
   try {
     disableSkill(skillRelativePath);
+    invalidate();
     res.json({ ok: true, path: skillRelativePath });
   } catch (err: any) {
     console.error('Failed to disable skill:', err);

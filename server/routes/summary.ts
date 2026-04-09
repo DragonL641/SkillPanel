@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { scanCustomSkills } from '../services/skill-scanner.js';
 import { scanPlugins } from '../services/plugin-scanner.js';
+import { getOrCompute } from '../services/cache.js';
 
 const router = Router();
 
@@ -21,8 +22,8 @@ function countSkillsInTree(nodes: any[]): { total: number; enabled: number } {
 }
 
 router.get('/skills/summary', (_req, res) => {
-  const tree = scanCustomSkills();
-  const plugins = scanPlugins();
+  const tree = getOrCompute('custom-skills', () => scanCustomSkills());
+  const plugins = getOrCompute('plugin-skills', () => scanPlugins());
   const custom = countSkillsInTree(tree);
   const pluginTotal = plugins.reduce((sum, p) => sum + p.skills.length, 0);
 
