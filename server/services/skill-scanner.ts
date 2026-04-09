@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
+import { computeContentHash } from './hash-utils.js';
 import matter from 'gray-matter';
 import { loadConfig } from '../config.js';
 
@@ -18,36 +18,6 @@ export interface TreeNode {
   path: string; // relative to customSkillDir
   children?: TreeNode[];
   skill?: SkillMeta;
-}
-
-function computeHash(skillDir: string): string {
-  const hash = crypto.createHash('md5');
-
-  // Hash SKILL.md content
-  const skillMdPath = path.join(skillDir, 'SKILL.md');
-  if (fs.existsSync(skillMdPath)) {
-    hash.update(fs.readFileSync(skillMdPath));
-  }
-
-  // Hash all files in scripts/ directory recursively
-  const scriptsDir = path.join(skillDir, 'scripts');
-  if (fs.existsSync(scriptsDir)) {
-    const walkDir = (dir: string) => {
-      const entries = fs.readdirSync(dir).sort();
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry);
-        const stat = fs.statSync(fullPath);
-        if (stat.isDirectory()) {
-          walkDir(fullPath);
-        } else {
-          hash.update(fs.readFileSync(fullPath));
-        }
-      }
-    };
-    walkDir(scriptsDir);
-  }
-
-  return hash.digest('hex').slice(0, 12);
 }
 
 function isEnabled(skillDir: string, skillName: string): boolean {
@@ -102,7 +72,7 @@ function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
           name: skillName,
           description: parsedData.description || '',
           enabled: isEnabled(fullPath, entry),
-          hash: computeHash(fullPath),
+          hash: computeContentHash(fullPath).slice(0, 12),
           hasAnalysis: false,
         },
       });
