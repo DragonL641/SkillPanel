@@ -4,9 +4,12 @@ import { loadConfig } from '../config.js';
 
 function resolveSkillDir(skillRelativePath: string): string {
   const config = loadConfig();
-  // Sanitize: prevent path traversal
-  const normalized = path.normalize(skillRelativePath).replace(/^(\.\.[/\\])+/, '');
-  return path.join(config.customSkillDir, normalized);
+  const resolved = path.resolve(config.customSkillDir, skillRelativePath);
+  const base = path.resolve(config.customSkillDir);
+  if (!resolved.startsWith(base + path.sep) && resolved !== base) {
+    throw new Error('Invalid skill path: path traversal detected');
+  }
+  return resolved;
 }
 
 function getSymlinkPath(skillDirName: string): string {
