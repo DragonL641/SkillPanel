@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SkillCard from './SkillCard';
+import { checkPluginUpdate } from '../api/client';
 
 interface PluginSkill {
   name: string;
@@ -16,6 +17,67 @@ interface PluginInfo {
 interface Props {
   plugins: PluginInfo[];
   filter?: string;
+}
+
+type UpdateStatus = { hasUpdate: boolean; behindBy: number } | { error: string } | null;
+
+function PluginHeader({ plugin, isOpen, onToggle }: {
+  plugin: PluginInfo;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const [checking, setChecking] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus>(null);
+
+  const handleCheckUpdate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setChecking(true);
+    setUpdateStatus(null);
+    try {
+      const result = await checkPluginUpdate(plugin.name);
+      if (result.error) {
+        setUpdateStatus({ error: result.error });
+      } else {
+        setUpdateStatus({ hasUpdate: result.hasUpdate, behindBy: result.behindBy });
+      }
+    } catch (err: any) {
+      setUpdateStatus({ error: err.message || '检查失败' });
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+    >
+      <span className={`text-xs transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
+        ▶
+      </span>
+      <span className="text-sm font-medium text-gray-800">{plugin.displayName}</span>
+      <span className="text-xs text-gray-400">({plugin.skills.length})</span>
+      <span className="ml-auto flex items-center gap-2">
+        {updateStatus && !('error' in updateStatus) && !updateStatus.hasUpdate && (
+          <span className="text-xs text-green-500">已是最新 ✓</span>
+        )}
+        {updateStatus && !('error' in updateStatus) && updateStatus.hasUpdate && (
+          <span className="text-xs text-amber-500">落后 {updateStatus.behindBy} 个 commit</span>
+        )}
+        {updateStatus && 'error' in updateStatus && (
+          <span className="text-xs text-red-400">{updateStatus.error}</span>
+        )}
+        <button
+          onClick={handleCheckUpdate}
+          disabled={checking}
+          className="text-xs text-gray-400 hover:text-blue-500 disabled:opacity-50 transition-colors"
+        >
+          {checking ? '检查中...' : '检查更新'}
+        </button>
+        <span className="text-xs text-gray-400">只读</span>
+      </span>
+    </button>
+  );
 }
 
 export default function PluginPanel({ plugins, filter }: Props) {
@@ -60,23 +122,7 @@ export default function PluginPanel({ plugins, filter }: Props) {
         const isOpen = expanded.has(plugin.name);
         return (
           <div key={plugin.name} className="border border-gray-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleExpand(plugin.name)}
-              className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
-            >
-              <span
-                className={`text-xs transition-transform duration-200 ${
-                  isOpen ? 'rotate-90' : ''
-                }`}
-              >
-                ▶
-              </span>
-              <span className="text-sm font-medium text-gray-800">
-                {plugin.displayName}
-              </span>
-              <span className="text-xs text-gray-400">({plugin.skills.length})</span>
-              <span className="ml-auto text-xs text-gray-400">只读</span>
-            </button>
+            <PluginHeader plugin={plugin} isOpen={isOpen} onToggle={() => toggleExpand(plugin.name)} />
             {isOpen && (
               <div className="flex flex-col">
                 {plugin.skills.map((skill) => (
