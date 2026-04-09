@@ -63,10 +63,7 @@ export async function analyzeSkill(skillDir: string, key: string): Promise<Skill
   }
 
   const content = collectSkillContent(skillDir);
-  const prompt = `分析以下 Claude Code skill 的工作原理，用中文输出，包含：
-1. 一句话概述
-2. 核心工作流程（步骤化）
-3. 关键依赖（API、工具、库等）
+  const prompt = `分析以下 Claude Code skill 的执行步骤，用中文输出，仅列出该 skill 实际的执行步骤（步骤化），不要包含概述或依赖信息。
 
 Skill 内容：
 ${content}`;
