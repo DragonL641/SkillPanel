@@ -10,6 +10,7 @@ import {
   fetchSummary,
   enableSkill,
   disableSkill,
+  deleteSkill,
   batchEnableSkills,
   batchDisableSkills,
 } from './api/client';
@@ -87,6 +88,17 @@ export default function App() {
     }
   };
 
+  const handleDeleteSkill = async (skillPath: string) => {
+    setError(null);
+    try {
+      await deleteSkill(skillPath);
+      await loadCustomSkills();
+      await loadSummary();
+    } catch (err: any) {
+      setError(err.message || '删除失败');
+    }
+  };
+
   const handleRefresh = async () => {
     if (tab === 'custom') await loadCustomSkills();
     else await loadPluginSkills();
@@ -132,7 +144,7 @@ export default function App() {
           <div className="text-gray-400 text-sm py-4 text-center">加载中...</div>
         )}
         {tab === 'custom' && (
-          <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} filter={search} />
+          <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
         )}
         {tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
       </main>
