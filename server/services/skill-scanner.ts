@@ -10,6 +10,7 @@ export interface SkillMeta {
   enabled: boolean;
   hash: string;
   hasAnalysis: boolean;
+  absolutePath: string;
 }
 
 export interface TreeNode {
@@ -74,6 +75,7 @@ function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
           enabled: isEnabled(fullPath, entry),
           hash: computeContentHash(fullPath).slice(0, 12),
           hasAnalysis: false,
+          absolutePath: fullPath,
         },
       });
     } else {
