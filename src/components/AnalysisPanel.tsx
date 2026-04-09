@@ -12,6 +12,7 @@ export default function AnalysisPanel({ source, name }: Props) {
   const [analyzedAt, setAnalyzedAt] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleExpand = async () => {
     if (!expanded) {
@@ -35,12 +36,13 @@ export default function AnalysisPanel({ source, name }: Props) {
 
   const handleAnalyze = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await triggerAnalysis(source, name);
       setSummary(data.summary);
       setAnalyzedAt(data.analyzedAt);
-    } catch {
-      // error state
+    } catch (err: any) {
+      setError(err.message || '分析失败');
     } finally {
       setLoading(false);
     }
@@ -91,7 +93,11 @@ export default function AnalysisPanel({ source, name }: Props) {
         </div>
       )}
 
-      {!loading && !summary && (
+      {!loading && error && (
+        <div className="text-red-500 text-xs py-1">{error}</div>
+      )}
+
+      {!loading && !summary && !error && (
         <div className="flex items-center gap-2 py-1">
           <span className="text-gray-400 text-xs">未分析</span>
           <button

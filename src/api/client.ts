@@ -15,8 +15,12 @@ export const disableSkill = (skillPath: string) =>
 export const fetchAnalysis = (source: string, name: string) =>
   fetch(`${BASE}/analysis/${source}/${name}`).then(r => r.json());
 
-export const triggerAnalysis = (source: string, name: string) =>
-  fetch(`${BASE}/analysis/${source}/${name}`, { method: 'POST' }).then(r => r.json());
+export const triggerAnalysis = async (source: string, name: string) => {
+  const res = await fetch(`${BASE}/analysis/${source}/${name}`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || '分析失败');
+  return data;
+};
 
 export const fetchConfig = () => fetch(`${BASE}/config`).then(r => r.json());
 

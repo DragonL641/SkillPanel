@@ -44,9 +44,8 @@ function findSkillDir(source: string, name: string): string | null {
     for (const plugin of plugins) {
       for (const skill of plugin.skills) {
         if (skill.name === name) {
-          const skillAbsPath = path.join(plugin.installPath, skill.path);
-          if (fs.existsSync(skillAbsPath)) {
-            return skillAbsPath;
+          if (fs.existsSync(skill.path)) {
+            return skill.path;
           }
         }
       }

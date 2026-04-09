@@ -119,15 +119,7 @@ export async function analyzeSkill(skillDir: string, key: string): Promise<Skill
   // Cache miss or hash changed — call Claude API
   const apiKey = config.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    // No API key available, return null summary
-    const analysis: SkillAnalysis = {
-      name,
-      hash,
-      summary: '',
-      analyzedAt: new Date().toISOString(),
-      model: '',
-    };
-    return analysis;
+    throw new Error('未配置 Anthropic API Key，请在配置页面设置后再使用分析功能');
   }
 
   const content = collectSkillContent(skillDir);
