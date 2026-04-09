@@ -23,6 +23,7 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
   const [apiModel, setApiModel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -48,14 +49,15 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(null);
     try {
       const data: ConfigResponse = await saveConfig(config);
       setApiConfigDetected(data.apiConfigDetected);
       setApiModel(data.apiModel);
       onSaved();
       onClose();
-    } catch (err) {
-      console.error('Failed to save config:', err);
+    } catch (err: any) {
+      setSaveError(err.message || '保存失败');
     } finally {
       setSaving(false);
     }
@@ -131,6 +133,10 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
             </p>
           </div>
         </div>
+
+        {saveError && (
+          <div className="text-red-500 text-sm mt-3">{saveError}</div>
+        )}
 
         <div className="flex justify-end gap-2 mt-6">
           <button
