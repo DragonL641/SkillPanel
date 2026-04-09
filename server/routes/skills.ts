@@ -52,4 +52,42 @@ router.post('/skills/custom/disable/{*skillPath}', (req, res) => {
   }
 });
 
+router.post('/skills/custom/batch-enable', (req, res) => {
+  const { paths } = req.body as { paths: string[] };
+  if (!Array.isArray(paths) || paths.length === 0) {
+    res.status(400).json({ error: 'paths must be a non-empty array' });
+    return;
+  }
+
+  const failed: Array<{ path: string; error: string }> = [];
+  for (const p of paths) {
+    try {
+      enableSkill(p);
+    } catch (err: any) {
+      failed.push({ path: p, error: err.message });
+    }
+  }
+  invalidate();
+  res.json({ ok: true, succeeded: paths.length - failed.length, failed });
+});
+
+router.post('/skills/custom/batch-disable', (req, res) => {
+  const { paths } = req.body as { paths: string[] };
+  if (!Array.isArray(paths) || paths.length === 0) {
+    res.status(400).json({ error: 'paths must be a non-empty array' });
+    return;
+  }
+
+  const failed: Array<{ path: string; error: string }> = [];
+  for (const p of paths) {
+    try {
+      disableSkill(p);
+    } catch (err: any) {
+      failed.push({ path: p, error: err.message });
+    }
+  }
+  invalidate();
+  res.json({ ok: true, succeeded: paths.length - failed.length, failed });
+});
+
 export default router;
