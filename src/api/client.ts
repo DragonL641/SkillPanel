@@ -1,32 +1,39 @@
 const BASE = '/api';
 
-export const fetchCustomSkills = () => fetch(`${BASE}/skills/custom`).then(r => r.json());
+async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(url, options);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data as T;
+}
 
-export const fetchPluginSkills = () => fetch(`${BASE}/skills/plugin`).then(r => r.json());
+export const fetchCustomSkills = () =>
+  apiFetch<{ tree: any[] }>(`${BASE}/skills/custom`);
 
-export const fetchSummary = () => fetch(`${BASE}/skills/summary`).then(r => r.json());
+export const fetchPluginSkills = () =>
+  apiFetch<{ plugins: any[] }>(`${BASE}/skills/plugin`);
+
+export const fetchSummary = () =>
+  apiFetch<any>(`${BASE}/skills/summary`);
 
 export const enableSkill = (skillPath: string) =>
-  fetch(`${BASE}/skills/custom/enable/${skillPath}`, { method: 'POST' }).then(r => r.json());
+  apiFetch<any>(`${BASE}/skills/custom/enable/${skillPath}`, { method: 'POST' });
 
 export const disableSkill = (skillPath: string) =>
-  fetch(`${BASE}/skills/custom/disable/${skillPath}`, { method: 'POST' }).then(r => r.json());
+  apiFetch<any>(`${BASE}/skills/custom/disable/${skillPath}`, { method: 'POST' });
 
 export const fetchAnalysis = (source: string, name: string) =>
-  fetch(`${BASE}/analysis/${source}/${name}`).then(r => r.json());
+  apiFetch<any>(`${BASE}/analysis/${source}/${name}`);
 
-export const triggerAnalysis = async (source: string, name: string) => {
-  const res = await fetch(`${BASE}/analysis/${source}/${name}`, { method: 'POST' });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || '分析失败');
-  return data;
-};
+export const triggerAnalysis = (source: string, name: string) =>
+  apiFetch<any>(`${BASE}/analysis/${source}/${name}`, { method: 'POST' });
 
-export const fetchConfig = () => fetch(`${BASE}/config`).then(r => r.json());
+export const fetchConfig = () =>
+  apiFetch<any>(`${BASE}/config`);
 
 export const saveConfig = (config: any) =>
-  fetch(`${BASE}/config`, {
+  apiFetch<any>(`${BASE}/config`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config),
-  }).then(r => r.json());
+  });
