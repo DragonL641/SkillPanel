@@ -11,6 +11,9 @@ interface PluginSkill {
 interface PluginInfo {
   name: string;
   displayName: string;
+  installPath: string;
+  version: string;
+  lastUpdated: string;
   skills: PluginSkill[];
 }
 
@@ -21,6 +24,14 @@ interface Props {
 
 type UpdateStatus = { hasUpdate: boolean; behindBy: number } | { error: string } | null;
 
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('zh-CN');
+  } catch {
+    return iso;
+  }
+}
+
 function PluginHeader({ plugin, isOpen, onToggle }: {
   plugin: PluginInfo;
   isOpen: boolean;
@@ -28,6 +39,7 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
 }) {
   const [checking, setChecking] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>(null);
+  const [isGitRepo, setIsGitRepo] = useState<boolean | null>(null);
 
   const handleCheckUpdate = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -35,6 +47,7 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
     setUpdateStatus(null);
     try {
       const result = await checkPluginUpdate(plugin.name);
+      setIsGitRepo(result.isGitRepo ?? true);
       if (result.error) {
         setUpdateStatus({ error: result.error });
       } else {
@@ -47,6 +60,13 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
     }
   };
 
+  const versionLabel = plugin.version !== 'unknown'
+    ? `v${plugin.version}`
+    : '';
+  const dateLabel = plugin.lastUpdated
+    ? formatDate(plugin.lastUpdated)
+    : '';
+
   return (
     <button
       onClick={onToggle}
@@ -57,6 +77,9 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
       </span>
       <span className="text-sm font-medium text-gray-800">{plugin.displayName}</span>
       <span className="text-xs text-gray-400">({plugin.skills.length})</span>
+      {versionLabel && (
+        <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{versionLabel}</span>
+      )}
       <span className="ml-auto flex items-center gap-2">
         {updateStatus && !('error' in updateStatus) && !updateStatus.hasUpdate && (
           <span className="text-xs text-green-500">已是最新 ✓</span>
@@ -67,14 +90,18 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
         {updateStatus && 'error' in updateStatus && (
           <span className="text-xs text-red-400">{updateStatus.error}</span>
         )}
-        <button
-          onClick={handleCheckUpdate}
-          disabled={checking}
-          className="text-xs text-gray-400 hover:text-blue-500 disabled:opacity-50 transition-colors"
-        >
-          {checking ? '检查中...' : '检查更新'}
-        </button>
-        <span className="text-xs text-gray-400">只读</span>
+        {(isGitRepo === null || isGitRepo === true) && (
+          <button
+            onClick={handleCheckUpdate}
+            disabled={checking}
+            className="text-xs text-gray-400 hover:text-blue-500 disabled:opacity-50 transition-colors"
+          >
+            {checking ? '检查中...' : '检查更新'}
+          </button>
+        )}
+        {dateLabel && (
+          <span className="text-[10px] text-gray-400">{dateLabel}</span>
+        )}
       </span>
     </button>
   );
