@@ -14,6 +14,7 @@ export interface PluginInfo {
   displayName: string;
   installPath: string;
   version: string;
+  lastUpdated: string;
   skills: PluginSkill[];
 }
 
@@ -160,6 +161,7 @@ export function scanPlugins(): PluginInfo[] {
       displayName,
       installPath,
       version: entry.version,
+      lastUpdated: entry.lastUpdated,
       skills,
     });
   }
