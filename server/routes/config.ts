@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { loadConfig, saveConfig, loadClaudeApiConfig } from '../config.js';
+import { invalidate } from '../services/cache.js';
 
 const router = Router();
 
@@ -16,7 +17,24 @@ router.get('/config', (_req, res) => {
 });
 
 router.put('/config', (req, res) => {
+  const { claudeRootDir, customSkillDir, port } = req.body;
+  if (port !== undefined) {
+    const p = Number(port);
+    if (!Number.isInteger(p) || p < 1024 || p > 65535) {
+      res.status(400).json({ error: 'Port must be an integer between 1024 and 65535' });
+      return;
+    }
+  }
+  if (claudeRootDir !== undefined && (typeof claudeRootDir !== 'string' || !claudeRootDir.trim())) {
+    res.status(400).json({ error: 'Claude root directory must be a non-empty string' });
+    return;
+  }
+  if (customSkillDir !== undefined && (typeof customSkillDir !== 'string' || !customSkillDir.trim())) {
+    res.status(400).json({ error: 'Custom skill directory must be a non-empty string' });
+    return;
+  }
   const updated = saveConfig(req.body);
+  invalidate();
   const apiConfig = loadClaudeApiConfig();
   res.json({
     claudeRootDir: updated.claudeRootDir,
