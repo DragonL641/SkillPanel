@@ -1,69 +1,99 @@
-import { useState, useEffect } from 'react';
-import { fetchSummary } from './api/client';
+import { useState, useEffect, useCallback } from 'react';
 import TabSwitch from './components/TabSwitch';
 import SummaryBar from './components/SummaryBar';
+import DirTree from './components/DirTree';
+import PluginPanel from './components/PluginPanel';
+import ConfigModal from './components/ConfigModal';
+import {
+  fetchCustomSkills,
+  fetchPluginSkills,
+  fetchSummary,
+  enableSkill,
+  disableSkill,
+} from './api/client';
 
 export default function App() {
   const [tab, setTab] = useState<'custom' | 'plugin'>('custom');
-  const [summary, setSummary] = useState(null);
+  const [summary, setSummary] = useState<any>(null);
+  const [tree, setTree] = useState<any[]>([]);
+  const [plugins, setPlugins] = useState<any[]>([]);
   const [search, setSearch] = useState('');
+  const [configOpen, setConfigOpen] = useState(false);
+
+  const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
+  const loadCustomSkills = useCallback(
+    () => fetchCustomSkills().then((d) => setTree(d.tree)),
+    [],
+  );
+  const loadPluginSkills = useCallback(
+    () => fetchPluginSkills().then((d) => setPlugins(d.plugins)),
+    [],
+  );
 
   useEffect(() => {
     loadSummary();
   }, []);
 
-  async function loadSummary() {
-    try {
-      const data = await fetchSummary();
-      setSummary(data);
-    } catch (err) {
-      console.error('Failed to load summary:', err);
-    }
-  }
+  useEffect(() => {
+    if (tab === 'custom') loadCustomSkills();
+    else loadPluginSkills();
+  }, [tab]);
 
-  function handleRefresh() {
-    loadSummary();
-  }
+  const handleToggleSkill = async (skillPath: string, enable: boolean) => {
+    if (enable) await enableSkill(skillPath);
+    else await disableSkill(skillPath);
+    await loadCustomSkills();
+    await loadSummary();
+  };
+
+  const handleRefresh = async () => {
+    if (tab === 'custom') await loadCustomSkills();
+    else await loadPluginSkills();
+    await loadSummary();
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
-        <h1 className="text-lg font-bold text-gray-800">SkillPanel</h1>
-        <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-800">SkillPanel</h1>
+        <div className="flex gap-3 items-center">
           <input
             type="text"
-            placeholder="搜索 skills..."
+            placeholder="搜索 skill..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="text-sm border border-gray-200 rounded px-3 py-1.5 w-48 focus:outline-none focus:border-blue-400"
           />
           <button
             onClick={handleRefresh}
-            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="text-gray-400 hover:text-gray-600 text-sm"
           >
             刷新
           </button>
-          <button className="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+          <button
+            onClick={() => setConfigOpen(true)}
+            className="text-gray-400 hover:text-gray-600 text-sm"
+          >
             配置
           </button>
         </div>
       </header>
 
-      {/* Tabs */}
-      <TabSwitch active={tab} onChange={setTab} />
-
-      {/* Main Content */}
-      <main className="flex-1 p-4">
-        {tab === 'custom' ? (
-          <p className="text-gray-500">自定义 Skills 内容（待实现）</p>
-        ) : (
-          <p className="text-gray-500">插件 Skills 内容（待实现）</p>
+      <main className="max-w-4xl mx-auto px-6 py-6 pb-20">
+        <TabSwitch active={tab} onChange={setTab} />
+        {tab === 'custom' && (
+          <DirTree nodes={tree} onToggle={handleToggleSkill} filter={search} />
         )}
+        {tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
       </main>
 
-      {/* Summary Bar */}
       <SummaryBar data={summary} />
+
+      <ConfigModal
+        open={configOpen}
+        onClose={() => setConfigOpen(false)}
+        onSaved={handleRefresh}
+      />
     </div>
   );
 }
