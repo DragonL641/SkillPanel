@@ -100,7 +100,6 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
       }
     }
 
-    invalidate('plugin-skills');
     res.json({ hasUpdate: behindBy > 0, behindBy, currentCommit, isGitRepo: true });
   } catch (err: any) {
     res.json({ hasUpdate: false, error: err.message, isGitRepo: false });

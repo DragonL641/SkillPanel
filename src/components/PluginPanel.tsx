@@ -68,9 +68,9 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
     : '';
 
   return (
-    <button
+    <div
       onClick={onToggle}
-      className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+      className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left cursor-pointer"
     >
       <span className={`text-xs transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
         ▶
@@ -103,7 +103,7 @@ function PluginHeader({ plugin, isOpen, onToggle }: {
           <span className="text-[10px] text-gray-400">{dateLabel}</span>
         )}
       </span>
-    </button>
+    </div>
   );
 }
 

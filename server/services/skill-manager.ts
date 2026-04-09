@@ -88,6 +88,12 @@ export function deleteSkill(skillRelativePath: string): void {
     throw new Error(`Skill directory not found: ${skillRelativePath}`);
   }
 
+  // Verify this is actually a skill directory before deleting
+  const skillMdPath = path.join(skillDir, 'SKILL.md');
+  if (!fs.existsSync(skillMdPath)) {
+    throw new Error(`Not a valid skill directory: ${skillRelativePath}`);
+  }
+
   // Remove symlink first (ignore errors if not linked)
   try {
     disableSkill(skillRelativePath);

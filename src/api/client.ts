@@ -42,7 +42,7 @@ export const saveConfig = (config: any) =>
   });
 
 export const checkPluginUpdate = (pluginName: string) =>
-  apiFetch<{ hasUpdate: boolean; behindBy: number; currentCommit: string; error?: string }>(
+  apiFetch<{ hasUpdate: boolean; behindBy: number; currentCommit: string; isGitRepo?: boolean; error?: string }>(
     `${BASE}/plugins/check-update/${pluginName}`,
     { method: 'POST' },
   );
