@@ -19,6 +19,7 @@ interface TreeNode {
 interface Props {
   nodes: TreeNode[];
   onToggle: (path: string, enable: boolean) => void;
+  onBatchToggle?: (paths: string[], enable: boolean) => void;
   filter?: string;
 }
 
@@ -36,13 +37,20 @@ function nodeMatches(node: TreeNode, filter: string): boolean {
   return (node.children ?? []).some((child) => nodeMatches(child, filter));
 }
 
+function collectSkillPaths(node: TreeNode): string[] {
+  if (node.type === 'skill') return [node.path];
+  return (node.children ?? []).flatMap(collectSkillPaths);
+}
+
 function TreeNodeItem({
   node,
   onToggle,
+  onBatchToggle,
   filter,
 }: {
   node: TreeNode;
   onToggle: (path: string, enable: boolean) => void;
+  onBatchToggle?: (paths: string[], enable: boolean) => void;
   filter?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -86,6 +94,20 @@ function TreeNodeItem({
           {node.name}/
         </span>
         <span className="text-xs text-gray-400">({childCount})</span>
+        <span className="ml-auto flex items-center gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onBatchToggle?.(collectSkillPaths(node), true); }}
+            className="text-xs text-blue-400 hover:text-blue-600 transition-colors"
+          >
+            全部启用
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onBatchToggle?.(collectSkillPaths(node), false); }}
+            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+          >
+            全部禁用
+          </button>
+        </span>
       </button>
       {expanded && (
         <div className="flex flex-col gap-2 p-3">
@@ -94,6 +116,7 @@ function TreeNodeItem({
               key={child.path}
               node={child}
               onToggle={onToggle}
+              onBatchToggle={onBatchToggle}
               filter={filter}
             />
           ))}
@@ -103,7 +126,7 @@ function TreeNodeItem({
   );
 }
 
-export default function DirTree({ nodes, onToggle, filter }: Props) {
+export default function DirTree({ nodes, onToggle, onBatchToggle, filter }: Props) {
   if (!nodes.length) {
     return (
       <div className="text-gray-400 text-sm py-8 text-center">
@@ -119,6 +142,7 @@ export default function DirTree({ nodes, onToggle, filter }: Props) {
           key={node.path}
           node={node}
           onToggle={onToggle}
+          onBatchToggle={onBatchToggle}
           filter={filter}
         />
       ))}

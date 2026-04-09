@@ -10,6 +10,8 @@ import {
   fetchSummary,
   enableSkill,
   disableSkill,
+  batchEnableSkills,
+  batchDisableSkills,
 } from './api/client';
 
 export default function App() {
@@ -71,6 +73,20 @@ export default function App() {
     }
   };
 
+  const handleBatchToggle = async (paths: string[], enable: boolean) => {
+    setError(null);
+    try {
+      const result = enable ? await batchEnableSkills(paths) : await batchDisableSkills(paths);
+      if (result.failed.length > 0) {
+        setError(`${result.failed.length} 个 skill 操作失败`);
+      }
+      await loadCustomSkills();
+      await loadSummary();
+    } catch (err: any) {
+      setError(err.message || '批量操作失败');
+    }
+  };
+
   const handleRefresh = async () => {
     if (tab === 'custom') await loadCustomSkills();
     else await loadPluginSkills();
@@ -116,7 +132,7 @@ export default function App() {
           <div className="text-gray-400 text-sm py-4 text-center">加载中...</div>
         )}
         {tab === 'custom' && (
-          <DirTree nodes={tree} onToggle={handleToggleSkill} filter={search} />
+          <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} filter={search} />
         )}
         {tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
       </main>
