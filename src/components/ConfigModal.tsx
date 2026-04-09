@@ -8,20 +8,34 @@ interface Props {
 }
 
 interface Config {
+  claudeRootDir?: string;
   customSkillDir?: string;
-  claudeSkillsDir?: string;
   port?: number;
-  anthropicApiKey?: string;
+}
+
+interface ConfigResponse extends Config {
+  apiConfigDetected: boolean;
+  apiModel: string | null;
 }
 
 export default function ConfigModal({ open, onClose, onSaved }: Props) {
   const [config, setConfig] = useState<Config>({});
+  const [apiConfigDetected, setApiConfigDetected] = useState(false);
+  const [apiModel, setApiModel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       fetchConfig()
-        .then((data) => setConfig(data))
+        .then((data: ConfigResponse) => {
+          setConfig({
+            claudeRootDir: data.claudeRootDir,
+            customSkillDir: data.customSkillDir,
+            port: data.port,
+          });
+          setApiConfigDetected(data.apiConfigDetected);
+          setApiModel(data.apiModel);
+        })
         .catch((err) => console.error('Failed to load config:', err));
     }
   }, [open]);
@@ -35,7 +49,9 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await saveConfig(config);
+      const data: ConfigResponse = await saveConfig(config);
+      setApiConfigDetected(data.apiConfigDetected);
+      setApiModel(data.apiModel);
       onSaved();
       onClose();
     } catch (err) {
@@ -59,24 +75,28 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
         <div className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              自定义 Skill 目录
+              Claude Code 目录
+            </label>
+            <input
+              type="text"
+              value={config.claudeRootDir ?? ''}
+              onChange={(e) => handleChange('claudeRootDir', e.target.value)}
+              placeholder="~/.claude"
+              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              skills/ 和 plugins/ 目录将从此自动推导
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              自定义 Skill 仓库目录
             </label>
             <input
               type="text"
               value={config.customSkillDir ?? ''}
               onChange={(e) => handleChange('customSkillDir', e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Claude Skills 目录
-            </label>
-            <input
-              type="text"
-              value={config.claudeSkillsDir ?? ''}
-              onChange={(e) => handleChange('claudeSkillsDir', e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -93,17 +113,22 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Anthropic API Key
-            </label>
-            <input
-              type="password"
-              value={config.anthropicApiKey ?? ''}
-              onChange={(e) => handleChange('anthropicApiKey', e.target.value)}
-              placeholder="sk-ant-..."
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+          <div className="border-t border-gray-100 pt-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-700">API 配置：</span>
+              {apiConfigDetected ? (
+                <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                  已检测到 {apiModel}
+                </span>
+              ) : (
+                <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+                  未检测到 — 分析功能不可用
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              从 {config.claudeRootDir || '~/.claude'}/settings.json 自动读取
+            </p>
           </div>
         </div>
 

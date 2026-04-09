@@ -1,21 +1,29 @@
 import { Router } from 'express';
-import { loadConfig, saveConfig } from '../config.js';
+import { loadConfig, saveConfig, loadClaudeApiConfig } from '../config.js';
 
 const router = Router();
 
 router.get('/config', (_req, res) => {
   const config = loadConfig();
+  const apiConfig = loadClaudeApiConfig();
   res.json({
-    ...config,
-    anthropicApiKey: config.anthropicApiKey ? '****' + config.anthropicApiKey.slice(-4) : '',
+    claudeRootDir: config.claudeRootDir,
+    customSkillDir: config.customSkillDir,
+    port: config.port,
+    apiConfigDetected: !!apiConfig,
+    apiModel: apiConfig?.model || null,
   });
 });
 
 router.put('/config', (req, res) => {
   const updated = saveConfig(req.body);
+  const apiConfig = loadClaudeApiConfig();
   res.json({
-    ...updated,
-    anthropicApiKey: updated.anthropicApiKey ? '****' + updated.anthropicApiKey.slice(-4) : '',
+    claudeRootDir: updated.claudeRootDir,
+    customSkillDir: updated.customSkillDir,
+    port: updated.port,
+    apiConfigDetected: !!apiConfig,
+    apiModel: apiConfig?.model || null,
   });
 });
 

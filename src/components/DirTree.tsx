@@ -22,13 +22,17 @@ interface Props {
   filter?: string;
 }
 
+function countSkills(node: TreeNode): number {
+  if (node.type === 'skill') return 1;
+  return (node.children ?? []).reduce((sum, c) => sum + countSkills(c), 0);
+}
+
 function nodeMatches(node: TreeNode, filter: string): boolean {
   if (node.type === 'skill') {
     const nameMatch = node.skill?.name.toLowerCase().includes(filter.toLowerCase());
     const descMatch = node.skill?.description.toLowerCase().includes(filter.toLowerCase());
     return !!(nameMatch || descMatch);
   }
-  // Dir node: matches if any child matches
   return (node.children ?? []).some((child) => nodeMatches(child, filter));
 }
 
@@ -43,7 +47,6 @@ function TreeNodeItem({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  // Apply filter
   if (filter && !nodeMatches(node, filter)) {
     return null;
   }
@@ -63,21 +66,29 @@ function TreeNodeItem({
     );
   }
 
-  // Dir node
-  const childCount = node.children?.length ?? 0;
+  // Dir node — same visual style as PluginPanel
+  const childCount = countSkills(node);
 
   return (
-    <div>
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 py-1 transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
       >
-        <span className="text-[10px]">{expanded ? '\u25BC' : '\u25B6'}</span>
-        <span className="font-medium">{node.name}/</span>
-        <span className="text-gray-300 text-xs">({childCount})</span>
+        <span
+          className={`text-xs transition-transform duration-200 ${
+            expanded ? 'rotate-90' : ''
+          }`}
+        >
+          ▶
+        </span>
+        <span className="text-sm font-medium text-gray-800">
+          {node.name}/
+        </span>
+        <span className="text-xs text-gray-400">({childCount})</span>
       </button>
       {expanded && (
-        <div className="ml-4 flex flex-col gap-2 mt-1">
+        <div className="flex flex-col gap-2 p-3">
           {node.children?.map((child) => (
             <TreeNodeItem
               key={child.path}

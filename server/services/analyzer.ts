@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import Anthropic from '@anthropic-ai/sdk';
-import { loadConfig } from '../config.js';
+import { loadConfig, loadClaudeApiConfig } from '../config.js';
 
 export interface SkillAnalysis {
   name: string;
@@ -117,13 +117,10 @@ export async function analyzeSkill(skillDir: string, key: string): Promise<Skill
   }
 
   // Cache miss or hash changed — call Claude API
-  const apiKey = config.anthropicApiKey || process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN;
-  if (!apiKey) {
-    throw new Error('未配置 Anthropic API Key，请在配置页面设置后再使用分析功能');
+  const apiConfig = loadClaudeApiConfig();
+  if (!apiConfig) {
+    throw new Error('未检测到 Claude Code API 配置，请确认 ~/.claude/settings.json 中包含 ANTHROPIC_AUTH_TOKEN');
   }
-
-  const baseURL = process.env.ANTHROPIC_BASE_URL || undefined;
-  const model = config.anthropicModel || process.env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'claude-sonnet-4-6';
 
   const content = collectSkillContent(skillDir);
   const prompt = `分析以下 Claude Code skill 的工作原理，用中文输出，包含：
@@ -134,9 +131,9 @@ export async function analyzeSkill(skillDir: string, key: string): Promise<Skill
 Skill 内容：
 ${content}`;
 
-  const client = new Anthropic({ apiKey, baseURL });
+  const client = new Anthropic({ apiKey: apiConfig.apiKey, baseURL: apiConfig.baseURL });
   const response = await client.messages.create({
-    model,
+    model: apiConfig.model,
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }],
   });
@@ -149,7 +146,7 @@ ${content}`;
     hash,
     summary,
     analyzedAt: new Date().toISOString(),
-    model: model,
+    model: apiConfig.model,
   };
 
   // Save to cache

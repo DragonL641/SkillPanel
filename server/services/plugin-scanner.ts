@@ -50,7 +50,6 @@ function parseSkillMd(skillMdPath: string): { name: string; description: string 
 
 function getSkillsFromMarketplace(
   installPath: string,
-  pluginName: string,
 ): PluginSkill[] {
   const marketplacePath = path.join(installPath, '.claude-plugin', 'marketplace.json');
   if (!fs.existsSync(marketplacePath)) return [];
@@ -60,22 +59,21 @@ function getSkillsFromMarketplace(
     const marketplace = JSON.parse(raw);
     const plugins: MarketplacePluginEntry[] = marketplace.plugins || [];
 
-    // Find the plugin entry matching the installed plugin name
-    const pluginEntry = plugins.find((p) => p.name === pluginName);
-    if (!pluginEntry || !pluginEntry.skills) return [];
-
+    // Collect skills from ALL plugin entries in marketplace.json
     const skills: PluginSkill[] = [];
-    for (const skillRelPath of pluginEntry.skills) {
-      // skillRelPath is like "./skills/xlsx"
-      const skillAbsPath = path.join(installPath, skillRelPath);
-      const skillMdPath = path.join(skillAbsPath, 'SKILL.md');
-      if (fs.existsSync(skillMdPath)) {
-        const parsed = parseSkillMd(skillMdPath);
-        skills.push({
-          name: parsed.name,
-          description: parsed.description,
-          path: skillRelPath,
-        });
+    for (const pluginEntry of plugins) {
+      if (!pluginEntry.skills) continue;
+      for (const skillRelPath of pluginEntry.skills) {
+        const skillAbsPath = path.join(installPath, skillRelPath);
+        const skillMdPath = path.join(skillAbsPath, 'SKILL.md');
+        if (fs.existsSync(skillMdPath)) {
+          const parsed = parseSkillMd(skillMdPath);
+          skills.push({
+            name: parsed.name,
+            description: parsed.description,
+            path: skillAbsPath,
+          });
+        }
       }
     }
     return skills;
@@ -147,7 +145,7 @@ export function scanPlugins(): PluginInfo[] {
     }
 
     // Try marketplace.json first, then fall back to scanning skills/ directory
-    let skills = getSkillsFromMarketplace(installPath, pluginName);
+    let skills = getSkillsFromMarketplace(installPath);
     if (skills.length === 0) {
       skills = scanSkillsDirectory(installPath);
     }
