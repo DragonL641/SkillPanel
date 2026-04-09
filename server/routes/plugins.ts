@@ -24,7 +24,7 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
   const pluginsFile = path.join(config.claudePluginsDir, 'installed_plugins.json');
 
   if (!fs.existsSync(pluginsFile)) {
-    res.json({ hasUpdate: false, error: 'No installed plugins file' });
+    res.json({ hasUpdate: false, error: 'No installed plugins file', isGitRepo: false });
     return;
   }
 
@@ -42,7 +42,14 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
     }
 
     if (!installPath || !fs.existsSync(installPath)) {
-      res.json({ hasUpdate: false, error: 'Plugin not found' });
+      res.json({ hasUpdate: false, error: 'Plugin not found', isGitRepo: false });
+      return;
+    }
+
+    // Check if installPath is a git repository
+    const gitDir = path.join(installPath, '.git');
+    if (!fs.existsSync(gitDir)) {
+      res.json({ hasUpdate: false, isGitRepo: false });
       return;
     }
 
@@ -55,7 +62,7 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
         timeout: 5000,
       }).trim();
     } catch {
-      res.json({ hasUpdate: false, error: 'Not a git repository' });
+      res.json({ hasUpdate: false, error: 'Not a git repository', isGitRepo: false });
       return;
     }
 
@@ -67,7 +74,7 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
         timeout: 30000,
       });
     } catch {
-      res.json({ hasUpdate: false, error: 'Network error', currentCommit });
+      res.json({ hasUpdate: false, error: 'Network error', currentCommit, isGitRepo: true });
       return;
     }
 
@@ -81,7 +88,6 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
       }).trim();
       behindBy = parseInt(count, 10) || 0;
     } catch {
-      // Might be on a different default branch, try master
       try {
         const count = execFileSync('git', ['rev-list', '--count', 'HEAD..origin/master'], {
           cwd: installPath,
@@ -95,9 +101,9 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
     }
 
     invalidate('plugin-skills');
-    res.json({ hasUpdate: behindBy > 0, behindBy, currentCommit });
+    res.json({ hasUpdate: behindBy > 0, behindBy, currentCommit, isGitRepo: true });
   } catch (err: any) {
-    res.json({ hasUpdate: false, error: err.message });
+    res.json({ hasUpdate: false, error: err.message, isGitRepo: false });
   }
 });
 
