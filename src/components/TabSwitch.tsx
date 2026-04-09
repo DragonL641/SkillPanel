@@ -5,7 +5,7 @@ interface Props {
 
 const tabs: { key: 'custom' | 'plugin'; label: string }[] = [
   { key: 'custom', label: '自定义 Skills' },
-  { key: 'plugin', label: '插件 Skills' },
+  { key: 'plugin', label: '插件管理' },
 ];
 
 export default function TabSwitch({ active, onChange }: Props) {
