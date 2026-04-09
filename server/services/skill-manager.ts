@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { loadConfig } from '../config.js';
 
-function resolveSkillDir(skillRelativePath: string): string {
+export function resolveSkillDir(skillRelativePath: string): string {
   const config = loadConfig();
   const resolved = path.resolve(config.customSkillDir, skillRelativePath);
   const base = path.resolve(config.customSkillDir);
@@ -79,4 +79,21 @@ export function disableSkill(skillRelativePath: string): void {
     }
     throw err;
   }
+}
+
+export function deleteSkill(skillRelativePath: string): void {
+  const skillDir = resolveSkillDir(skillRelativePath);
+
+  if (!fs.existsSync(skillDir)) {
+    throw new Error(`Skill directory not found: ${skillRelativePath}`);
+  }
+
+  // Remove symlink first (ignore errors if not linked)
+  try {
+    disableSkill(skillRelativePath);
+  } catch {
+    // Symlink may not exist, that's fine
+  }
+
+  fs.rmSync(skillDir, { recursive: true, force: true });
 }
