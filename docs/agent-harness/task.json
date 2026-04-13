@@ -578,7 +578,7 @@
       "steps": [
         "安装 vitest（与 vite 生态一致）"
       ],
-      "passes": false,
+      "passes": true,
       "category": "18. [测试] 整个项目零测试文件，无测试框架",
       "dependsOn": [
         43

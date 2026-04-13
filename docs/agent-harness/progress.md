@@ -251,3 +251,9 @@
 - **Date**: 2026-04-14
 - **Task 43**: ✅ 方案 B：当 Claude API 未配置时，隐藏插件技能的分析按钮和 AnalysisPanel 避免误导。App.tsx 启动时 fetchConfig 获取 `apiConfigDetected` 状态，通过 PluginPanel → PluginCard → PluginSkillRow 逐层传递，`PluginSkillRow` 根据 `apiConfigDetected` 条件渲染"分析"按钮和 AnalysisPanel。API 未配置时按钮不显示，API 配置后按钮正常工作。tsc --noEmit 和 vite build 均通过
 - **Files**: `src/App.tsx`, `src/components/PluginPanel.tsx`
+
+## Session 47 — Run 47
+
+- **Date**: 2026-04-14
+- **Task 44**: ✅ 安装 vitest@4.1.4 作为 devDependency，与 Vite 8 生态一致。`npx vitest --version` 确认可正常运行
+- **File**: `package.json`（新增 devDependency）
