@@ -210,6 +210,12 @@
 - **Task 33**: ✅ 创建统一 HTTP 错误类体系：(1) 新建 `server/errors.ts`，定义 `HttpError`（基类，携带 statusCode）、`ValidationError`（400）、`NotFoundError`（404）、`ConflictError`（409）；(2) 更新全局错误中间件，优先检查 `HttpError` 实例并使用其 `statusCode`；(3) 更新 `skill-manager.ts` 服务层抛出类型化错误——路径遍历 → `ValidationError`、技能目录不存在/无效 → `NotFoundError`、symlink 冲突 → `ConflictError`
 - **Files**: `server/errors.ts`, `server/index.ts`, `server/services/skill-manager.ts`
 
+## Session 39 — Run 39
+
+- **Date**: 2026-04-14
+- **Task 37**: ✅ 替换 `client.ts` 中所有 `any` 为具体类型：`fetchCustomSkills` → `{ tree: TreeNode[] }`、`fetchPluginSkills` → `{ plugins: PluginInfo[] }`、`fetchSummary` → `Summary`、`enableSkill`/`disableSkill` → `{ ok: boolean; path: string }`、`fetchAnalysis`/`triggerAnalysis` → `AnalysisResponse`（新增类型）、`fetchConfig`/`saveConfig` → `AppConfigResponse`/`AppConfig`。在 `types.ts` 中新增 `AnalysisResponse` 接口。tsc --noEmit 和 vite build 均通过，client.ts 零 `any`
+- **Files**: `src/api/client.ts`, `src/types.ts`
+
 ## Session 38 — Run 38
 
 - **Date**: 2026-04-14

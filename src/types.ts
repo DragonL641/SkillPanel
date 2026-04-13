@@ -47,6 +47,16 @@ export interface SkillAnalysis {
   analyzedAt: string;
 }
 
+/** API response for analysis endpoints (GET/POST) */
+export interface AnalysisResponse {
+  name: string;
+  source: string;
+  summary: string | null;
+  hash: string | null;
+  analyzedAt: string | null;
+  model: string | null;
+}
+
 /** User-editable config fields */
 export interface AppConfig {
   claudeRootDir?: string;
