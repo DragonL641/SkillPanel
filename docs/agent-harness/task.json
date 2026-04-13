@@ -1,0 +1,1173 @@
+{
+  "project": "SkillPanel",
+  "approval": {
+    "status": "approved",
+    "approved_by": "aca-run",
+    "approved_at": "2026-04-13T18:39:56.279Z"
+  },
+  "execution": {
+    "bare_approval_starts_execution": true,
+    "default_mode_after_approval": "continuous-batch",
+    "default_tasks_per_run": 50,
+    "default_max_runs_after_approval": 50,
+    "default_delay_seconds": 3,
+    "default_timeout_seconds": 900,
+    "default_max_retries": 3
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "title": "改为先检查 `res.",
+      "description": "改为先检查 `res.ok`，非 ok 时尝试解析 JSON 获取 error 字段，解析失败则用 `res.status` + `res.statusText` 构造错误",
+      "steps": [
+        "改为先检查 `res.ok`，非 ok 时尝试解析 JSON 获取 error 字段，解析失败则用 `res.status` + `res.statusText` 构造错误"
+      ],
+      "passes": true,
+      "category": "1. [功能缺陷] apiFetch 在检查 res.ok 前调用 res.json()，非 JSON 响应导致崩溃"
+    },
+    {
+      "id": 2,
+      "title": "添加模块级变量 `let cachedConfig: AppConfig | null = null`",
+      "description": "添加模块级变量 `let cachedConfig: AppConfig | null = null`",
+      "steps": [
+        "添加模块级变量 `let cachedConfig: AppConfig | null = null`"
+      ],
+      "passes": false,
+      "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
+      "dependsOn": [
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "title": "loadConfig() 优先返回缓存",
+      "description": "loadConfig() 优先返回缓存",
+      "steps": [
+        "loadConfig() 优先返回缓存"
+      ],
+      "passes": false,
+      "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
+      "dependsOn": [
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "title": "saveConfig() 写入后清除缓存",
+      "description": "saveConfig() 写入后清除缓存",
+      "steps": [
+        "saveConfig() 写入后清除缓存"
+      ],
+      "passes": false,
+      "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
+      "dependsOn": [
+        3
+      ]
+    },
+    {
+      "id": 5,
+      "title": "添加 `invalidateConfig()` 供外部调用",
+      "description": "添加 `invalidateConfig()` 供外部调用",
+      "steps": [
+        "添加 `invalidateConfig()` 供外部调用"
+      ],
+      "passes": false,
+      "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
+      "dependsOn": [
+        4
+      ]
+    },
+    {
+      "id": 6,
+      "title": "改用 write-then-rename 模式：先写临时文件，再 `fs.",
+      "description": "改用 write-then-rename 模式：先写临时文件，再 `fs.renameSync` 原子替换",
+      "steps": [
+        "改用 write-then-rename 模式：先写临时文件，再 `fs.renameSync` 原子替换"
+      ],
+      "passes": false,
+      "category": "3. [功能缺陷] saveConfig 非原子写入可能导致配置损坏",
+      "dependsOn": [
+        5
+      ]
+    },
+    {
+      "id": 7,
+      "title": "或者对并发请求加锁（简单方案：模块级 Promise 队列）",
+      "description": "或者对并发请求加锁（简单方案：模块级 Promise 队列）",
+      "steps": [
+        "或者对并发请求加锁（简单方案：模块级 Promise 队列）"
+      ],
+      "passes": false,
+      "category": "3. [功能缺陷] saveConfig 非原子写入可能导致配置损坏",
+      "dependsOn": [
+        6
+      ]
+    },
+    {
+      "id": 8,
+      "title": "在所有路由之后添加全局错误中间件",
+      "description": "在所有路由之后添加全局错误中间件",
+      "steps": [
+        "在所有路由之后添加全局错误中间件"
+      ],
+      "passes": false,
+      "category": "4. [错误处理] 无全局 Express 错误处理中间件",
+      "dependsOn": [
+        7
+      ]
+    },
+    {
+      "id": 9,
+      "title": "中间件返回 `{ error: string }` JSON 格式",
+      "description": "中间件返回 `{ error: string }` JSON 格式",
+      "steps": [
+        "中间件返回 `{ error: string }` JSON 格式"
+      ],
+      "passes": false,
+      "category": "4. [错误处理] 无全局 Express 错误处理中间件",
+      "dependsOn": [
+        8
+      ]
+    },
+    {
+      "id": 10,
+      "title": "记录错误日志",
+      "description": "记录错误日志",
+      "steps": [
+        "记录错误日志"
+      ],
+      "passes": false,
+      "category": "4. [错误处理] 无全局 Express 错误处理中间件",
+      "dependsOn": [
+        9
+      ]
+    },
+    {
+      "id": 11,
+      "title": "在 catch 中添加 `console.",
+      "description": "在 catch 中添加 `console.warn('[Config] Failed to load Claude API config:', err)`",
+      "steps": [
+        "在 catch 中添加 `console.warn('[Config] Failed to load Claude API config:', err)`"
+      ],
+      "passes": false,
+      "category": "5. [错误处理] loadClaudeApiConfig 静默吞噬错误，返回 null",
+      "dependsOn": [
+        10
+      ]
+    },
+    {
+      "id": 12,
+      "title": "区分\"文件不存在\"（正常，不警告）和\"文件存在但解析失败\"（警告）",
+      "description": "区分\"文件不存在\"（正常，不警告）和\"文件存在但解析失败\"（警告）",
+      "steps": [
+        "区分\"文件不存在\"（正常，不警告）和\"文件存在但解析失败\"（警告）"
+      ],
+      "passes": false,
+      "category": "5. [错误处理] loadClaudeApiConfig 静默吞噬错误，返回 null",
+      "dependsOn": [
+        11
+      ]
+    },
+    {
+      "id": 13,
+      "title": "添加全局错误中间件后此问题自动解决（参见 #4）",
+      "description": "添加全局错误中间件后此问题自动解决（参见 #4）",
+      "steps": [
+        "添加全局错误中间件后此问题自动解决（参见 #4）"
+      ],
+      "passes": false,
+      "category": "6. [错误处理] GET /api/config 无 try-catch 错误处理",
+      "dependsOn": [
+        12
+      ]
+    },
+    {
+      "id": 14,
+      "title": "或单独加 try-catch",
+      "description": "或单独加 try-catch",
+      "steps": [
+        "或单独加 try-catch"
+      ],
+      "passes": false,
+      "category": "6. [错误处理] GET /api/config 无 try-catch 错误处理",
+      "dependsOn": [
+        13
+      ]
+    },
+    {
+      "id": 15,
+      "title": "将 `execFileSync` 改为 `execFile`（异步）",
+      "description": "将 `execFileSync` 改为 `execFile`（异步）",
+      "steps": [
+        "将 `execFileSync` 改为 `execFile`（异步）"
+      ],
+      "passes": false,
+      "category": "7. [性能] execFileSync('git fetch') 阻塞事件循环最多 30 秒",
+      "dependsOn": [
+        14
+      ]
+    },
+    {
+      "id": 16,
+      "title": "路由处理器改为 `async`",
+      "description": "路由处理器改为 `async`",
+      "steps": [
+        "路由处理器改为 `async`"
+      ],
+      "passes": false,
+      "category": "7. [性能] execFileSync('git fetch') 阻塞事件循环最多 30 秒",
+      "dependsOn": [
+        15
+      ]
+    },
+    {
+      "id": 17,
+      "title": "使用 Promise 包装或 util.",
+      "description": "使用 Promise 包装或 util.promisify",
+      "steps": [
+        "使用 Promise 包装或 util.promisify"
+      ],
+      "passes": false,
+      "category": "7. [性能] execFileSync('git fetch') 阻塞事件循环最多 30 秒",
+      "dependsOn": [
+        16
+      ]
+    },
+    {
+      "id": 18,
+      "title": "这些函数本身是同步的（filesystem 操作），暂无法异步化",
+      "description": "这些函数本身是同步的（filesystem 操作），暂无法异步化",
+      "steps": [
+        "这些函数本身是同步的（filesystem 操作），暂无法异步化"
+      ],
+      "passes": false,
+      "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
+      "dependsOn": [
+        17
+      ]
+    },
+    {
+      "id": 19,
+      "title": "可通过 setImmediate 分片处理避免长时间阻塞（低优先级优化）",
+      "description": "可通过 setImmediate 分片处理避免长时间阻塞（低优先级优化）",
+      "steps": [
+        "可通过 setImmediate 分片处理避免长时间阻塞（低优先级优化）"
+      ],
+      "passes": false,
+      "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
+      "dependsOn": [
+        18
+      ]
+    },
+    {
+      "id": 20,
+      "title": "添加启动跳过配置项（环境变量 `SKIP_AUTO_ANALYSIS=1`）",
+      "description": "添加启动跳过配置项（环境变量 `SKIP_AUTO_ANALYSIS=1`）",
+      "steps": [
+        "添加启动跳过配置项（环境变量 `SKIP_AUTO_ANALYSIS=1`）"
+      ],
+      "passes": false,
+      "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
+      "dependsOn": [
+        19
+      ]
+    },
+    {
+      "id": 21,
+      "title": "添加最大条目数限制（如 500 条）",
+      "description": "添加最大条目数限制（如 500 条）",
+      "steps": [
+        "添加最大条目数限制（如 500 条）"
+      ],
+      "passes": false,
+      "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
+      "dependsOn": [
+        20
+      ]
+    },
+    {
+      "id": 22,
+      "title": "saveCache 时检查条目数，超出时删除最旧的",
+      "description": "saveCache 时检查条目数，超出时删除最旧的",
+      "steps": [
+        "saveCache 时检查条目数，超出时删除最旧的"
+      ],
+      "passes": false,
+      "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
+      "dependsOn": [
+        21
+      ]
+    },
+    {
+      "id": 23,
+      "title": "或者添加 TTL 过期机制",
+      "description": "或者添加 TTL 过期机制",
+      "steps": [
+        "或者添加 TTL 过期机制"
+      ],
+      "passes": false,
+      "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
+      "dependsOn": [
+        22
+      ]
+    },
+    {
+      "id": 24,
+      "title": "使用 AbortController 控制循环",
+      "description": "使用 AbortController 控制循环",
+      "steps": [
+        "使用 AbortController 控制循环"
+      ],
+      "passes": false,
+      "category": "10. [资源] analyzeAllSkills 启动任务无取消/优雅关闭机制",
+      "dependsOn": [
+        23
+      ]
+    },
+    {
+      "id": 25,
+      "title": "添加 process SIGTERM/SIGINT 处理器调用 abort",
+      "description": "添加 process SIGTERM/SIGINT 处理器调用 abort",
+      "steps": [
+        "添加 process SIGTERM/SIGINT 处理器调用 abort"
+      ],
+      "passes": false,
+      "category": "10. [资源] analyzeAllSkills 启动任务无取消/优雅关闭机制",
+      "dependsOn": [
+        24
+      ]
+    },
+    {
+      "id": 26,
+      "title": "在循环中检查 signal.",
+      "description": "在循环中检查 signal.aborted",
+      "steps": [
+        "在循环中检查 signal.aborted"
+      ],
+      "passes": false,
+      "category": "10. [资源] analyzeAllSkills 启动任务无取消/优雅关闭机制",
+      "dependsOn": [
+        25
+      ]
+    },
+    {
+      "id": 27,
+      "title": "实施 #2 的 config 缓存后，此问题影响降低",
+      "description": "实施 #2 的 config 缓存后，此问题影响降低",
+      "steps": [
+        "实施 #2 的 config 缓存后，此问题影响降低"
+      ],
+      "passes": false,
+      "category": "11. [架构] 路由处理器直接调用 loadConfig()，绕过 service 层",
+      "dependsOn": [
+        26
+      ]
+    },
+    {
+      "id": 28,
+      "title": "长期：服务层函数接受 config 参数，由路由层传入",
+      "description": "长期：服务层函数接受 config 参数，由路由层传入",
+      "steps": [
+        "长期：服务层函数接受 config 参数，由路由层传入"
+      ],
+      "passes": false,
+      "category": "11. [架构] 路由处理器直接调用 loadConfig()，绕过 service 层",
+      "dependsOn": [
+        27
+      ]
+    },
+    {
+      "id": 29,
+      "title": "短期：保持现有结构，依赖 config 缓存减少 I/O",
+      "description": "短期：保持现有结构，依赖 config 缓存减少 I/O",
+      "steps": [
+        "短期：保持现有结构，依赖 config 缓存减少 I/O"
+      ],
+      "passes": false,
+      "category": "11. [架构] 路由处理器直接调用 loadConfig()，绕过 service 层",
+      "dependsOn": [
+        28
+      ]
+    },
+    {
+      "id": 30,
+      "title": "将 findSkillDir 移到 skill-scanner.",
+      "description": "将 findSkillDir 移到 skill-scanner.ts 或新建 skill-resolver.ts",
+      "steps": [
+        "将 findSkillDir 移到 skill-scanner.ts 或新建 skill-resolver.ts"
+      ],
+      "passes": false,
+      "category": "12. [架构] analysis.ts 路由文件包含 42 行文件系统遍历逻辑（findSkillDir）",
+      "dependsOn": [
+        29
+      ]
+    },
+    {
+      "id": 31,
+      "title": "路由文件只做参数验证和调用 service",
+      "description": "路由文件只做参数验证和调用 service",
+      "steps": [
+        "路由文件只做参数验证和调用 service"
+      ],
+      "passes": false,
+      "category": "12. [架构] analysis.ts 路由文件包含 42 行文件系统遍历逻辑（findSkillDir）",
+      "dependsOn": [
+        30
+      ]
+    },
+    {
+      "id": 32,
+      "title": "利用已有缓存的 scanCustomSkills 结果查找，避免重复遍历",
+      "description": "利用已有缓存的 scanCustomSkills 结果查找，避免重复遍历",
+      "steps": [
+        "利用已有缓存的 scanCustomSkills 结果查找，避免重复遍历"
+      ],
+      "passes": false,
+      "category": "12. [架构] analysis.ts 路由文件包含 42 行文件系统遍历逻辑（findSkillDir）",
+      "dependsOn": [
+        31
+      ]
+    },
+    {
+      "id": 33,
+      "title": "制定统一规则：验证错误 → 400，资源不存在 → 404，冲突 → 409，服务端错误 → 500",
+      "description": "制定统一规则：验证错误 → 400，资源不存在 → 404，冲突 → 409，服务端错误 → 500",
+      "steps": [
+        "制定统一规则：验证错误 → 400，资源不存在 → 404，冲突 → 409，服务端错误 → 500"
+      ],
+      "passes": false,
+      "category": "13. [架构] HTTP 状态码在路由间不一致",
+      "dependsOn": [
+        32
+      ]
+    },
+    {
+      "id": 34,
+      "title": "逐个路由修正",
+      "description": "逐个路由修正",
+      "steps": [
+        "逐个路由修正"
+      ],
+      "passes": false,
+      "category": "13. [架构] HTTP 状态码在路由间不一致",
+      "dependsOn": [
+        33
+      ]
+    },
+    {
+      "id": 35,
+      "title": "全局错误中间件统一处理未分类错误",
+      "description": "全局错误中间件统一处理未分类错误",
+      "steps": [
+        "全局错误中间件统一处理未分类错误"
+      ],
+      "passes": false,
+      "category": "13. [架构] HTTP 状态码在路由间不一致",
+      "dependsOn": [
+        34
+      ]
+    },
+    {
+      "id": 36,
+      "title": "创建 `src/types.",
+      "description": "创建 `src/types.ts` 定义所有共享类型（TreeNode, SkillMeta, PluginInfo, PluginSkill, Summary, SkillAnalysis, AppConfig）",
+      "steps": [
+        "Create or modify `src/types.ts`"
+      ],
+      "passes": false,
+      "category": "14. [代码规范] 前端到处使用 `any` 类型",
+      "dependsOn": [
+        35
+      ]
+    },
+    {
+      "id": 37,
+      "title": "替换 client.",
+      "description": "替换 client.ts 中所有 `any` 为具体类型",
+      "steps": [
+        "替换 client.ts 中所有 `any` 为具体类型"
+      ],
+      "passes": false,
+      "category": "14. [代码规范] 前端到处使用 `any` 类型",
+      "dependsOn": [
+        36
+      ]
+    },
+    {
+      "id": 38,
+      "title": "替换 App.",
+      "description": "替换 App.tsx 中 `useState<any>` 为 `useState<TreeNode[] | null>` 等",
+      "steps": [
+        "替换 App.tsx 中 `useState<any>` 为 `useState<TreeNode[] | null>` 等"
+      ],
+      "passes": false,
+      "category": "14. [代码规范] 前端到处使用 `any` 类型",
+      "dependsOn": [
+        37
+      ]
+    },
+    {
+      "id": 39,
+      "title": "统一使用 `catch (err: unknown)` + `err instanceof Error ? err.",
+      "description": "统一使用 `catch (err: unknown)` + `err instanceof Error ? err.message : String(err)`",
+      "steps": [
+        "统一使用 `catch (err: unknown)` + `err instanceof Error ? err.message : String(err)`"
+      ],
+      "passes": false,
+      "category": "15. [代码规范] catch (err: any) 无类型安全",
+      "dependsOn": [
+        38
+      ]
+    },
+    {
+      "id": 40,
+      "title": "或创建辅助函数 `getErrorMessage(err: unknown): string`",
+      "description": "或创建辅助函数 `getErrorMessage(err: unknown): string`",
+      "steps": [
+        "或创建辅助函数 `getErrorMessage(err: unknown): string`"
+      ],
+      "passes": false,
+      "category": "15. [代码规范] catch (err: any) 无类型安全",
+      "dependsOn": [
+        39
+      ]
+    },
+    {
+      "id": 41,
+      "title": "scanSkillsDirectory 中使用 `path.",
+      "description": "scanSkillsDirectory 中使用 `path.resolve(pluginPath, 'skills', entry)` 构造绝对路径",
+      "steps": [
+        "scanSkillsDirectory 中使用 `path.resolve(pluginPath, 'skills', entry)` 构造绝对路径"
+      ],
+      "passes": false,
+      "category": "16. [API] plugin-scanner 对目录扫描发现的技能返回相对路径，破坏分析功能",
+      "dependsOn": [
+        40
+      ]
+    },
+    {
+      "id": 42,
+      "title": "方案 A：添加 onClick 触发与自定义技能相同的分析流程",
+      "description": "方案 A：添加 onClick 触发与自定义技能相同的分析流程",
+      "steps": [
+        "方案 A：添加 onClick 触发与自定义技能相同的分析流程"
+      ],
+      "passes": false,
+      "category": "17. [UX] PluginPanel 分析按钮无 onClick 处理器——死 UI 元素",
+      "dependsOn": [
+        41
+      ]
+    },
+    {
+      "id": 43,
+      "title": "方案 B：如果插件技能不支持分析，移除该按钮避免误导",
+      "description": "方案 B：如果插件技能不支持分析，移除该按钮避免误导",
+      "steps": [
+        "方案 B：如果插件技能不支持分析，移除该按钮避免误导"
+      ],
+      "passes": false,
+      "category": "17. [UX] PluginPanel 分析按钮无 onClick 处理器——死 UI 元素",
+      "dependsOn": [
+        42
+      ]
+    },
+    {
+      "id": 44,
+      "title": "安装 vitest（与 vite 生态一致）",
+      "description": "安装 vitest（与 vite 生态一致）",
+      "steps": [
+        "安装 vitest（与 vite 生态一致）"
+      ],
+      "passes": false,
+      "category": "18. [测试] 整个项目零测试文件，无测试框架",
+      "dependsOn": [
+        43
+      ]
+    },
+    {
+      "id": 45,
+      "title": "为关键安全逻辑添加测试：skill-manager.",
+      "description": "为关键安全逻辑添加测试：skill-manager.ts 的 resolveSkillDir 路径遍历检查",
+      "steps": [
+        "为关键安全逻辑添加测试：skill-manager.ts 的 resolveSkillDir 路径遍历检查"
+      ],
+      "passes": false,
+      "category": "18. [测试] 整个项目零测试文件，无测试框架",
+      "dependsOn": [
+        44
+      ]
+    },
+    {
+      "id": 46,
+      "title": "为 API 路由添加集成测试",
+      "description": "为 API 路由添加集成测试",
+      "steps": [
+        "为 API 路由添加集成测试"
+      ],
+      "passes": false,
+      "category": "18. [测试] 整个项目零测试文件，无测试框架",
+      "dependsOn": [
+        45
+      ]
+    },
+    {
+      "id": 47,
+      "title": "添加 `\"test\": \"vitest\"` 脚本",
+      "description": "添加 `\"test\": \"vitest\"` 脚本",
+      "steps": [
+        "添加 `\"test\": \"vitest\"` 脚本"
+      ],
+      "passes": false,
+      "category": "18. [测试] 整个项目零测试文件，无测试框架",
+      "dependsOn": [
+        46
+      ]
+    },
+    {
+      "id": 48,
+      "title": "补充所有缺失路由到文档表格",
+      "description": "补充所有缺失路由到文档表格",
+      "steps": [
+        "补充所有缺失路由到文档表格"
+      ],
+      "passes": false,
+      "category": "19. [文档] CLAUDE.md API 路由表不完整且 key 格式错误",
+      "dependsOn": [
+        47
+      ]
+    },
+    {
+      "id": 49,
+      "title": "修正缓存 key 格式描述为 `source/name`",
+      "description": "修正缓存 key 格式描述为 `source/name`",
+      "steps": [
+        "修正缓存 key 格式描述为 `source/name`"
+      ],
+      "passes": false,
+      "category": "19. [文档] CLAUDE.md API 路由表不完整且 key 格式错误",
+      "dependsOn": [
+        48
+      ]
+    },
+    {
+      "id": 50,
+      "title": "添加 config 响应中的 apiConfigDetected/apiModel 字段说明",
+      "description": "添加 config 响应中的 apiConfigDetected/apiModel 字段说明",
+      "steps": [
+        "添加 config 响应中的 apiConfigDetected/apiModel 字段说明"
+      ],
+      "passes": false,
+      "category": "19. [文档] CLAUDE.md API 路由表不完整且 key 格式错误",
+      "dependsOn": [
+        49
+      ]
+    },
+    {
+      "id": 51,
+      "title": "loadConfig 中统一改为 `??`",
+      "description": "loadConfig 中统一改为 `??`",
+      "steps": [
+        "loadConfig 中统一改为 `??`"
+      ],
+      "passes": false,
+      "category": "20. [功能缺陷] loadConfig 中 `||` vs `??` 不一致：空字符串/port 0 处理问题",
+      "dependsOn": [
+        50
+      ]
+    },
+    {
+      "id": 52,
+      "title": "包裹 try-catch，解析失败时 warn 日志并返回默认配置",
+      "description": "包裹 try-catch，解析失败时 warn 日志并返回默认配置",
+      "steps": [
+        "包裹 try-catch，解析失败时 warn 日志并返回默认配置"
+      ],
+      "passes": false,
+      "category": "21. [功能缺陷] loadConfig 对损坏 JSON 无 try-catch",
+      "dependsOn": [
+        51
+      ]
+    },
+    {
+      "id": 53,
+      "title": "catch 中添加 `console.",
+      "description": "catch 中添加 `console.warn('[Analyzer] Cache file corrupt, starting fresh')`",
+      "steps": [
+        "catch 中添加 `console.warn('[Analyzer] Cache file corrupt, starting fresh')`"
+      ],
+      "passes": false,
+      "category": "22. [错误处理] analyzer.ts 缓存 loadCache 静默吞噬损坏错误",
+      "dependsOn": [
+        52
+      ]
+    },
+    {
+      "id": 54,
+      "title": "添加 try-catch 或依赖 #4 全局错误中间件",
+      "description": "添加 try-catch 或依赖 #4 全局错误中间件",
+      "steps": [
+        "添加 try-catch 或依赖 #4 全局错误中间件"
+      ],
+      "passes": false,
+      "category": "23. [错误处理] summary 路由无 try-catch",
+      "dependsOn": [
+        53
+      ]
+    },
+    {
+      "id": 55,
+      "title": "创建 `src/types.",
+      "description": "创建 `src/types.ts` 统一定义前端类型",
+      "steps": [
+        "Create or modify `src/types.ts`"
+      ],
+      "passes": false,
+      "category": "24. [代码简化] SkillMeta/TreeNode 接口在 3 个文件中重复定义",
+      "dependsOn": [
+        54
+      ]
+    },
+    {
+      "id": 56,
+      "title": "各组件从 types.",
+      "description": "各组件从 types.ts 导入",
+      "steps": [
+        "各组件从 types.ts 导入"
+      ],
+      "passes": false,
+      "category": "24. [代码简化] SkillMeta/TreeNode 接口在 3 个文件中重复定义",
+      "dependsOn": [
+        55
+      ]
+    },
+    {
+      "id": 57,
+      "title": "后端类型保持独立（不共享文件）",
+      "description": "后端类型保持独立（不共享文件）",
+      "steps": [
+        "后端类型保持独立（不共享文件）"
+      ],
+      "passes": false,
+      "category": "24. [代码简化] SkillMeta/TreeNode 接口在 3 个文件中重复定义",
+      "dependsOn": [
+        56
+      ]
+    },
+    {
+      "id": 58,
+      "title": "纳入 `src/types.",
+      "description": "纳入 `src/types.ts` 统一管理",
+      "steps": [
+        "Create or modify `src/types.ts`"
+      ],
+      "passes": false,
+      "category": "25. [代码简化] PluginInfo/PluginSkill 接口在 2 个文件中重复定义",
+      "dependsOn": [
+        57
+      ]
+    },
+    {
+      "id": 59,
+      "title": "提取通用函数 `batchToggle(paths: string[], action: 'enable' | 'disable')`",
+      "description": "提取通用函数 `batchToggle(paths: string[], action: 'enable' | 'disable')`",
+      "steps": [
+        "提取通用函数 `batchToggle(paths: string[], action: 'enable' | 'disable')`"
+      ],
+      "passes": false,
+      "category": "26. [代码简化] batch-enable/batch-disable 处理器近乎相同",
+      "dependsOn": [
+        58
+      ]
+    },
+    {
+      "id": 60,
+      "title": "两个路由处理器调用通用函数",
+      "description": "两个路由处理器调用通用函数",
+      "steps": [
+        "两个路由处理器调用通用函数"
+      ],
+      "passes": false,
+      "category": "26. [代码简化] batch-enable/batch-disable 处理器近乎相同",
+      "dependsOn": [
+        59
+      ]
+    },
+    {
+      "id": 61,
+      "title": "改为 `Map<string, CacheEntry<unknown>>` 或保持 any 但添加注释说明设计意图",
+      "description": "改为 `Map<string, CacheEntry<unknown>>` 或保持 any 但添加注释说明设计意图",
+      "steps": [
+        "改为 `Map<string, CacheEntry<unknown>>` 或保持 any 但添加注释说明设计意图"
+      ],
+      "passes": false,
+      "category": "27. [架构] Cache 服务使用 `Map<string, CacheEntry<any>>` 失去类型安全",
+      "dependsOn": [
+        60
+      ]
+    },
+    {
+      "id": 62,
+      "title": "低优先级，缓存本身是内部实现细节",
+      "description": "低优先级，缓存本身是内部实现细节",
+      "steps": [
+        "低优先级，缓存本身是内部实现细节"
+      ],
+      "passes": false,
+      "category": "27. [架构] Cache 服务使用 `Map<string, CacheEntry<any>>` 失去类型安全",
+      "dependsOn": [
+        61
+      ]
+    },
+    {
+      "id": 63,
+      "title": "改为精确失效：`invalidate('custom-skills')` 而非 `invalidate()`",
+      "description": "改为精确失效：`invalidate('custom-skills')` 而非 `invalidate()`",
+      "steps": [
+        "改为精确失效：`invalidate('custom-skills')` 而非 `invalidate()`"
+      ],
+      "passes": false,
+      "category": "28. [性能] 缓存失效是全局的——启用一个自定义技能导致插件缓存也清除",
+      "dependsOn": [
+        62
+      ]
+    },
+    {
+      "id": 64,
+      "title": "config 变更时才清除所有缓存",
+      "description": "config 变更时才清除所有缓存",
+      "steps": [
+        "config 变更时才清除所有缓存"
+      ],
+      "passes": false,
+      "category": "28. [性能] 缓存失效是全局的——启用一个自定义技能导致插件缓存也清除",
+      "dependsOn": [
+        63
+      ]
+    },
+    {
+      "id": 65,
+      "title": "将 loadCache 结果缓存到模块级变量",
+      "description": "将 loadCache 结果缓存到模块级变量",
+      "steps": [
+        "将 loadCache 结果缓存到模块级变量"
+      ],
+      "passes": false,
+      "category": "29. [性能] analyzeSkill 每次分析读取缓存文件两次",
+      "dependsOn": [
+        64
+      ]
+    },
+    {
+      "id": 66,
+      "title": "saveCache 后更新缓存变量",
+      "description": "saveCache 后更新缓存变量",
+      "steps": [
+        "saveCache 后更新缓存变量"
+      ],
+      "passes": false,
+      "category": "29. [性能] analyzeSkill 每次分析读取缓存文件两次",
+      "dependsOn": [
+        65
+      ]
+    },
+    {
+      "id": 67,
+      "title": "实施 #2 的 config 缓存后此问题自动解决",
+      "description": "实施 #2 的 config 缓存后此问题自动解决",
+      "steps": [
+        "实施 #2 的 config 缓存后此问题自动解决"
+      ],
+      "passes": false,
+      "category": "30. [性能] isEnabled() 每个技能调用一次 loadConfig()",
+      "dependsOn": [
+        66
+      ]
+    },
+    {
+      "id": 68,
+      "title": "移动到 service 层（#12），利用 scanCustomSkills 缓存结果查找",
+      "description": "移动到 service 层（#12），利用 scanCustomSkills 缓存结果查找",
+      "steps": [
+        "移动到 service 层（#12），利用 scanCustomSkills 缓存结果查找"
+      ],
+      "passes": false,
+      "category": "31. [性能] findSkillDir 执行未缓存的完整目录遍历",
+      "dependsOn": [
+        67
+      ]
+    },
+    {
+      "id": 69,
+      "title": "实施 #2 的 config 缓存后此问题自动解决",
+      "description": "实施 #2 的 config 缓存后此问题自动解决",
+      "steps": [
+        "实施 #2 的 config 缓存后此问题自动解决"
+      ],
+      "passes": false,
+      "category": "32. [资源] GET/PUT /config 每个请求多次读取配置文件",
+      "dependsOn": [
+        68
+      ]
+    },
+    {
+      "id": 70,
+      "title": "getOrCompute 命中过期条目时 `cache.",
+      "description": "getOrCompute 命中过期条目时 `cache.delete(key)` 再重新计算",
+      "steps": [
+        "getOrCompute 命中过期条目时 `cache.delete(key)` 再重新计算"
+      ],
+      "passes": false,
+      "category": "33. [资源] 过期缓存条目从不删除，Map 无限增长",
+      "dependsOn": [
+        69
+      ]
+    },
+    {
+      "id": 71,
+      "title": "在路由层提取并验证字段：`const { claudeRootDir, customSkillDir, port } = req.",
+      "description": "在路由层提取并验证字段：`const { claudeRootDir, customSkillDir, port } = req.body`",
+      "steps": [
+        "在路由层提取并验证字段：`const { claudeRootDir, customSkillDir, port } = req.body`"
+      ],
+      "passes": false,
+      "category": "34. [API] config 保存将原始 req.body 传入 saveConfig 无白名单验证",
+      "dependsOn": [
+        70
+      ]
+    },
+    {
+      "id": 72,
+      "title": "验证 port 为整数、路径为非空字符串",
+      "description": "验证 port 为整数、路径为非空字符串",
+      "steps": [
+        "验证 port 为整数、路径为非空字符串"
+      ],
+      "passes": false,
+      "category": "34. [API] config 保存将原始 req.body 传入 saveConfig 无白名单验证",
+      "dependsOn": [
+        71
+      ]
+    },
+    {
+      "id": 73,
+      "title": "按 #13 统一规则修正",
+      "description": "按 #13 统一规则修正",
+      "steps": [
+        "按 #13 统一规则修正"
+      ],
+      "passes": false,
+      "category": "35. [API] DELETE/enable/disable 错误使用 400 而非 404/409",
+      "dependsOn": [
+        72
+      ]
+    },
+    {
+      "id": 74,
+      "title": "先验证技能目录存在，不存在返回 404",
+      "description": "先验证技能目录存在，不存在返回 404",
+      "steps": [
+        "先验证技能目录存在，不存在返回 404"
+      ],
+      "passes": false,
+      "category": "36. [API] analysis GET 端点对不存在的技能返回 200",
+      "dependsOn": [
+        73
+      ]
+    },
+    {
+      "id": 75,
+      "title": "或者在响应中添加 `exists: boolean` 字段",
+      "description": "或者在响应中添加 `exists: boolean` 字段",
+      "steps": [
+        "或者在响应中添加 `exists: boolean` 字段"
+      ],
+      "passes": false,
+      "category": "36. [API] analysis GET 端点对不存在的技能返回 200",
+      "dependsOn": [
+        74
+      ]
+    },
+    {
+      "id": 76,
+      "title": "改为 useEffect 监听某个 trigger 状态变化来启动分析",
+      "description": "改为 useEffect 监听某个 trigger 状态变化来启动分析",
+      "steps": [
+        "改为 useEffect 监听某个 trigger 状态变化来启动分析"
+      ],
+      "passes": false,
+      "category": "37. [UX] AnalysisPanel 中 setTimeout(fn, 0) 可能导致过期闭包问题",
+      "dependsOn": [
+        75
+      ]
+    },
+    {
+      "id": 77,
+      "title": "或使用 useRef 存储最新 handleAnalyze",
+      "description": "或使用 useRef 存储最新 handleAnalyze",
+      "steps": [
+        "或使用 useRef 存储最新 handleAnalyze"
+      ],
+      "passes": false,
+      "category": "37. [UX] AnalysisPanel 中 setTimeout(fn, 0) 可能导致过期闭包问题",
+      "dependsOn": [
+        76
+      ]
+    },
+    {
+      "id": 78,
+      "title": "添加 `\"typecheck\": \"tsc --noEmit\"` 脚本",
+      "description": "添加 `\"typecheck\": \"tsc --noEmit\"` 脚本",
+      "steps": [
+        "添加 `\"typecheck\": \"tsc --noEmit\"` 脚本"
+      ],
+      "passes": false,
+      "category": "38. [构建] 无 tsc --noEmit 类型检查步骤",
+      "dependsOn": [
+        77
+      ]
+    },
+    {
+      "id": 79,
+      "title": "修改 `\"build\"` 为 `\"tsc --noEmit && vite build\"`",
+      "description": "修改 `\"build\"` 为 `\"tsc --noEmit && vite build\"`",
+      "steps": [
+        "修改 `\"build\"` 为 `\"tsc --noEmit && vite build\"`"
+      ],
+      "passes": false,
+      "category": "38. [构建] 无 tsc --noEmit 类型检查步骤",
+      "dependsOn": [
+        78
+      ]
+    },
+    {
+      "id": 80,
+      "title": "提取 `walkDir(dir, callback)` 辅助函数",
+      "description": "提取 `walkDir(dir, callback)` 辅助函数",
+      "steps": [
+        "提取 `walkDir(dir, callback)` 辅助函数"
+      ],
+      "passes": false,
+      "category": "39. [代码简化] hash-utils.ts 中 computeContentHash 和 collectSkillContent 目录遍历逻辑重复",
+      "dependsOn": [
+        79
+      ]
+    },
+    {
+      "id": 81,
+      "title": "添加 5-10 秒 setTimeout 自动清除",
+      "description": "添加 5-10 秒 setTimeout 自动清除",
+      "steps": [
+        "添加 5-10 秒 setTimeout 自动清除"
+      ],
+      "passes": false,
+      "category": "40. [UX] 错误横幅无自动消除",
+      "dependsOn": [
+        80
+      ]
+    },
+    {
+      "id": 82,
+      "title": "组件卸载时 clearTimeout",
+      "description": "组件卸载时 clearTimeout",
+      "steps": [
+        "组件卸载时 clearTimeout"
+      ],
+      "passes": false,
+      "category": "40. [UX] 错误横幅无自动消除",
+      "dependsOn": [
+        81
+      ]
+    },
+    {
+      "id": 83,
+      "title": "将 `useState(false)` 改为 `useState(true)`",
+      "description": "将 `useState(false)` 改为 `useState(true)`",
+      "steps": [
+        "将 `useState(false)` 改为 `useState(true)`"
+      ],
+      "passes": false,
+      "category": "41. [UX] initialLoading 默认 false 导致短暂空状态闪烁",
+      "dependsOn": [
+        82
+      ]
+    },
+    {
+      "id": 84,
+      "title": "添加 `await`",
+      "description": "添加 `await`",
+      "steps": [
+        "添加 `await`"
+      ],
+      "passes": false,
+      "category": "42. [资源] handleRefresh 中 loadPluginSkills 缺少 await",
+      "dependsOn": [
+        83
+      ]
+    },
+    {
+      "id": 85,
+      "title": "使用 `encodeURIComponent(skillPath)` 编码路径段",
+      "description": "使用 `encodeURIComponent(skillPath)` 编码路径段",
+      "steps": [
+        "使用 `encodeURIComponent(skillPath)` 编码路径段"
+      ],
+      "passes": false,
+      "category": "43. [API] API 客户端未对 skillPath 做 URL 编码",
+      "dependsOn": [
+        84
+      ]
+    },
+    {
+      "id": 86,
+      "title": "注意：嵌套路径（含 `/`）需要特殊处理",
+      "description": "注意：嵌套路径（含 `/`）需要特殊处理",
+      "steps": [
+        "注意：嵌套路径（含 `/`）需要特殊处理"
+      ],
+      "passes": false,
+      "category": "43. [API] API 客户端未对 skillPath 做 URL 编码",
+      "dependsOn": [
+        85
+      ]
+    },
+    {
+      "id": 87,
+      "title": "运行 `npm install` 重新生成 lockfile",
+      "description": "运行 `npm install` 重新生成 lockfile",
+      "steps": [
+        "运行 `npm install` 重新生成 lockfile"
+      ],
+      "passes": false,
+      "category": "44. [依赖] lockfile name 与 package.json 不一致",
+      "dependsOn": [
+        86
+      ]
+    },
+    {
+      "id": 88,
+      "title": "在 .",
+      "description": "在 .gitignore 添加 `.idea/`",
+      "steps": [
+        "在 .gitignore 添加 `.idea/`"
+      ],
+      "passes": false,
+      "category": "45. [配置] .idea/ 未在 .gitignore 中",
+      "dependsOn": [
+        87
+      ]
+    },
+    {
+      "id": 89,
+      "title": "`git rm -r --cached .",
+      "description": "`git rm -r --cached .idea/` 从版本控制中移除",
+      "steps": [
+        "`git rm -r --cached .idea/` 从版本控制中移除"
+      ],
+      "passes": false,
+      "category": "45. [配置] .idea/ 未在 .gitignore 中",
+      "dependsOn": [
+        88
+      ]
+    }
+  ]
+}

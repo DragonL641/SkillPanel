@@ -2,9 +2,15 @@ const BASE = '/api';
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  return data as T;
+  if (!res.ok) {
+    let message = `HTTP ${res.status}: ${res.statusText}`;
+    try {
+      const data = await res.json();
+      if (data.error) message = data.error;
+    } catch { /* response body not JSON, use default message */ }
+    throw new Error(message);
+  }
+  return (await res.json()) as T;
 }
 
 export const fetchCustomSkills = () =>
