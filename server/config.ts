@@ -55,7 +55,10 @@ export function saveConfig(config: Record<string, any>): AppConfig {
     port: config.port ?? current.port,
   };
   // Only persist user-configurable fields, not derived ones
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(merged, null, 2), 'utf-8');
+  // Write to temp file then rename for atomic replacement
+  const tmpFile = CONFIG_FILE + '.tmp';
+  fs.writeFileSync(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
+  fs.renameSync(tmpFile, CONFIG_FILE);
   cachedConfig = null;
   return loadConfig();
 }

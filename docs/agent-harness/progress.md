@@ -35,3 +35,9 @@
 - **Date**: 2026-04-14
 - **Task 5**: ✅ 添加 `invalidateConfig()` 供外部调用
 - **File**: `server/config.ts`
+
+## Session 6 — Run 6
+
+- **Date**: 2026-04-14
+- **Task 6**: ✅ `saveConfig()` 改用 write-then-rename 模式：先写 `.tmp` 临时文件，再 `fs.renameSync` 原子替换
+- **File**: `server/config.ts`
