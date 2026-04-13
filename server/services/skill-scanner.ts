@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { computeContentHash } from './hash-utils.js';
+import { scanPlugins } from './plugin-scanner.js';
 import matter from 'gray-matter';
 import type { AppConfig } from '../config.js';
 
@@ -103,4 +104,51 @@ export function scanCustomSkills(config: AppConfig): TreeNode[] {
     return [];
   }
   return scanDirectory(config, config.customSkillDir, config.customSkillDir);
+}
+
+/**
+ * Find the skill directory by source and name.
+ * - "custom": recursively search in customSkillDir for a directory matching the name that contains SKILL.md
+ * - "plugin": use scanPlugins() to find the skill path
+ */
+export function findSkillDir(config: AppConfig, source: string, name: string): string | null {
+  if (source === 'custom') {
+    const root = config.customSkillDir;
+    if (!fs.existsSync(root)) return null;
+
+    const search = (dir: string): string | null => {
+      const entries = fs.readdirSync(dir);
+      for (const entry of entries) {
+        if (entry.startsWith('.') || entry === 'node_modules') continue;
+        const fullPath = path.join(dir, entry);
+        if (!fs.statSync(fullPath).isDirectory()) continue;
+
+        if (entry === name && fs.existsSync(path.join(fullPath, 'SKILL.md'))) {
+          return fullPath;
+        }
+        // Recurse into subdirectories
+        const found = search(fullPath);
+        if (found) return found;
+      }
+      return null;
+    };
+
+    return search(root);
+  }
+
+  if (source === 'plugin') {
+    const plugins = scanPlugins(config);
+    for (const plugin of plugins) {
+      for (const skill of plugin.skills) {
+        if (skill.name === name) {
+          if (fs.existsSync(skill.path)) {
+            return skill.path;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  return null;
 }

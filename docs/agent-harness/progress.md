@@ -173,3 +173,9 @@
 - **Date**: 2026-04-14
 - **Task 29**: ✅ 确认性任务：config 缓存（Tasks 2-5）已使 `loadConfig()` 首次加载后返回模块级缓存，路由层调用 `loadConfig()` 无磁盘 I/O；Task 28 已使服务层接受 config 参数。短期目标"保持现有结构，依赖 config 缓存减少 I/O"已完全满足
 - **File**: 无需修改（已由 Tasks 2-5 和 Task 28 覆盖）
+
+## Session 31 — Run 31
+
+- **Date**: 2026-04-14
+- **Task 30**: ✅ 将 `findSkillDir` 函数从 `server/routes/analysis.ts` 移到 `server/services/skill-scanner.ts`，路由文件改为从 skill-scanner 导入；`skill-scanner.ts` 新增 `scanPlugins` 导入，导出 `findSkillDir(config, source, name)`
+- **Files**: `server/services/skill-scanner.ts`, `server/routes/analysis.ts`

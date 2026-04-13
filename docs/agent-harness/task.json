@@ -396,7 +396,7 @@
       "steps": [
         "将 findSkillDir 移到 skill-scanner.ts 或新建 skill-resolver.ts"
       ],
-      "passes": false,
+      "passes": true,
       "category": "12. [架构] analysis.ts 路由文件包含 42 行文件系统遍历逻辑（findSkillDir）",
       "dependsOn": [
         29
