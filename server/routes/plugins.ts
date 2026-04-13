@@ -11,7 +11,7 @@ import { scanPlugins } from '../services/plugin-scanner.js';
 
 const router = Router();
 
-router.get('/skills/plugin', (_req, res) => {
+router.get('/skills/plugin', async (_req, res) => {
   try {
     const plugins = getOrCompute('plugin-skills', () => scanPlugins());
     res.json({ plugins });

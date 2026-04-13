@@ -214,7 +214,7 @@
       "steps": [
         "路由处理器改为 `async`"
       ],
-      "passes": false,
+      "passes": true,
       "category": "7. [性能] execFileSync('git fetch') 阻塞事件循环最多 30 秒",
       "dependsOn": [
         15

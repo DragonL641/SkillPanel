@@ -95,3 +95,9 @@
 - **Date**: 2026-04-14
 - **Task 15**: ✅ 将 `execFileSync` 改为 `execFile`（异步）：使用 `util.promisify(execFile)` 创建 `execFileAsync`，路由处理器改为 `async`，四处 `execFileSync` 调用替换为 `await execFileAsync`，返回值改为 `.stdout.trim()`
 - **File**: `server/routes/plugins.ts`
+
+## Session 16 — Run 17
+
+- **Date**: 2026-04-14
+- **Task 16**: ✅ 将 `GET /skills/plugin` 路由处理器改为 `async`（POST handler 已在 Task 15 中改为 async）
+- **File**: `server/routes/plugins.ts`
