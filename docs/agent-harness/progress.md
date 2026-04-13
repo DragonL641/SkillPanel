@@ -191,3 +191,9 @@
 - **Date**: 2026-04-14
 - **Task 32**: ✅ `findSkillDir` 对 custom skills 改为使用 `scanCustomSkills` 的缓存树查找，避免重复文件系统遍历：添加模块级 `cachedCustomTree` 变量，`scanCustomSkills` 每次调用时更新缓存；新增 `findSkillInTree` 辅助函数递归搜索树节点（按目录名 `path.basename(node.path)` 或显示名 `node.skill?.name` 匹配）；`findSkillDir` 对 custom source 使用 `cachedCustomTree ?? scanCustomSkills(config)` 获取树后调用 `findSkillInTree`
 - **File**: `server/services/skill-scanner.ts`
+
+## Session 35 — Run 35
+
+- **Date**: 2026-04-14
+- **Task 33**: ✅ 创建统一 HTTP 错误类体系：(1) 新建 `server/errors.ts`，定义 `HttpError`（基类，携带 statusCode）、`ValidationError`（400）、`NotFoundError`（404）、`ConflictError`（409）；(2) 更新全局错误中间件，优先检查 `HttpError` 实例并使用其 `statusCode`；(3) 更新 `skill-manager.ts` 服务层抛出类型化错误——路径遍历 → `ValidationError`、技能目录不存在/无效 → `NotFoundError`、symlink 冲突 → `ConflictError`
+- **Files**: `server/errors.ts`, `server/index.ts`, `server/services/skill-manager.ts`

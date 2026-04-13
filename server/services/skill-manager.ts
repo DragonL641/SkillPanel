@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import type { AppConfig } from '../config.js';
+import { ValidationError, NotFoundError, ConflictError } from '../errors.js';
 
 export function resolveSkillDir(config: AppConfig, skillRelativePath: string): string {
   const resolved = path.resolve(config.customSkillDir, skillRelativePath);
   const base = path.resolve(config.customSkillDir);
   if (!resolved.startsWith(base + path.sep) && resolved !== base) {
-    throw new Error('Invalid skill path: path traversal detected');
+    throw new ValidationError('Invalid skill path: path traversal detected');
   }
   return resolved;
 }
@@ -22,7 +23,7 @@ export function enableSkill(config: AppConfig, skillRelativePath: string): void 
   // Verify the skill directory exists and contains SKILL.md
   const skillMdPath = path.join(skillDir, 'SKILL.md');
   if (!fs.existsSync(skillMdPath)) {
-    throw new Error(`Not a valid skill directory: ${skillRelativePath}`);
+    throw new NotFoundError(`Not a valid skill directory: ${skillRelativePath}`);
   }
 
   // Ensure claude skills directory exists
@@ -45,7 +46,7 @@ export function enableSkill(config: AppConfig, skillRelativePath: string): void 
       fs.unlinkSync(symlinkPath);
     } else {
       // Not a symlink, don't touch it for safety
-      throw new Error(
+      throw new ConflictError(
         `Cannot enable skill: ${symlinkPath} exists but is not a symlink`
       );
     }
@@ -65,7 +66,7 @@ export function disableSkill(config: AppConfig, skillRelativePath: string): void
   try {
     const stat = fs.lstatSync(symlinkPath);
     if (!stat.isSymbolicLink()) {
-      throw new Error(
+      throw new ConflictError(
         `Cannot disable skill: ${symlinkPath} is not a symlink (safety check failed)`
       );
     }
@@ -105,13 +106,13 @@ export function deleteSkill(config: AppConfig, skillRelativePath: string): void 
   const skillDir = resolveSkillDir(config, skillRelativePath);
 
   if (!fs.existsSync(skillDir)) {
-    throw new Error(`Skill directory not found: ${skillRelativePath}`);
+    throw new NotFoundError(`Skill directory not found: ${skillRelativePath}`);
   }
 
   // Verify this is actually a skill directory before deleting
   const skillMdPath = path.join(skillDir, 'SKILL.md');
   if (!fs.existsSync(skillMdPath)) {
-    throw new Error(`Not a valid skill directory: ${skillRelativePath}`);
+    throw new NotFoundError(`Not a valid skill directory: ${skillRelativePath}`);
   }
 
   // Remove symlink first (ignore errors if not linked)

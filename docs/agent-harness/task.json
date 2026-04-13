@@ -435,7 +435,7 @@
       "steps": [
         "制定统一规则：验证错误 → 400，资源不存在 → 404，冲突 → 409，服务端错误 → 500"
       ],
-      "passes": false,
+      "passes": true,
       "category": "13. [架构] HTTP 状态码在路由间不一致",
       "dependsOn": [
         32

@@ -1,6 +1,7 @@
 import express from 'express';
 import viteExpress from 'vite-express';
 import { loadConfig } from './config.js';
+import { HttpError } from './errors.js';
 import configRoutes from './routes/config.js';
 import skillsRoutes from './routes/skills.js';
 import summaryRoutes from './routes/summary.js';
@@ -22,6 +23,11 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   const message = err instanceof Error ? err.message : String(err);
   console.error('[Express]', message, err instanceof Error ? err.stack : '');
+
+  if (err instanceof HttpError) {
+    res.status(err.statusCode).json({ error: err.message });
+    return;
+  }
   res.status(500).json({ error: message });
 });
 
