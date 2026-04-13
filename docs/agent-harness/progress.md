@@ -239,3 +239,9 @@
 - **Date**: 2026-04-14
 - **Task 40**: ✅ 创建 `getErrorMessage(err: unknown): string` 辅助函数，替换所有 11 处 `err instanceof Error ? err.message : String(err)` 内联模式。前端：`src/utils/getErrorMessage.ts`（新建），替换 `ConfigModal.tsx`（1处）、`AnalysisPanel.tsx`（1处）、`PluginPanel.tsx`（1处）、`App.tsx`（5处）。后端：`server/utils.ts`（新建），替换 `index.ts`（1处）、`skill-manager.ts`（1处）、`plugins.ts`（1处）。tsc --noEmit 和 vite build 均通过
 - **Files**: `src/utils/getErrorMessage.ts`, `server/utils.ts`, `src/components/ConfigModal.tsx`, `src/components/AnalysisPanel.tsx`, `src/components/PluginPanel.tsx`, `src/App.tsx`, `server/index.ts`, `server/services/skill-manager.ts`, `server/routes/plugins.ts`
+
+## Session 45 — Run 45
+
+- **Date**: 2026-04-14
+- **Task 42**: ✅ 方案 A：为 PluginPanel 的插件技能"分析"按钮添加 onClick 处理器，触发与自定义技能相同的分析流程。提取 `PluginSkillRow` 子组件，集成 `AnalysisPanel`（ref + `onLoadingChange`），复用已有的 `source="plugin"` API 路由。死 `<span>` 改为 `<button>`，分析中显示 `animate-pulse` + "分析中..."文案，`disabled` 防重复点击。tsc --noEmit 和 vite build 均通过
+- **File**: `src/components/PluginPanel.tsx`

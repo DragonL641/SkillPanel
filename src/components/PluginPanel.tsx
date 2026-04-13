@@ -1,22 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronDown, RefreshCw, Sparkles } from 'lucide-react';
 import { checkPluginUpdate } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
-
-interface PluginSkill {
-  name: string;
-  description: string;
-  path: string;
-}
-
-interface PluginInfo {
-  name: string;
-  displayName: string;
-  installPath: string;
-  version: string;
-  lastUpdated: string;
-  skills: PluginSkill[];
-}
+import AnalysisPanel, { type AnalysisPanelHandle } from './AnalysisPanel';
+import type { PluginSkill, PluginInfo } from '../types';
 
 interface Props {
   plugins: PluginInfo[];
@@ -145,17 +132,33 @@ function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: 
       {isOpen && (
         <div className="flex flex-col gap-2.5 px-4 pb-4">
           {plugin.skills.map((skill) => (
-            <div key={`${plugin.name}/${skill.path}`} className="flex items-center gap-2.5 px-3 py-2.5 bg-surface-secondary rounded-[var(--radius-md)]">
-              <span className="text-[13px] font-medium text-fg-primary">{skill.name}</span>
-              <span className="flex-1 text-xs text-fg-secondary truncate">{skill.description}</span>
-              <span className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-accent border border-border rounded-[var(--radius-md)] hover:bg-accent-light transition-colors cursor-pointer">
-                <Sparkles size={11} />
-                分析
-              </span>
-            </div>
+            <PluginSkillRow key={`${plugin.name}/${skill.path}`} skill={skill} pluginName={plugin.name} />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function PluginSkillRow({ skill, pluginName }: { skill: PluginSkill; pluginName: string }) {
+  const [analyzing, setAnalyzing] = useState(false);
+  const analysisRef = useRef<AnalysisPanelHandle>(null);
+
+  return (
+    <div className="px-3 py-2.5 bg-surface-secondary rounded-[var(--radius-md)]">
+      <div className="flex items-center gap-2.5">
+        <span className="text-[13px] font-medium text-fg-primary">{skill.name}</span>
+        <span className="flex-1 text-xs text-fg-secondary truncate">{skill.description}</span>
+        <button
+          onClick={() => analysisRef.current?.triggerAnalysis()}
+          disabled={analyzing}
+          className={`flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light cursor-pointer'}`}
+        >
+          <Sparkles size={11} className={analyzing ? 'animate-pulse' : ''} />
+          {analyzing ? '分析中...' : '分析'}
+        </button>
+      </div>
+      <AnalysisPanel ref={analysisRef} source="plugin" name={skill.name} onLoadingChange={setAnalyzing} />
     </div>
   );
 }
