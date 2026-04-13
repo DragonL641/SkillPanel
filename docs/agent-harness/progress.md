@@ -149,3 +149,9 @@
 - **Date**: 2026-04-14
 - **Task 24**: ✅ `analyzeAllSkills()` 接受可选 `AbortSignal` 参数，循环中每次迭代检查 `signal?.aborted`，中止时打印日志并提前返回；`server/index.ts` 创建 `AbortController` 实例并传递 `signal`
 - **Files**: `server/services/analyzer.ts`, `server/index.ts`
+
+## Session 26 — Run 26
+
+- **Date**: 2026-04-14
+- **Task 25**: ✅ 添加 `process` SIGTERM/SIGINT 处理器调用 `abort`：将 `AbortController` 提升到模块级作用域，注册 `process.on('SIGTERM')` 和 `process.on('SIGINT')` 信号处理器，收到信号时调用 `abortController.abort()` 以优雅终止后台分析任务
+- **File**: `server/index.ts`

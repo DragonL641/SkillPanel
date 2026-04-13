@@ -331,7 +331,7 @@
       "steps": [
         "添加 process SIGTERM/SIGINT 处理器调用 abort"
       ],
-      "passes": false,
+      "passes": true,
       "category": "10. [资源] analyzeAllSkills 启动任务无取消/优雅关闭机制",
       "dependsOn": [
         24

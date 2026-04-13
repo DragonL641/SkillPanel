@@ -27,13 +27,24 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
 
 const config = loadConfig();
 
+const abortController = new AbortController();
+
+// Graceful shutdown: abort background analysis on SIGTERM/SIGINT
+process.on('SIGTERM', () => {
+  console.log('[Shutdown] SIGTERM received, aborting background analysis...');
+  abortController.abort();
+});
+process.on('SIGINT', () => {
+  console.log('[Shutdown] SIGINT received, aborting background analysis...');
+  abortController.abort();
+});
+
 const server = app.listen(config.port, () => {
   console.log(`SkillPanel running at http://localhost:${config.port}`);
 
   // Auto-analyze all skills in background (non-blocking)
   // Set SKIP_AUTO_ANALYSIS=1 to skip startup analysis
   if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
-    const abortController = new AbortController();
     analyzeAllSkills(abortController.signal).catch(err =>
       console.error('[Auto-analysis] Error:', err instanceof Error ? err.message : err),
     );
