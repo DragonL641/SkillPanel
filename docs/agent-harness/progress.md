@@ -83,3 +83,9 @@
 - **Date**: 2026-04-14
 - **Task 13**: ✅ 全局错误中间件已在 Task 8 添加，`GET /api/config` 同步处理器抛出的异常会被 Express 5 自动捕获并传递给全局错误中间件，无需额外修改
 - **File**: 无需修改（已由 Task 8 覆盖）
+
+## Session 14 — Run 15
+
+- **Date**: 2026-04-14
+- **Task 14**: ✅ `GET /api/config` 路由添加 try-catch，捕获异常后 `console.error` 记录日志并返回 500 `{ error: string }` JSON
+- **File**: `server/routes/config.ts`

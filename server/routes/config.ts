@@ -5,15 +5,21 @@ import { invalidate } from '../services/cache.js';
 const router = Router();
 
 router.get('/config', (_req, res) => {
-  const config = loadConfig();
-  const apiConfig = loadClaudeApiConfig();
-  res.json({
-    claudeRootDir: config.claudeRootDir,
-    customSkillDir: config.customSkillDir,
-    port: config.port,
-    apiConfigDetected: !!apiConfig,
-    apiModel: apiConfig?.model || null,
-  });
+  try {
+    const config = loadConfig();
+    const apiConfig = loadClaudeApiConfig();
+    res.json({
+      claudeRootDir: config.claudeRootDir,
+      customSkillDir: config.customSkillDir,
+      port: config.port,
+      apiConfigDetected: !!apiConfig,
+      apiModel: apiConfig?.model || null,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Config] GET /api/config failed:', err);
+    res.status(500).json({ error: message });
+  }
 });
 
 router.put('/config', async (req, res) => {
