@@ -192,6 +192,12 @@
 - **Task 32**: ✅ `findSkillDir` 对 custom skills 改为使用 `scanCustomSkills` 的缓存树查找，避免重复文件系统遍历：添加模块级 `cachedCustomTree` 变量，`scanCustomSkills` 每次调用时更新缓存；新增 `findSkillInTree` 辅助函数递归搜索树节点（按目录名 `path.basename(node.path)` 或显示名 `node.skill?.name` 匹配）；`findSkillDir` 对 custom source 使用 `cachedCustomTree ?? scanCustomSkills(config)` 获取树后调用 `findSkillInTree`
 - **File**: `server/services/skill-scanner.ts`
 
+## Session 36 — Run 36
+
+- **Date**: 2026-04-14
+- **Task 34**: ✅ 逐个路由修正：移除 skills.ts 中 enable/disable/delete 的 try-catch 块（原统一返回 400），移除 analysis.ts POST 的 try-catch 块（原统一返回 500），让 service 层抛出的 HttpError 子类（ValidationError 400、NotFoundError 404、ConflictError 409）传播到全局错误中间件，由中间件根据 `err.statusCode` 返回正确的 HTTP 状态码
+- **Files**: `server/routes/skills.ts`, `server/routes/analysis.ts`
+
 ## Session 35 — Run 35
 
 - **Date**: 2026-04-14

@@ -26,15 +26,10 @@ router.post('/skills/custom/enable/{*skillPath}', (req, res) => {
     return;
   }
 
-  try {
-    const config = loadConfig();
-    enableSkill(config, skillRelativePath);
-    invalidate();
-    res.json({ ok: true, path: skillRelativePath });
-  } catch (err: any) {
-    console.error('Failed to enable skill:', err);
-    res.status(400).json({ error: err.message });
-  }
+  const config = loadConfig();
+  enableSkill(config, skillRelativePath);
+  invalidate();
+  res.json({ ok: true, path: skillRelativePath });
 });
 
 router.post('/skills/custom/disable/{*skillPath}', (req, res) => {
@@ -45,15 +40,10 @@ router.post('/skills/custom/disable/{*skillPath}', (req, res) => {
     return;
   }
 
-  try {
-    const config = loadConfig();
-    disableSkill(config, skillRelativePath);
-    invalidate();
-    res.json({ ok: true, path: skillRelativePath });
-  } catch (err: any) {
-    console.error('Failed to disable skill:', err);
-    res.status(400).json({ error: err.message });
-  }
+  const config = loadConfig();
+  disableSkill(config, skillRelativePath);
+  invalidate();
+  res.json({ ok: true, path: skillRelativePath });
 });
 
 router.post('/skills/custom/batch-enable', (req, res) => {
@@ -90,15 +80,10 @@ router.delete('/skills/custom/delete/{*skillPath}', (req, res) => {
     return;
   }
 
-  try {
-    const config = loadConfig();
-    deleteSkill(config, skillRelativePath);
-    invalidate();
-    res.json({ ok: true, path: skillRelativePath });
-  } catch (err: any) {
-    console.error('Failed to delete skill:', err);
-    res.status(400).json({ error: err.message });
-  }
+  const config = loadConfig();
+  deleteSkill(config, skillRelativePath);
+  invalidate();
+  res.json({ ok: true, path: skillRelativePath });
 });
 
 export default router;

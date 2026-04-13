@@ -448,7 +448,7 @@
       "steps": [
         "逐个路由修正"
       ],
-      "passes": false,
+      "passes": true,
       "category": "13. [架构] HTTP 状态码在路由间不一致",
       "dependsOn": [
         33
