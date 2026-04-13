@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { AppConfig } from '../config.js';
 import { ValidationError, NotFoundError, ConflictError } from '../errors.js';
+import { getErrorMessage } from '../utils.js';
 
 export function resolveSkillDir(config: AppConfig, skillRelativePath: string): string {
   const resolved = path.resolve(config.customSkillDir, skillRelativePath);
@@ -96,7 +97,7 @@ export function batchToggleSkills(
     try {
       toggleFn(config, p);
     } catch (err: unknown) {
-      failed.push({ path: p, error: err instanceof Error ? err.message : String(err) });
+      failed.push({ path: p, error: getErrorMessage(err) });
     }
   }
   return { ok: true, succeeded: paths.length - failed.length, failed };

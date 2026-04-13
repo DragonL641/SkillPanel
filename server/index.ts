@@ -2,6 +2,7 @@ import express from 'express';
 import viteExpress from 'vite-express';
 import { loadConfig } from './config.js';
 import { HttpError } from './errors.js';
+import { getErrorMessage } from './utils.js';
 import configRoutes from './routes/config.js';
 import skillsRoutes from './routes/skills.js';
 import summaryRoutes from './routes/summary.js';
@@ -21,7 +22,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 // Global error middleware — catches errors from all routes
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  const message = err instanceof Error ? err.message : String(err);
+  const message = getErrorMessage(err);
   console.error('[Express]', message, err instanceof Error ? err.stack : '');
 
   if (err instanceof HttpError) {

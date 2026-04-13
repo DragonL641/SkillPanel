@@ -233,3 +233,9 @@
 - **Date**: 2026-04-14
 - **Task 39**: ✅ 统一将所有 `catch (err: any)` 改为 `catch (err: unknown)` + `err instanceof Error ? err.message : String(err)` 模式。修改 7 处（4 个前端文件 + 2 个后端文件）：`ConfigModal.tsx`、`AnalysisPanel.tsx`、`App.tsx`（2 处）、`PluginPanel.tsx`、`skill-manager.ts`（3 处）、`plugins.ts`。对 `skill-manager.ts` 中检查 `err.code` 的场景使用 `(err as NodeJS.ErrnoException).code` 类型断言。tsc --noEmit 和 vite build 均通过，项目零 `catch (err: any)` 残留
 - **Files**: `src/components/ConfigModal.tsx`, `src/components/AnalysisPanel.tsx`, `src/App.tsx`, `src/components/PluginPanel.tsx`, `server/services/skill-manager.ts`, `server/routes/plugins.ts`
+
+## Session 42 — Run 43
+
+- **Date**: 2026-04-14
+- **Task 40**: ✅ 创建 `getErrorMessage(err: unknown): string` 辅助函数，替换所有 11 处 `err instanceof Error ? err.message : String(err)` 内联模式。前端：`src/utils/getErrorMessage.ts`（新建），替换 `ConfigModal.tsx`（1处）、`AnalysisPanel.tsx`（1处）、`PluginPanel.tsx`（1处）、`App.tsx`（5处）。后端：`server/utils.ts`（新建），替换 `index.ts`（1处）、`skill-manager.ts`（1处）、`plugins.ts`（1处）。tsc --noEmit 和 vite build 均通过
+- **Files**: `src/utils/getErrorMessage.ts`, `server/utils.ts`, `src/components/ConfigModal.tsx`, `src/components/AnalysisPanel.tsx`, `src/components/PluginPanel.tsx`, `src/App.tsx`, `server/index.ts`, `server/services/skill-manager.ts`, `server/routes/plugins.ts`

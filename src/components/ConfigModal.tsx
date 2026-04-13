@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, CheckCircle, AlertTriangle } from 'lucide-react';
 import { fetchConfig, saveConfig } from '../api/client';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 interface Props {
   open: boolean;
@@ -58,7 +59,7 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       onSaved();
       onClose();
     } catch (err: unknown) {
-      setSaveError((err instanceof Error ? err.message : String(err)) || '保存失败');
+      setSaveError(getErrorMessage(err) || '保存失败');
     } finally {
       setSaving(false);
     }

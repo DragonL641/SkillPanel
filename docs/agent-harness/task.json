@@ -526,7 +526,7 @@
       "steps": [
         "或创建辅助函数 `getErrorMessage(err: unknown): string`"
       ],
-      "passes": false,
+      "passes": true,
       "category": "15. [代码规范] catch (err: any) 无类型安全",
       "dependsOn": [
         39

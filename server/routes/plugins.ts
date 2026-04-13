@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { loadConfig } from '../config.js';
 import { getOrCompute } from '../services/cache.js';
 import { scanPlugins, checkPluginUpdateByName } from '../services/plugin-scanner.js';
+import { getErrorMessage } from '../utils.js';
 
 const router = Router();
 
@@ -23,7 +24,7 @@ router.post('/plugins/check-update/:pluginName', async (req, res) => {
     const result = await checkPluginUpdateByName(config, pluginName);
     res.json(result);
   } catch (err: unknown) {
-    res.json({ hasUpdate: false, error: err instanceof Error ? err.message : String(err), isGitRepo: false });
+    res.json({ hasUpdate: false, error: getErrorMessage(err), isGitRepo: false });
   }
 });
 

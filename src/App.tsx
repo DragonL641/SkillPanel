@@ -6,6 +6,7 @@ import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
 import type { TreeNode, PluginInfo, Summary } from './types';
+import { getErrorMessage } from './utils/getErrorMessage';
 import {
   fetchCustomSkills,
   fetchPluginSkills,
@@ -36,7 +37,7 @@ export default function App() {
       const d = await fetchCustomSkills();
       setTree(d.tree);
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || '加载失败');
+      setError(getErrorMessage(err) || '加载失败');
     } finally {
       if (!silent) setInitialLoading(false);
     }
@@ -49,7 +50,7 @@ export default function App() {
       const d = await fetchPluginSkills();
       setPlugins(d.plugins);
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || '加载失败');
+      setError(getErrorMessage(err) || '加载失败');
     } finally {
       if (!silent) setInitialLoading(false);
     }
@@ -72,7 +73,7 @@ export default function App() {
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || (enable ? '启用失败' : '禁用失败'));
+      setError(getErrorMessage(err) || (enable ? '启用失败' : '禁用失败'));
     }
   };
 
@@ -86,7 +87,7 @@ export default function App() {
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || '批量操作失败');
+      setError(getErrorMessage(err) || '批量操作失败');
     }
   };
 
@@ -97,7 +98,7 @@ export default function App() {
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || '删除失败');
+      setError(getErrorMessage(err) || '删除失败');
     }
   };
 

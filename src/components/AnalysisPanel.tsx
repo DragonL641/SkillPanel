@@ -1,6 +1,7 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { fetchAnalysis, triggerAnalysis } from '../api/client';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 const MIN_LOADING_MS = 500;
 
@@ -36,7 +37,7 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
       setSummary(data.summary);
       setAnalyzedAt(data.analyzedAt);
     } catch (err: unknown) {
-      setError((err instanceof Error ? err.message : String(err)) || '分析失败');
+      setError(getErrorMessage(err) || '分析失败');
     } finally {
       setLoading(false);
       onLoadingChange?.(false);

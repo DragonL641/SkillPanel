@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, RefreshCw, Sparkles } from 'lucide-react';
 import { checkPluginUpdate } from '../api/client';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 interface PluginSkill {
   name: string;
@@ -92,7 +93,7 @@ function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: 
         setUpdateStatus({ hasUpdate: result.hasUpdate, behindBy: result.behindBy });
       }
     } catch (err: unknown) {
-      setUpdateStatus({ error: (err instanceof Error ? err.message : String(err)) || '检查失败' });
+      setUpdateStatus({ error: getErrorMessage(err) || '检查失败' });
     } finally {
       setChecking(false);
     }
