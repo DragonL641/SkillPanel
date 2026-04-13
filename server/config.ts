@@ -86,7 +86,8 @@ export function loadClaudeApiConfig(): ClaudeApiConfig | null {
       baseURL: env.ANTHROPIC_BASE_URL || undefined,
       model: env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'claude-sonnet-4-6',
     };
-  } catch {
+  } catch (err) {
+    console.warn('[Config] Failed to load Claude API config:', err);
     return null;
   }
 }

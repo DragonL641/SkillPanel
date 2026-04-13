@@ -65,3 +65,9 @@
 - **Date**: 2026-04-14
 - **Task 10**: ✅ 全局错误中间件记录完整错误日志：`console.error` 输出 message + stack trace
 - **File**: `server/index.ts`
+
+## Session 11 — Run 12
+
+- **Date**: 2026-04-14
+- **Task 11**: ✅ `loadClaudeApiConfig` 的 catch 中添加 `console.warn('[Config] Failed to load Claude API config:', err)`
+- **File**: `server/config.ts`
