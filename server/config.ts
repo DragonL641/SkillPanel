@@ -71,6 +71,25 @@ export function invalidateConfig(): void {
   cachedConfig = null;
 }
 
+export interface ConfigResponse {
+  claudeRootDir: string;
+  customSkillDir: string;
+  port: number;
+  apiConfigDetected: boolean;
+  apiModel: string | null;
+}
+
+export function buildConfigResponse(config: AppConfig): ConfigResponse {
+  const apiConfig = loadClaudeApiConfig();
+  return {
+    claudeRootDir: config.claudeRootDir,
+    customSkillDir: config.customSkillDir,
+    port: config.port,
+    apiConfigDetected: !!apiConfig,
+    apiModel: apiConfig?.model || null,
+  };
+}
+
 export function loadClaudeApiConfig(): ClaudeApiConfig | null {
   const config = loadConfig();
   const settingsPath = path.join(config.claudeRootDir, 'settings.json');

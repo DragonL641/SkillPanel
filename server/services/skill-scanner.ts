@@ -111,6 +111,44 @@ export function scanCustomSkills(config: AppConfig): TreeNode[] {
  * - "custom": recursively search in customSkillDir for a directory matching the name that contains SKILL.md
  * - "plugin": use scanPlugins() to find the skill path
  */
+export interface SkillsSummary {
+  customTotal: number;
+  customEnabled: number;
+  pluginTotal: number;
+  grandTotal: number;
+}
+
+function countSkillsInTree(nodes: TreeNode[]): { total: number; enabled: number } {
+  let total = 0;
+  let enabled = 0;
+  for (const node of nodes) {
+    if (node.type === 'skill') {
+      total++;
+      if (node.skill?.enabled) enabled++;
+    } else if (node.children) {
+      const sub = countSkillsInTree(node.children);
+      total += sub.total;
+      enabled += sub.enabled;
+    }
+  }
+  return { total, enabled };
+}
+
+export function getSkillsSummary(
+  config: AppConfig,
+  customTree: TreeNode[],
+  plugins: import('./plugin-scanner.js').PluginInfo[],
+): SkillsSummary {
+  const custom = countSkillsInTree(customTree);
+  const pluginTotal = plugins.reduce((sum, p) => sum + p.skills.length, 0);
+  return {
+    customTotal: custom.total,
+    customEnabled: custom.enabled,
+    pluginTotal,
+    grandTotal: custom.total + pluginTotal,
+  };
+}
+
 export function findSkillDir(config: AppConfig, source: string, name: string): string | null {
   if (source === 'custom') {
     const root = config.customSkillDir;

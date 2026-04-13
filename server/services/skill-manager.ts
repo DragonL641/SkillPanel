@@ -78,6 +78,29 @@ export function disableSkill(config: AppConfig, skillRelativePath: string): void
   }
 }
 
+export interface BatchToggleResult {
+  ok: boolean;
+  succeeded: number;
+  failed: Array<{ path: string; error: string }>;
+}
+
+export function batchToggleSkills(
+  config: AppConfig,
+  paths: string[],
+  action: 'enable' | 'disable',
+): BatchToggleResult {
+  const toggleFn = action === 'enable' ? enableSkill : disableSkill;
+  const failed: Array<{ path: string; error: string }> = [];
+  for (const p of paths) {
+    try {
+      toggleFn(config, p);
+    } catch (err: any) {
+      failed.push({ path: p, error: err.message });
+    }
+  }
+  return { ok: true, succeeded: paths.length - failed.length, failed };
+}
+
 export function deleteSkill(config: AppConfig, skillRelativePath: string): void {
   const skillDir = resolveSkillDir(config, skillRelativePath);
 

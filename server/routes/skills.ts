@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { loadConfig } from '../config.js';
 import { scanCustomSkills } from '../services/skill-scanner.js';
-import { enableSkill, disableSkill, deleteSkill } from '../services/skill-manager.js';
+import { enableSkill, disableSkill, deleteSkill, batchToggleSkills } from '../services/skill-manager.js';
 import { getOrCompute, invalidate } from '../services/cache.js';
 
 const router = Router();
@@ -64,16 +64,9 @@ router.post('/skills/custom/batch-enable', (req, res) => {
   }
 
   const config = loadConfig();
-  const failed: Array<{ path: string; error: string }> = [];
-  for (const p of paths) {
-    try {
-      enableSkill(config, p);
-    } catch (err: any) {
-      failed.push({ path: p, error: err.message });
-    }
-  }
+  const result = batchToggleSkills(config, paths, 'enable');
   invalidate();
-  res.json({ ok: true, succeeded: paths.length - failed.length, failed });
+  res.json(result);
 });
 
 router.post('/skills/custom/batch-disable', (req, res) => {
@@ -84,16 +77,9 @@ router.post('/skills/custom/batch-disable', (req, res) => {
   }
 
   const config = loadConfig();
-  const failed: Array<{ path: string; error: string }> = [];
-  for (const p of paths) {
-    try {
-      disableSkill(config, p);
-    } catch (err: any) {
-      failed.push({ path: p, error: err.message });
-    }
-  }
+  const result = batchToggleSkills(config, paths, 'disable');
   invalidate();
-  res.json({ ok: true, succeeded: paths.length - failed.length, failed });
+  res.json(result);
 });
 
 router.delete('/skills/custom/delete/{*skillPath}', (req, res) => {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loadConfig, saveConfig, loadClaudeApiConfig } from '../config.js';
+import { loadConfig, saveConfig, buildConfigResponse } from '../config.js';
 import { invalidate } from '../services/cache.js';
 
 const router = Router();
@@ -7,14 +7,7 @@ const router = Router();
 router.get('/config', (_req, res) => {
   try {
     const config = loadConfig();
-    const apiConfig = loadClaudeApiConfig();
-    res.json({
-      claudeRootDir: config.claudeRootDir,
-      customSkillDir: config.customSkillDir,
-      port: config.port,
-      apiConfigDetected: !!apiConfig,
-      apiModel: apiConfig?.model || null,
-    });
+    res.json(buildConfigResponse(config));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[Config] GET /api/config failed:', err);
@@ -41,14 +34,7 @@ router.put('/config', async (req, res) => {
   }
   const updated = await saveConfig(req.body);
   invalidate();
-  const apiConfig = loadClaudeApiConfig();
-  res.json({
-    claudeRootDir: updated.claudeRootDir,
-    customSkillDir: updated.customSkillDir,
-    port: updated.port,
-    apiConfigDetected: !!apiConfig,
-    apiModel: apiConfig?.model || null,
-  });
+  res.json(buildConfigResponse(updated));
 });
 
 export default router;

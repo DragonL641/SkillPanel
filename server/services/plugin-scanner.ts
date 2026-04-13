@@ -1,7 +1,11 @@
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import type { AppConfig } from '../config.js';
+
+const execFileAsync = promisify(execFile);
 
 export interface PluginSkill {
   name: string;
@@ -169,4 +173,107 @@ export function scanPlugins(config: AppConfig): PluginInfo[] {
   plugins.sort((a, b) => a.displayName.localeCompare(b.displayName));
 
   return plugins;
+}
+
+export interface CheckUpdateResult {
+  hasUpdate: boolean;
+  error?: string;
+  isGitRepo: boolean;
+  behindBy?: number;
+  currentCommit?: string;
+}
+
+/**
+ * Resolve installPath for a plugin by name from installed_plugins.json.
+ */
+export function resolvePluginInstallPath(config: AppConfig, pluginName: string): string | null {
+  const pluginsFile = path.join(config.claudePluginsDir, 'installed_plugins.json');
+  if (!fs.existsSync(pluginsFile)) return null;
+
+  try {
+    const raw = fs.readFileSync(pluginsFile, 'utf-8');
+    const installed = JSON.parse(raw).plugins || {};
+
+    for (const [key, entries] of Object.entries(installed)) {
+      const name = key.split('@')[0];
+      if (name === pluginName && (entries as any[])[0]) {
+        return (entries as any[])[0].installPath;
+      }
+    }
+  } catch {
+    // parse error
+  }
+  return null;
+}
+
+/**
+ * Check if a git-based plugin has updates available on origin, by plugin name.
+ */
+export async function checkPluginUpdateByName(config: AppConfig, pluginName: string): Promise<CheckUpdateResult> {
+  const installPath = resolvePluginInstallPath(config, pluginName);
+  if (!installPath) {
+    return { hasUpdate: false, error: 'Plugin not found', isGitRepo: false };
+  }
+  return checkPluginUpdate(installPath);
+}
+
+/**
+ * Check if a git-based plugin has updates available on origin.
+ */
+export async function checkPluginUpdate(installPath: string): Promise<CheckUpdateResult> {
+  if (!fs.existsSync(installPath)) {
+    return { hasUpdate: false, error: 'Plugin not found', isGitRepo: false };
+  }
+
+  const gitDir = path.join(installPath, '.git');
+  if (!fs.existsSync(gitDir)) {
+    return { hasUpdate: false, isGitRepo: false };
+  }
+
+  // Get current commit
+  let currentCommit = '';
+  try {
+    currentCommit = (await execFileAsync('git', ['rev-parse', '--short', 'HEAD'], {
+      cwd: installPath,
+      encoding: 'utf-8',
+      timeout: 5000,
+    })).stdout.trim();
+  } catch {
+    return { hasUpdate: false, error: 'Not a git repository', isGitRepo: false };
+  }
+
+  // Fetch from origin
+  try {
+    await execFileAsync('git', ['fetch', 'origin'], {
+      cwd: installPath,
+      encoding: 'utf-8',
+      timeout: 30000,
+    });
+  } catch {
+    return { hasUpdate: false, error: 'Network error', currentCommit, isGitRepo: true };
+  }
+
+  // Check commits behind (try main first, then master)
+  let behindBy = 0;
+  try {
+    const count = (await execFileAsync('git', ['rev-list', '--count', 'HEAD..origin/main'], {
+      cwd: installPath,
+      encoding: 'utf-8',
+      timeout: 5000,
+    })).stdout.trim();
+    behindBy = parseInt(count, 10) || 0;
+  } catch {
+    try {
+      const count = (await execFileAsync('git', ['rev-list', '--count', 'HEAD..origin/master'], {
+        cwd: installPath,
+        encoding: 'utf-8',
+        timeout: 5000,
+      })).stdout.trim();
+      behindBy = parseInt(count, 10) || 0;
+    } catch {
+      // Can't determine, report no update found
+    }
+  }
+
+  return { hasUpdate: behindBy > 0, behindBy, currentCommit, isGitRepo: true };
 }

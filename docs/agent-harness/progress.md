@@ -179,3 +179,9 @@
 - **Date**: 2026-04-14
 - **Task 30**: ✅ 将 `findSkillDir` 函数从 `server/routes/analysis.ts` 移到 `server/services/skill-scanner.ts`，路由文件改为从 skill-scanner 导入；`skill-scanner.ts` 新增 `scanPlugins` 导入，导出 `findSkillDir(config, source, name)`
 - **Files**: `server/services/skill-scanner.ts`, `server/routes/analysis.ts`
+
+## Session 33 — Run 33
+
+- **Date**: 2026-04-14
+- **Task 31**: ✅ 路由文件只做参数验证和调用 service：(1) `summary.ts` — `countSkillsInTree` 聚合逻辑移至 `skill-scanner.ts` 的 `getSkillsSummary(config, tree, plugins)`，路由改为调用 service 并直接返回结果；(2) `skills.ts` — batch-enable/batch-disable 的循环+错误收集逻辑移至 `skill-manager.ts` 的 `batchToggleSkills(config, paths, action)`，路由只做参数验证和调用；(3) `plugins.ts` — `resolvePluginInstallPath` + `checkPluginUpdate` 组合包装为 `plugin-scanner.ts` 的 `checkPluginUpdateByName(config, pluginName)`，路由简化为调用单一 service 函数；(4) `config.ts` — GET/PUT 重复的响应构造逻辑提取为 `config.ts` 的 `buildConfigResponse(config)`，路由直接调用
+- **Files**: `server/services/skill-scanner.ts`, `server/services/skill-manager.ts`, `server/services/plugin-scanner.ts`, `server/config.ts`, `server/routes/summary.ts`, `server/routes/skills.ts`, `server/routes/plugins.ts`, `server/routes/config.ts`
