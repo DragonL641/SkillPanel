@@ -89,3 +89,9 @@
 - **Date**: 2026-04-14
 - **Task 14**: ✅ `GET /api/config` 路由添加 try-catch，捕获异常后 `console.error` 记录日志并返回 500 `{ error: string }` JSON
 - **File**: `server/routes/config.ts`
+
+## Session 15 — Run 16
+
+- **Date**: 2026-04-14
+- **Task 15**: ✅ 将 `execFileSync` 改为 `execFile`（异步）：使用 `util.promisify(execFile)` 创建 `execFileAsync`，路由处理器改为 `async`，四处 `execFileSync` 调用替换为 `await execFileAsync`，返回值改为 `.stdout.trim()`
+- **File**: `server/routes/plugins.ts`

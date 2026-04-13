@@ -1,7 +1,10 @@
-import { execFileSync } from 'child_process';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
 import { Router } from 'express';
+
+const execFileAsync = promisify(execFile);
 import { loadConfig } from '../config.js';
 import { getOrCompute, invalidate } from '../services/cache.js';
 import { scanPlugins } from '../services/plugin-scanner.js';
@@ -18,7 +21,7 @@ router.get('/skills/plugin', (_req, res) => {
   }
 });
 
-router.post('/plugins/check-update/:pluginName', (req, res) => {
+router.post('/plugins/check-update/:pluginName', async (req, res) => {
   const { pluginName } = req.params;
   const config = loadConfig();
   const pluginsFile = path.join(config.claudePluginsDir, 'installed_plugins.json');
@@ -56,11 +59,11 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
     // Get current commit
     let currentCommit = '';
     try {
-      currentCommit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+      currentCommit = (await execFileAsync('git', ['rev-parse', '--short', 'HEAD'], {
         cwd: installPath,
         encoding: 'utf-8',
         timeout: 5000,
-      }).trim();
+      })).stdout.trim();
     } catch {
       res.json({ hasUpdate: false, error: 'Not a git repository', isGitRepo: false });
       return;
@@ -68,7 +71,7 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
 
     // Fetch from origin
     try {
-      execFileSync('git', ['fetch', 'origin'], {
+      await execFileAsync('git', ['fetch', 'origin'], {
         cwd: installPath,
         encoding: 'utf-8',
         timeout: 30000,
@@ -81,19 +84,19 @@ router.post('/plugins/check-update/:pluginName', (req, res) => {
     // Check commits behind
     let behindBy = 0;
     try {
-      const count = execFileSync('git', ['rev-list', '--count', 'HEAD..origin/main'], {
+      const count = (await execFileAsync('git', ['rev-list', '--count', 'HEAD..origin/main'], {
         cwd: installPath,
         encoding: 'utf-8',
         timeout: 5000,
-      }).trim();
+      })).stdout.trim();
       behindBy = parseInt(count, 10) || 0;
     } catch {
       try {
-        const count = execFileSync('git', ['rev-list', '--count', 'HEAD..origin/master'], {
+        const count = (await execFileAsync('git', ['rev-list', '--count', 'HEAD..origin/master'], {
           cwd: installPath,
           encoding: 'utf-8',
           timeout: 5000,
-        }).trim();
+        })).stdout.trim();
         behindBy = parseInt(count, 10) || 0;
       } catch {
         // Can't determine, report no update found

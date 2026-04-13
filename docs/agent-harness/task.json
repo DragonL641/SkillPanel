@@ -201,7 +201,7 @@
       "steps": [
         "将 `execFileSync` 改为 `execFile`（异步）"
       ],
-      "passes": false,
+      "passes": true,
       "category": "7. [性能] execFileSync('git fetch') 阻塞事件循环最多 30 秒",
       "dependsOn": [
         14
