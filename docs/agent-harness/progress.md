@@ -155,3 +155,9 @@
 - **Date**: 2026-04-14
 - **Task 25**: ✅ 添加 `process` SIGTERM/SIGINT 处理器调用 `abort`：将 `AbortController` 提升到模块级作用域，注册 `process.on('SIGTERM')` 和 `process.on('SIGINT')` 信号处理器，收到信号时调用 `abortController.abort()` 以优雅终止后台分析任务
 - **File**: `server/index.ts`
+
+## Session 27 — Run 27
+
+- **Date**: 2026-04-14
+- **Task 26**: ✅ 确认性任务：`analyzeAllSkills()` 循环中已有 `signal?.aborted` 检查（第 163 行），中止时打印日志 `[Auto-analysis] Aborted.` 并提前返回，已由 Task 24 实现覆盖
+- **File**: `server/services/analyzer.ts`（无需修改，已由 Task 24 覆盖）
