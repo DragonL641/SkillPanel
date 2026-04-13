@@ -5,6 +5,7 @@ import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
+import type { TreeNode, PluginInfo, Summary } from './types';
 import {
   fetchCustomSkills,
   fetchPluginSkills,
@@ -18,9 +19,9 @@ import {
 
 export default function App() {
   const [tab, setTab] = useState<'custom' | 'plugin'>('custom');
-  const [summary, setSummary] = useState<any>(null);
-  const [tree, setTree] = useState<any[]>([]);
-  const [plugins, setPlugins] = useState<any[]>([]);
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [tree, setTree] = useState<TreeNode[]>([]);
+  const [plugins, setPlugins] = useState<PluginInfo[]>([]);
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);

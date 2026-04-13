@@ -221,3 +221,9 @@
 - **Date**: 2026-04-14
 - **Task 36**: ✅ 创建 `src/types.ts`，定义 8 个共享前端类型：`SkillMeta`、`TreeNode`、`PluginSkill`、`PluginInfo`、`Summary`、`SkillAnalysis`、`AppConfig`、`AppConfigResponse`。类型从 DirTree.tsx、SkillCard.tsx、PluginPanel.tsx、StatsRow.tsx、ConfigModal.tsx 的本地接口提取汇总。tsc --noEmit 和 vite build 均通过
 - **File**: `src/types.ts`
+
+## Session 40 — Run 40
+
+- **Date**: 2026-04-14
+- **Task 38**: ✅ 替换 App.tsx 中 3 处 `useState<any>` 为具体类型：`useState<Summary | null>(null)`、`useState<TreeNode[]>([])`、`useState<PluginInfo[]>([])`。添加 `import type { TreeNode, PluginInfo, Summary } from './types'`。tsc --noEmit 和 vite build 均通过
+- **File**: `src/App.tsx`

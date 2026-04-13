@@ -500,7 +500,7 @@
       "steps": [
         "替换 App.tsx 中 `useState<any>` 为 `useState<TreeNode[] | null>` 等"
       ],
-      "passes": false,
+      "passes": true,
       "category": "14. [代码规范] 前端到处使用 `any` 类型",
       "dependsOn": [
         37
