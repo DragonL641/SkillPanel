@@ -257,3 +257,9 @@
 - **Date**: 2026-04-14
 - **Task 44**: ✅ 安装 vitest@4.1.4 作为 devDependency，与 Vite 8 生态一致。`npx vitest --version` 确认可正常运行
 - **File**: `package.json`（新增 devDependency）
+
+## Session 48 — Run 48
+
+- **Date**: 2026-04-14
+- **Task 45**: ✅ 为 `skill-manager.ts` 添加 24 个测试用例，覆盖全部 5 个导出函数（`resolveSkillDir`、`enableSkill`、`disableSkill`、`deleteSkill`、`batchToggleSkills`）。重点覆盖安全逻辑：路径遍历检测（`..`、绝对路径、混合遍历）均抛出 `ValidationError`；正常操作（创建/移除 symlink、幂等性、批量操作失败收集）均正确工作。所有测试使用真实文件系统（temp 目录），无 mock
+- **File**: `server/services/__tests__/skill-manager.test.ts`（新建）

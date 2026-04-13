@@ -591,7 +591,7 @@
       "steps": [
         "为关键安全逻辑添加测试：skill-manager.ts 的 resolveSkillDir 路径遍历检查"
       ],
-      "passes": false,
+      "passes": true,
       "category": "18. [测试] 整个项目零测试文件，无测试框架",
       "dependsOn": [
         44
