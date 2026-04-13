@@ -71,3 +71,9 @@
 - **Date**: 2026-04-14
 - **Task 11**: ✅ `loadClaudeApiConfig` 的 catch 中添加 `console.warn('[Config] Failed to load Claude API config:', err)`
 - **File**: `server/config.ts`
+
+## Session 12 — Run 13
+
+- **Date**: 2026-04-14
+- **Task 12**: ✅ 区分"文件不存在"（ENOENT，正常返回 null 不警告）和"文件存在但解析失败"（console.warn 警告）
+- **File**: `server/config.ts`

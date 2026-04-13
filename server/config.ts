@@ -87,6 +87,10 @@ export function loadClaudeApiConfig(): ClaudeApiConfig | null {
       model: env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'claude-sonnet-4-6',
     };
   } catch (err) {
+    // Distinguish "file not found" (normal, no warning) from "file exists but parse failed" (warn)
+    if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
+      return null;
+    }
     console.warn('[Config] Failed to load Claude API config:', err);
     return null;
   }
