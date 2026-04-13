@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { loadConfig } from '../config.js';
+import type { AppConfig } from '../config.js';
 
-export function resolveSkillDir(skillRelativePath: string): string {
-  const config = loadConfig();
+export function resolveSkillDir(config: AppConfig, skillRelativePath: string): string {
   const resolved = path.resolve(config.customSkillDir, skillRelativePath);
   const base = path.resolve(config.customSkillDir);
   if (!resolved.startsWith(base + path.sep) && resolved !== base) {
@@ -12,14 +11,12 @@ export function resolveSkillDir(skillRelativePath: string): string {
   return resolved;
 }
 
-function getSymlinkPath(skillDirName: string): string {
-  const config = loadConfig();
+function getSymlinkPath(config: AppConfig, skillDirName: string): string {
   return path.join(config.claudeSkillsDir, skillDirName);
 }
 
-export function enableSkill(skillRelativePath: string): void {
-  const config = loadConfig();
-  const skillDir = resolveSkillDir(skillRelativePath);
+export function enableSkill(config: AppConfig, skillRelativePath: string): void {
+  const skillDir = resolveSkillDir(config, skillRelativePath);
   const skillBasename = path.basename(skillDir);
 
   // Verify the skill directory exists and contains SKILL.md
@@ -33,7 +30,7 @@ export function enableSkill(skillRelativePath: string): void {
     fs.mkdirSync(config.claudeSkillsDir, { recursive: true });
   }
 
-  const symlinkPath = getSymlinkPath(skillBasename);
+  const symlinkPath = getSymlinkPath(config, skillBasename);
 
   // If symlink already exists and points to the right target, skip
   try {
@@ -60,10 +57,10 @@ export function enableSkill(skillRelativePath: string): void {
   fs.symlinkSync(skillDir, symlinkPath);
 }
 
-export function disableSkill(skillRelativePath: string): void {
-  const skillDir = resolveSkillDir(skillRelativePath);
+export function disableSkill(config: AppConfig, skillRelativePath: string): void {
+  const skillDir = resolveSkillDir(config, skillRelativePath);
   const skillBasename = path.basename(skillDir);
-  const symlinkPath = getSymlinkPath(skillBasename);
+  const symlinkPath = getSymlinkPath(config, skillBasename);
 
   try {
     const stat = fs.lstatSync(symlinkPath);
@@ -81,8 +78,8 @@ export function disableSkill(skillRelativePath: string): void {
   }
 }
 
-export function deleteSkill(skillRelativePath: string): void {
-  const skillDir = resolveSkillDir(skillRelativePath);
+export function deleteSkill(config: AppConfig, skillRelativePath: string): void {
+  const skillDir = resolveSkillDir(config, skillRelativePath);
 
   if (!fs.existsSync(skillDir)) {
     throw new Error(`Skill directory not found: ${skillRelativePath}`);
@@ -96,7 +93,7 @@ export function deleteSkill(skillRelativePath: string): void {
 
   // Remove symlink first (ignore errors if not linked)
   try {
-    disableSkill(skillRelativePath);
+    disableSkill(config, skillRelativePath);
   } catch {
     // Symlink may not exist, that's fine
   }

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { loadConfig } from '../config.js';
+import type { AppConfig } from '../config.js';
 
 export interface PluginSkill {
   name: string;
@@ -110,8 +110,7 @@ function scanSkillsDirectory(installPath: string): PluginSkill[] {
   return skills;
 }
 
-export function scanPlugins(): PluginInfo[] {
-  const config = loadConfig();
+export function scanPlugins(config: AppConfig): PluginInfo[] {
   const pluginsFile = path.join(config.claudePluginsDir, 'installed_plugins.json');
   if (!fs.existsSync(pluginsFile)) return [];
 

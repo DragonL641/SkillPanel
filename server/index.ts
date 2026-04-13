@@ -45,7 +45,7 @@ const server = app.listen(config.port, () => {
   // Auto-analyze all skills in background (non-blocking)
   // Set SKIP_AUTO_ANALYSIS=1 to skip startup analysis
   if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
-    analyzeAllSkills(abortController.signal).catch(err =>
+    analyzeAllSkills(config, abortController.signal).catch(err =>
       console.error('[Auto-analysis] Error:', err instanceof Error ? err.message : err),
     );
   } else {

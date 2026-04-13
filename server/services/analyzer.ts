@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
-import { loadConfig, loadClaudeApiConfig } from '../config.js';
+import { loadClaudeApiConfig } from '../config.js';
+import type { AppConfig } from '../config.js';
 import { computeContentHash, collectSkillContent } from './hash-utils.js';
 import { scanCustomSkills, type TreeNode } from './skill-scanner.js';
 import { scanPlugins } from './plugin-scanner.js';
@@ -14,14 +15,13 @@ export interface SkillAnalysis {
   model: string;
 }
 
-function getCacheFilePath(): string {
-  const config = loadConfig();
+function getCacheFilePath(config: AppConfig): string {
   const cacheDir = path.join(path.dirname(config.customSkillDir), '.skillpanel');
   return path.join(cacheDir, 'analysis-cache.json');
 }
 
-function loadCache(): Record<string, SkillAnalysis> {
-  const cacheFile = getCacheFilePath();
+function loadCache(config: AppConfig): Record<string, SkillAnalysis> {
+  const cacheFile = getCacheFilePath(config);
   try {
     if (fs.existsSync(cacheFile)) {
       const raw = fs.readFileSync(cacheFile, 'utf-8');
@@ -36,7 +36,7 @@ function loadCache(): Record<string, SkillAnalysis> {
 const MAX_CACHE_ENTRIES = 500;
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-function saveCache(cache: Record<string, SkillAnalysis>): void {
+function saveCache(config: AppConfig, cache: Record<string, SkillAnalysis>): void {
   // Evict expired entries (TTL)
   const now = Date.now();
   for (const [k, v] of Object.entries(cache)) {
@@ -57,7 +57,7 @@ function saveCache(cache: Record<string, SkillAnalysis>): void {
     }
   }
 
-  const cacheFile = getCacheFilePath();
+  const cacheFile = getCacheFilePath(config);
   const cacheDir = path.dirname(cacheFile);
   if (!fs.existsSync(cacheDir)) {
     fs.mkdirSync(cacheDir, { recursive: true });
@@ -65,8 +65,8 @@ function saveCache(cache: Record<string, SkillAnalysis>): void {
   fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2), 'utf-8');
 }
 
-export function getCachedAnalysis(key: string): SkillAnalysis | null {
-  const cache = loadCache();
+export function getCachedAnalysis(config: AppConfig, key: string): SkillAnalysis | null {
+  const cache = loadCache(config);
   const entry = cache[key];
   if (!entry) return null;
   // Treat expired entries as cache misses
@@ -74,14 +74,13 @@ export function getCachedAnalysis(key: string): SkillAnalysis | null {
   return entry;
 }
 
-export async function analyzeSkill(skillDir: string, key: string, force = false): Promise<SkillAnalysis> {
-  const config = loadConfig();
+export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false): Promise<SkillAnalysis> {
   const hash = computeContentHash(skillDir);
   const name = path.basename(skillDir);
 
   // Check cache first (skip when force=true)
   if (!force) {
-    const cached = getCachedAnalysis(key);
+    const cached = getCachedAnalysis(config, key);
     if (cached && cached.hash === hash) {
       return cached;
     }
@@ -118,9 +117,9 @@ ${content}`;
   };
 
   // Save to cache
-  const cache = loadCache();
+  const cache = loadCache(config);
   cache[key] = analysis;
-  saveCache(cache);
+  saveCache(config, cache);
 
   return analysis;
 }
@@ -130,9 +129,7 @@ ${content}`;
  * Iterates custom + plugin skills, skips those with matching cache hashes.
  * Runs sequentially to avoid overwhelming the API.
  */
-export async function analyzeAllSkills(signal?: AbortSignal): Promise<void> {
-  const config = loadConfig();
-
+export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal): Promise<void> {
   const collectFromTree = (nodes: TreeNode[]): Array<{ dir: string; key: string }> => {
     const result: Array<{ dir: string; key: string }> = [];
     for (const node of nodes) {
@@ -147,8 +144,8 @@ export async function analyzeAllSkills(signal?: AbortSignal): Promise<void> {
     return result;
   };
 
-  const allSkills = collectFromTree(scanCustomSkills());
-  for (const plugin of scanPlugins()) {
+  const allSkills = collectFromTree(scanCustomSkills(config));
+  for (const plugin of scanPlugins(config)) {
     for (const skill of plugin.skills) {
       allSkills.push({ dir: skill.path, key: `plugin/${skill.name}` });
     }
@@ -168,9 +165,9 @@ export async function analyzeAllSkills(signal?: AbortSignal): Promise<void> {
     await new Promise<void>((resolve) => setImmediate(resolve));
     try {
       const hash = computeContentHash(dir);
-      const cached = getCachedAnalysis(key);
+      const cached = getCachedAnalysis(config, key);
       if (cached && cached.hash === hash) continue;
-      await analyzeSkill(dir, key);
+      await analyzeSkill(config, dir, key);
       analyzed++;
     } catch (err) {
       console.error(`[Auto-analysis] Failed: ${key}`, err instanceof Error ? err.message : err);

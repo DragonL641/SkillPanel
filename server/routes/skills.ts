@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { loadConfig } from '../config.js';
 import { scanCustomSkills } from '../services/skill-scanner.js';
 import { enableSkill, disableSkill, deleteSkill } from '../services/skill-manager.js';
 import { getOrCompute, invalidate } from '../services/cache.js';
@@ -7,7 +8,8 @@ const router = Router();
 
 router.get('/skills/custom', (_req, res) => {
   try {
-    const tree = getOrCompute('custom-skills', () => scanCustomSkills());
+    const config = loadConfig();
+    const tree = getOrCompute('custom-skills', () => scanCustomSkills(config));
     res.json({ tree });
   } catch (err: any) {
     console.error('Failed to scan custom skills:', err);
@@ -25,7 +27,8 @@ router.post('/skills/custom/enable/{*skillPath}', (req, res) => {
   }
 
   try {
-    enableSkill(skillRelativePath);
+    const config = loadConfig();
+    enableSkill(config, skillRelativePath);
     invalidate();
     res.json({ ok: true, path: skillRelativePath });
   } catch (err: any) {
@@ -43,7 +46,8 @@ router.post('/skills/custom/disable/{*skillPath}', (req, res) => {
   }
 
   try {
-    disableSkill(skillRelativePath);
+    const config = loadConfig();
+    disableSkill(config, skillRelativePath);
     invalidate();
     res.json({ ok: true, path: skillRelativePath });
   } catch (err: any) {
@@ -59,10 +63,11 @@ router.post('/skills/custom/batch-enable', (req, res) => {
     return;
   }
 
+  const config = loadConfig();
   const failed: Array<{ path: string; error: string }> = [];
   for (const p of paths) {
     try {
-      enableSkill(p);
+      enableSkill(config, p);
     } catch (err: any) {
       failed.push({ path: p, error: err.message });
     }
@@ -78,10 +83,11 @@ router.post('/skills/custom/batch-disable', (req, res) => {
     return;
   }
 
+  const config = loadConfig();
   const failed: Array<{ path: string; error: string }> = [];
   for (const p of paths) {
     try {
-      disableSkill(p);
+      disableSkill(config, p);
     } catch (err: any) {
       failed.push({ path: p, error: err.message });
     }
@@ -99,7 +105,8 @@ router.delete('/skills/custom/delete/{*skillPath}', (req, res) => {
   }
 
   try {
-    deleteSkill(skillRelativePath);
+    const config = loadConfig();
+    deleteSkill(config, skillRelativePath);
     invalidate();
     res.json({ ok: true, path: skillRelativePath });
   } catch (err: any) {

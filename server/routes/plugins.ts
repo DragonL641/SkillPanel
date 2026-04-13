@@ -13,7 +13,8 @@ const router = Router();
 
 router.get('/skills/plugin', async (_req, res) => {
   try {
-    const plugins = getOrCompute('plugin-skills', () => scanPlugins());
+    const config = loadConfig();
+    const plugins = getOrCompute('plugin-skills', () => scanPlugins(config));
     res.json({ plugins });
   } catch (err: any) {
     console.error('Failed to scan plugins:', err);

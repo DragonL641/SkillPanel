@@ -12,9 +12,7 @@ const router = Router();
  * - "custom": recursively search in customSkillDir for a directory matching the name that contains SKILL.md
  * - "plugin": use scanPlugins() to find the skill path
  */
-function findSkillDir(source: string, name: string): string | null {
-  const config = loadConfig();
-
+function findSkillDir(config: ReturnType<typeof loadConfig>, source: string, name: string): string | null {
   if (source === 'custom') {
     const root = config.customSkillDir;
     if (!fs.existsSync(root)) return null;
@@ -40,7 +38,7 @@ function findSkillDir(source: string, name: string): string | null {
   }
 
   if (source === 'plugin') {
-    const plugins = scanPlugins();
+    const plugins = scanPlugins(config);
     for (const plugin of plugins) {
       for (const skill of plugin.skills) {
         if (skill.name === name) {
@@ -60,7 +58,8 @@ function findSkillDir(source: string, name: string): string | null {
 router.get('/analysis/:source/:name', (req, res) => {
   const { source, name } = req.params;
   const key = `${source}/${name}`;
-  const cached = getCachedAnalysis(key);
+  const config = loadConfig();
+  const cached = getCachedAnalysis(config, key);
 
   res.json({
     name,
@@ -78,13 +77,14 @@ router.post('/analysis/:source/:name', async (req, res) => {
   const key = `${source}/${name}`;
 
   try {
-    const skillDir = findSkillDir(source, name);
+    const config = loadConfig();
+    const skillDir = findSkillDir(config, source, name);
     if (!skillDir) {
       res.status(404).json({ error: `Skill not found: ${source}/${name}` });
       return;
     }
 
-    const analysis = await analyzeSkill(skillDir, key, true);
+    const analysis = await analyzeSkill(config, skillDir, key, true);
     res.json({
       name: analysis.name,
       source,

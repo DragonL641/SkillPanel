@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { computeContentHash } from './hash-utils.js';
 import matter from 'gray-matter';
-import { loadConfig } from '../config.js';
+import type { AppConfig } from '../config.js';
 
 export interface SkillMeta {
   name: string;
@@ -21,8 +21,7 @@ export interface TreeNode {
   skill?: SkillMeta;
 }
 
-function isEnabled(skillDir: string, skillName: string): boolean {
-  const config = loadConfig();
+function isEnabled(config: AppConfig, skillDir: string, skillName: string): boolean {
   const symlinkPath = path.join(config.claudeSkillsDir, skillName);
   try {
     const stat = fs.lstatSync(symlinkPath);
@@ -37,7 +36,7 @@ function isEnabled(skillDir: string, skillName: string): boolean {
   return false;
 }
 
-function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
+function scanDirectory(config: AppConfig, dirPath: string, basePath: string): TreeNode[] {
   const entries = fs.readdirSync(dirPath);
   const dirs: TreeNode[] = [];
   const skills: TreeNode[] = [];
@@ -72,7 +71,7 @@ function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
         skill: {
           name: skillName,
           description: parsedData.description || '',
-          enabled: isEnabled(fullPath, entry),
+          enabled: isEnabled(config, fullPath, entry),
           hash: computeContentHash(fullPath).slice(0, 12),
           hasAnalysis: false,
           absolutePath: fullPath,
@@ -80,7 +79,7 @@ function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
       });
     } else {
       // This is a container directory, recurse
-      const children = scanDirectory(fullPath, basePath);
+      const children = scanDirectory(config, fullPath, basePath);
       if (children.length > 0) {
         dirs.push({
           type: 'dir',
@@ -99,10 +98,9 @@ function scanDirectory(dirPath: string, basePath: string): TreeNode[] {
   return [...dirs, ...skills];
 }
 
-export function scanCustomSkills(): TreeNode[] {
-  const config = loadConfig();
+export function scanCustomSkills(config: AppConfig): TreeNode[] {
   if (!fs.existsSync(config.customSkillDir)) {
     return [];
   }
-  return scanDirectory(config.customSkillDir, config.customSkillDir);
+  return scanDirectory(config, config.customSkillDir, config.customSkillDir);
 }

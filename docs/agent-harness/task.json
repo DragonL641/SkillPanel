@@ -357,7 +357,7 @@
       "steps": [
         "实施 #2 的 config 缓存后，此问题影响降低"
       ],
-      "passes": false,
+      "passes": true,
       "category": "11. [架构] 路由处理器直接调用 loadConfig()，绕过 service 层",
       "dependsOn": [
         26
@@ -370,7 +370,7 @@
       "steps": [
         "长期：服务层函数接受 config 参数，由路由层传入"
       ],
-      "passes": false,
+      "passes": true,
       "category": "11. [架构] 路由处理器直接调用 loadConfig()，绕过 service 层",
       "dependsOn": [
         27
