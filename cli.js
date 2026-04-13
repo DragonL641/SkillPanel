@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPath = path.join(__dirname, 'server', 'index.ts');
 
 try {
-  execFileSync('npx', ['tsx', serverPath], { stdio: 'inherit' });
+  execFileSync('tsx', [serverPath], { stdio: 'inherit' });
 } catch (e) {
   process.exit(e.status || 1);
 }

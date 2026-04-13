@@ -1,29 +1,36 @@
+import { FolderCode, Puzzle } from 'lucide-react';
+
 interface Props {
   active: 'custom' | 'plugin';
   onChange: (tab: 'custom' | 'plugin') => void;
 }
 
-const tabs: { key: 'custom' | 'plugin'; label: string }[] = [
-  { key: 'custom', label: '自定义 Skills' },
-  { key: 'plugin', label: '插件管理' },
+const tabs: { key: 'custom' | 'plugin'; label: string; icon: typeof FolderCode }[] = [
+  { key: 'custom', label: '自定义技能', icon: FolderCode },
+  { key: 'plugin', label: '插件管理', icon: Puzzle },
 ];
 
 export default function TabSwitch({ active, onChange }: Props) {
   return (
-    <div className="flex border-b border-gray-200">
-      {tabs.map((tab) => (
-        <button
-          key={tab.key}
-          onClick={() => onChange(tab.key)}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
-            active === tab.key
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div className="flex gap-1 p-1 bg-surface-tertiary rounded-[var(--radius-md)]">
+      {tabs.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = active === tab.key;
+        return (
+          <button
+            key={tab.key}
+            onClick={() => onChange(tab.key)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-[var(--radius-sm)] transition-all ${
+              isActive
+                ? 'bg-surface-primary text-fg-primary shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+                : 'text-fg-secondary hover:text-fg-primary'
+            }`}
+          >
+            <Icon size={14} />
+            {tab.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

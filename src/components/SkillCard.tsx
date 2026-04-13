@@ -1,4 +1,6 @@
-import AnalysisPanel from './AnalysisPanel';
+import { useState, useRef } from 'react';
+import { Sparkles, Trash2 } from 'lucide-react';
+import AnalysisPanel, { type AnalysisPanelHandle } from './AnalysisPanel';
 
 interface SkillMeta {
   name: string;
@@ -17,71 +19,72 @@ interface Props {
 
 export default function SkillCard({ skill, path, source, onToggle, onDelete }: Props) {
   const isPlugin = source === 'plugin';
-
-  const statusBadge = isPlugin ? null : skill.enabled ? (
-    <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600">
-      已启用
-    </span>
-  ) : (
-    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-400">
-      未启用
-    </span>
-  );
-
-  const actionButton = !isPlugin && (
-    <span className="flex items-center gap-2">
-      <button
-        onClick={() => onToggle?.(path, !skill.enabled)}
-        className={`text-xs px-3 py-1 rounded transition-colors ${
-          skill.enabled
-            ? 'text-gray-500 hover:bg-gray-100 hover:text-red-500'
-            : 'text-blue-500 hover:bg-blue-50'
-        }`}
-      >
-        {skill.enabled ? '禁用' : '启用'}
-      </button>
-      <button
-        onClick={() => {
-          if (window.confirm(`确定删除 Skill「${skill.name}」？此操作不可撤销。`)) {
-            onDelete?.(path);
-          }
-        }}
-        className="text-xs px-2 py-1 rounded text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-      >
-        删除
-      </button>
-    </span>
-  );
-
-  const borderClass = !isPlugin && skill.enabled
-    ? 'border-green-500 border-2'
-    : 'border-gray-200 border';
+  const [analyzing, setAnalyzing] = useState(false);
+  const analysisRef = useRef<AnalysisPanelHandle>(null);
 
   return (
-    <div className={`bg-white rounded-lg ${borderClass} p-4 hover:shadow-sm transition-shadow`}>
-      <div className="flex items-center justify-between">
+    <div className={`flex flex-col gap-3 p-4 bg-surface-primary rounded-[var(--radius-lg)] border transition-shadow hover:shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${!isPlugin && skill.enabled ? 'border-success' : 'border-border'}`}>
+      {/* Top: name + badge */}
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-sm text-gray-800">
-            {skill.name}
-          </span>
-          {statusBadge}
+          <span className="text-sm font-semibold text-fg-primary">{skill.name}</span>
+          {!isPlugin && (
+            skill.enabled ? (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-success-light text-success text-[10px] font-semibold rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                已启用
+              </span>
+            ) : (
+              <span className="px-2 py-0.5 bg-surface-tertiary text-fg-muted text-[10px] font-medium rounded-full">
+                未启用
+              </span>
+            )
+          )}
         </div>
-        {actionButton}
       </div>
 
+      {/* Description */}
       {skill.description && (
-        <p className="text-xs text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-fg-secondary leading-relaxed line-clamp-2">
           {skill.description}
         </p>
       )}
 
-      {skill.absolutePath && (
-        <p className="text-[10px] text-gray-400 mt-1 font-mono truncate">
-          {skill.absolutePath}
-        </p>
-      )}
+      {/* Actions row */}
+      <div className="flex items-center gap-2">
+        {!isPlugin && onToggle && (
+          <button
+            onClick={() => onToggle(path, !skill.enabled)}
+            className={`relative w-9 h-5 rounded-full transition-colors shrink-0 ${skill.enabled ? 'bg-accent' : 'bg-border'}`}
+          >
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-fg-inverse transition-transform ${skill.enabled ? 'left-[18px]' : 'left-0.5'}`} />
+          </button>
+        )}
+        <button
+          onClick={() => analysisRef.current?.triggerAnalysis()}
+          disabled={analyzing}
+          className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light'}`}
+        >
+          <Sparkles size={12} className={analyzing ? 'animate-pulse' : ''} />
+          {analyzing ? '分析中...' : '分析'}
+        </button>
+        <div className="flex-1" />
+        {!isPlugin && onDelete && (
+          <button
+            onClick={() => {
+              if (window.confirm(`确定删除 Skill「${skill.name}」？此操作不可撤销。`)) {
+                onDelete(path);
+              }
+            }}
+            className="p-1.5 text-danger rounded-[var(--radius-md)] hover:bg-danger-light transition-colors shrink-0"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
+      </div>
 
-      <AnalysisPanel source={source} name={skill.name} />
+      {/* Analysis panel */}
+      <AnalysisPanel ref={analysisRef} source={source} name={skill.name} onLoadingChange={setAnalyzing} />
     </div>
   );
 }

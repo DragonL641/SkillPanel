@@ -84,7 +84,7 @@ router.post('/analysis/:source/:name', async (req, res) => {
       return;
     }
 
-    const analysis = await analyzeSkill(skillDir, key);
+    const analysis = await analyzeSkill(skillDir, key, true);
     res.json({
       name: analysis.name,
       source,

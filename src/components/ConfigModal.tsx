@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X, CheckCircle, AlertTriangle } from 'lucide-react';
 import { fetchConfig, saveConfig } from '../api/client';
 
 interface Props {
@@ -69,88 +70,94 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
+        className="bg-surface-primary rounded-[var(--radius-xl)] shadow-[0_4px_24px_rgba(0,0,0,0.1)] w-full max-w-[500px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">配置</h2>
+        {/* Header */}
+        <div className="flex items-center px-6 py-5 border-b border-border">
+          <h2 className="text-lg font-bold text-fg-primary">配置</h2>
+          <div className="flex-1" />
+          <button onClick={onClose} className="p-1.5 text-fg-secondary hover:text-fg-primary transition-colors">
+            <X size={18} />
+          </button>
+        </div>
 
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Claude Code 目录
-            </label>
+        {/* Body */}
+        <div className="flex flex-col gap-5 p-6">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[13px] font-medium text-fg-primary">Claude Code 目录</label>
             <input
               type="text"
               value={config.claudeRootDir ?? ''}
               onChange={(e) => handleChange('claudeRootDir', e.target.value)}
               placeholder="~/.claude"
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
             />
-            <p className="text-xs text-gray-400 mt-1">
-              skills/ 和 plugins/ 目录将从此自动推导
-            </p>
+            <p className="text-[11px] text-fg-muted">skills/ 和 plugins/ 目录将从此自动推导</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              自定义 Skill 仓库目录
-            </label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[13px] font-medium text-fg-primary">自定义 Skill 仓库目录</label>
             <input
               type="text"
               value={config.customSkillDir ?? ''}
               onChange={(e) => handleChange('customSkillDir', e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              端口
-            </label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[13px] font-medium text-fg-primary">端口</label>
             <input
               type="number"
               value={config.port ?? ''}
               onChange={(e) => handleChange('port', Number(e.target.value))}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-[200px] px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
             />
           </div>
 
-          <div className="border-t border-gray-100 pt-3">
+          {/* API Status */}
+          <div className={`flex flex-col gap-2 p-4 rounded-[var(--radius-lg)] ${apiConfigDetected ? 'bg-success-light' : 'bg-warning-light'}`}>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">API 配置：</span>
               {apiConfigDetected ? (
-                <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
-                  已检测到 {apiModel}
-                </span>
+                <CheckCircle size={16} className="text-success" />
               ) : (
-                <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
-                  未检测到 — 分析功能不可用
-                </span>
+                <AlertTriangle size={16} className="text-warning" />
               )}
+              <span className={`text-[13px] font-semibold ${apiConfigDetected ? 'text-success' : 'text-warning'}`}>
+                {apiConfigDetected ? 'API 配置已检测到' : 'API 配置未检测到'}
+              </span>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
+            {apiConfigDetected && apiModel && (
+              <span className="font-mono text-xs text-fg-secondary">模型: {apiModel}</span>
+            )}
+            {!apiConfigDetected && (
+              <span className="text-xs text-fg-secondary">分析功能不可用</span>
+            )}
+            <p className="text-[11px] text-fg-muted">
               从 {config.claudeRootDir || '~/.claude'}/settings.json 自动读取
             </p>
           </div>
+
+          {saveError && (
+            <div className="text-danger text-sm">{saveError}</div>
+          )}
         </div>
 
-        {saveError && (
-          <div className="text-red-500 text-sm mt-3">{saveError}</div>
-        )}
-
-        <div className="flex justify-end gap-2 mt-6">
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 rounded hover:bg-gray-100 transition-colors"
+            className="px-4 py-2 text-[13px] font-medium text-fg-primary bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors"
           >
             取消
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-[13px] font-semibold text-fg-inverse bg-accent rounded-[var(--radius-md)] hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
-            {saving ? '保存中...' : '保存'}
+            {saving ? '保存中...' : '保存配置'}
           </button>
         </div>
       </div>

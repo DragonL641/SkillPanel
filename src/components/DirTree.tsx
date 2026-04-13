@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import SkillCard from './SkillCard';
 
 interface SkillMeta {
@@ -80,55 +81,68 @@ function TreeNodeItem({
     );
   }
 
-  // Dir node — same visual style as PluginPanel
   const childCount = countSkills(node);
+  const skills = (node.children ?? []).filter((c) => c.type === 'skill');
+  const dirs = (node.children ?? []).filter((c) => c.type === 'dir');
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
-      >
-        <span
-          className={`text-xs transition-transform duration-200 ${
-            expanded ? 'rotate-90' : ''
-          }`}
+    <div className="flex flex-col gap-4">
+      {/* Section Header */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-1"
         >
-          ▶
+          <ChevronRight
+            size={16}
+            className={`text-fg-muted transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
+          />
+          <span className="text-base font-semibold text-fg-primary">{node.name}</span>
+        </button>
+        <span className="flex items-center px-2 py-0.5 bg-surface-tertiary rounded-full text-[11px] font-medium text-fg-secondary">
+          {childCount} 个技能
         </span>
-        <span className="text-sm font-medium text-gray-800">
-          {node.name}/
-        </span>
-        <span className="text-xs text-gray-400">({childCount})</span>
-        <span className="ml-auto flex items-center gap-2">
-          <button
-            onClick={(e) => { e.stopPropagation(); onBatchToggle?.(collectSkillPaths(node), true); }}
-            className="text-xs text-blue-400 hover:text-blue-600 transition-colors"
-          >
-            全部启用
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onBatchToggle?.(collectSkillPaths(node), false); }}
-            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
-          >
-            全部禁用
-          </button>
-        </span>
-      </button>
-      {expanded && (
-        <div className="flex flex-col gap-2 p-3">
-          {node.children?.map((child) => (
-            <TreeNodeItem
-              key={child.path}
-              node={child}
-              onToggle={onToggle}
-              onBatchToggle={onBatchToggle}
-              onDelete={onDelete}
-              filter={filter}
-            />
-          ))}
-        </div>
-      )}
+        <div className="flex-1" />
+        <button
+          onClick={() => onBatchToggle?.(collectSkillPaths(node), true)}
+          className="text-xs font-medium text-accent hover:text-accent-hover transition-colors"
+        >
+          全部启用
+        </button>
+        <span className="text-xs text-fg-muted">|</span>
+        <button
+          onClick={() => onBatchToggle?.(collectSkillPaths(node), false)}
+          className="text-xs font-medium text-fg-muted hover:text-danger transition-colors"
+        >
+          全部禁用
+        </button>
+      </div>
+
+      {/* Skills Grid */}
+      <div className="grid grid-cols-3 gap-4">
+        {skills.map((child) => (
+          <TreeNodeItem
+            key={child.path}
+            node={child}
+            onToggle={onToggle}
+            onBatchToggle={onBatchToggle}
+            onDelete={onDelete}
+            filter={filter}
+          />
+        ))}
+      </div>
+
+      {/* Nested dirs */}
+      {expanded && dirs.map((child) => (
+        <TreeNodeItem
+          key={child.path}
+          node={child}
+          onToggle={onToggle}
+          onBatchToggle={onBatchToggle}
+          onDelete={onDelete}
+          filter={filter}
+        />
+      ))}
     </div>
   );
 }
@@ -136,14 +150,14 @@ function TreeNodeItem({
 export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filter }: Props) {
   if (!nodes.length) {
     return (
-      <div className="text-gray-400 text-sm py-8 text-center">
+      <div className="text-fg-muted text-sm py-8 text-center">
         暂无自定义 skills
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2 mt-4">
+    <div className="flex flex-col gap-6">
       {nodes.map((node) => (
         <TreeNodeItem
           key={node.path}

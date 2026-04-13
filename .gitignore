@@ -3,3 +3,4 @@ dist/
 .skillpanel/
 skillpanel.config.json
 *.DS_Store
+/.idea/

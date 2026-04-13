@@ -1,21 +1,40 @@
 {
-  "name": "skillpanel",
+  "name": "@dragonl641/skillpanel",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "version": "0.1.0",
+  "description": "A lightweight Web UI for managing Claude Code skills",
+  "license": "MIT",
   "type": "module",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skills",
+    "cli"
+  ],
+  "files": [
+    "cli.js",
+    "server/",
+    "dist/"
+  ],
+  "bin": {
+    "skillpanel": "./cli.js"
+  },
   "scripts": {
     "dev": "tsx server/index.ts",
     "build": "vite build",
-    "start": "NODE_ENV=production tsx server/index.ts"
-  },
-  "bin": {
-    "skillpanel": "./cli.js"
+    "start": "NODE_ENV=production tsx server/index.ts",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.86.1",
     "express": "^5.2.1",
     "gray-matter": "^4.0.3",
+    "lucide-react": "^1.8.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "tsx": "^4.21.0",
     "vite-express": "^0.22.1"
   },
   "devDependencies": {
@@ -25,7 +44,6 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "tailwindcss": "^4.2.2",
-    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.7"
   }

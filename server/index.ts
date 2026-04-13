@@ -6,6 +6,7 @@ import skillsRoutes from './routes/skills.js';
 import summaryRoutes from './routes/summary.js';
 import pluginsRoutes from './routes/plugins.js';
 import analysisRoutes from './routes/analysis.js';
+import { analyzeAllSkills } from './services/analyzer.js';
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,11 @@ const config = loadConfig();
 
 const server = app.listen(config.port, () => {
   console.log(`SkillPanel running at http://localhost:${config.port}`);
+
+  // Auto-analyze all skills in background (non-blocking)
+  analyzeAllSkills().catch(err =>
+    console.error('[Auto-analysis] Error:', err instanceof Error ? err.message : err),
+  );
 });
 
 viteExpress.bind(app, server);

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Search, Settings, RefreshCw } from 'lucide-react';
 import TabSwitch from './components/TabSwitch';
-import SummaryBar from './components/SummaryBar';
+import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
@@ -22,13 +23,13 @@ export default function App() {
   const [plugins, setPlugins] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
 
-  const loadCustomSkills = useCallback(async () => {
-    setLoading(true);
+  const loadCustomSkills = useCallback(async (silent = false) => {
+    if (!silent) setInitialLoading(true);
     setError(null);
     try {
       const d = await fetchCustomSkills();
@@ -36,12 +37,12 @@ export default function App() {
     } catch (err: any) {
       setError(err.message || '加载失败');
     } finally {
-      setLoading(false);
+      if (!silent) setInitialLoading(false);
     }
   }, []);
 
-  const loadPluginSkills = useCallback(async () => {
-    setLoading(true);
+  const loadPluginSkills = useCallback(async (silent = false) => {
+    if (!silent) setInitialLoading(true);
     setError(null);
     try {
       const d = await fetchPluginSkills();
@@ -49,7 +50,7 @@ export default function App() {
     } catch (err: any) {
       setError(err.message || '加载失败');
     } finally {
-      setLoading(false);
+      if (!silent) setInitialLoading(false);
     }
   }, []);
 
@@ -58,8 +59,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (tab === 'custom') loadCustomSkills();
-    else loadPluginSkills();
+    if (tab === 'custom') loadCustomSkills(false);
+    else loadPluginSkills(false);
   }, [tab]);
 
   const handleToggleSkill = async (skillPath: string, enable: boolean) => {
@@ -67,7 +68,7 @@ export default function App() {
     try {
       if (enable) await enableSkill(skillPath);
       else await disableSkill(skillPath);
-      await loadCustomSkills();
+      await loadCustomSkills(true);
       await loadSummary();
     } catch (err: any) {
       setError(err.message || (enable ? '启用失败' : '禁用失败'));
@@ -81,7 +82,7 @@ export default function App() {
       if (result.failed.length > 0) {
         setError(`${result.failed.length} 个 skill 操作失败`);
       }
-      await loadCustomSkills();
+      await loadCustomSkills(true);
       await loadSummary();
     } catch (err: any) {
       setError(err.message || '批量操作失败');
@@ -92,7 +93,7 @@ export default function App() {
     setError(null);
     try {
       await deleteSkill(skillPath);
-      await loadCustomSkills();
+      await loadCustomSkills(true);
       await loadSummary();
     } catch (err: any) {
       setError(err.message || '删除失败');
@@ -100,57 +101,81 @@ export default function App() {
   };
 
   const handleRefresh = async () => {
-    if (tab === 'custom') await loadCustomSkills();
-    else await loadPluginSkills();
+    if (tab === 'custom') await loadCustomSkills(true);
+    else await loadPluginSkills(true);
     await loadSummary();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-800">SkillPanel</h1>
-        <div className="flex gap-3 items-center">
+    <div className="min-h-screen bg-surface-secondary">
+      {/* Header */}
+      <header className="bg-surface-primary border-b border-border px-8 py-4 flex items-center gap-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 bg-accent rounded-[var(--radius-md)]" />
+          <span className="text-lg font-bold text-fg-primary">SkillPanel</span>
+        </div>
+
+        {/* Tabs */}
+        <TabSwitch active={tab} onChange={setTab} />
+
+        <div className="flex-1" />
+
+        {/* Search */}
+        <div className="flex items-center gap-2 px-3.5 py-2.5 bg-surface-primary border border-border rounded-[var(--radius-md)] w-[300px]">
+          <Search size={16} className="text-fg-muted shrink-0" />
           <input
             type="text"
-            placeholder="搜索 skill..."
+            placeholder="搜索技能..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="text-sm border border-gray-200 rounded px-3 py-1.5 w-48 focus:outline-none focus:border-blue-400"
+            className="text-[13px] bg-transparent focus:outline-none w-full text-fg-primary placeholder:text-fg-muted"
           />
-          <button
-            onClick={handleRefresh}
-            className="text-gray-400 hover:text-gray-600 text-sm"
-          >
-            刷新
-          </button>
-          <button
-            onClick={() => setConfigOpen(true)}
-            className="text-gray-400 hover:text-gray-600 text-sm"
-          >
-            配置
-          </button>
         </div>
+
+        {/* Refresh */}
+        <button
+          onClick={handleRefresh}
+          className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
+        >
+          <RefreshCw size={18} />
+        </button>
+
+        {/* Config */}
+        <button
+          onClick={() => setConfigOpen(true)}
+          className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
+        >
+          <Settings size={18} />
+        </button>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-6 pb-20">
-        <TabSwitch active={tab} onChange={setTab} />
+      {/* Main Content */}
+      <main className="px-8 py-6 flex flex-col gap-6">
+        {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded mb-4 flex items-center justify-between">
+          <div className="bg-danger-light border border-danger/20 text-danger text-sm px-4 py-2.5 rounded-[var(--radius-lg)] flex items-center justify-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 ml-2">&times;</button>
+            <button onClick={() => setError(null)} className="text-danger/60 hover:text-danger ml-2 text-lg">&times;</button>
           </div>
         )}
-        {loading && (
-          <div className="text-gray-400 text-sm py-4 text-center">加载中...</div>
+
+        {/* Stats */}
+        <StatsRow data={summary} />
+
+        {/* Loading */}
+        {initialLoading && (
+          <div className="text-fg-muted text-sm py-4 text-center">加载中...</div>
         )}
-        {tab === 'custom' && (
+
+        {/* Content */}
+        {!initialLoading && tab === 'custom' && (
           <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
         )}
-        {tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
+        {!initialLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
       </main>
 
-      <SummaryBar data={summary} />
-
+      {/* Config Modal */}
       <ConfigModal
         open={configOpen}
         onClose={() => setConfigOpen(false)}
