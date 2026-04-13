@@ -133,6 +133,8 @@ export async function analyzeAllSkills(): Promise<void> {
 
   let analyzed = 0;
   for (const { dir, key } of allSkills) {
+    // Yield to the event loop between iterations to avoid blocking
+    await new Promise<void>((resolve) => setImmediate(resolve));
     try {
       const hash = computeContentHash(dir);
       const cached = getCachedAnalysis(key);

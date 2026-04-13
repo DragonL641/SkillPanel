@@ -113,3 +113,9 @@
 - **Date**: 2026-04-14
 - **Task 17**: ✅ `util.promisify(execFile)` 已在 Task 15 中实现（`execFileAsync = promisify(execFile)`），所有 `execFileSync` 调用已替换为 `await execFileAsync`，无需额外修改
 - **File**: `server/routes/plugins.ts`（无需修改，已由 Task 15 覆盖）
+
+## Session 19 — Run 20
+
+- **Date**: 2026-04-14
+- **Task 19**: ✅ 在 `analyzeAllSkills()` 的 for 循环体开头添加 `await new Promise<void>(resolve => setImmediate(resolve))`，每次迭代间让出事件循环控制权，避免连续同步文件 I/O 长时间阻塞
+- **File**: `server/services/analyzer.ts`

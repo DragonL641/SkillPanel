@@ -253,7 +253,7 @@
       "steps": [
         "可通过 setImmediate 分片处理避免长时间阻塞（低优先级优化）"
       ],
-      "passes": false,
+      "passes": true,
       "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
       "dependsOn": [
         18
