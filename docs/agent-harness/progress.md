@@ -185,3 +185,9 @@
 - **Date**: 2026-04-14
 - **Task 31**: ✅ 路由文件只做参数验证和调用 service：(1) `summary.ts` — `countSkillsInTree` 聚合逻辑移至 `skill-scanner.ts` 的 `getSkillsSummary(config, tree, plugins)`，路由改为调用 service 并直接返回结果；(2) `skills.ts` — batch-enable/batch-disable 的循环+错误收集逻辑移至 `skill-manager.ts` 的 `batchToggleSkills(config, paths, action)`，路由只做参数验证和调用；(3) `plugins.ts` — `resolvePluginInstallPath` + `checkPluginUpdate` 组合包装为 `plugin-scanner.ts` 的 `checkPluginUpdateByName(config, pluginName)`，路由简化为调用单一 service 函数；(4) `config.ts` — GET/PUT 重复的响应构造逻辑提取为 `config.ts` 的 `buildConfigResponse(config)`，路由直接调用
 - **Files**: `server/services/skill-scanner.ts`, `server/services/skill-manager.ts`, `server/services/plugin-scanner.ts`, `server/config.ts`, `server/routes/summary.ts`, `server/routes/skills.ts`, `server/routes/plugins.ts`, `server/routes/config.ts`
+
+## Session 34 — Run 34
+
+- **Date**: 2026-04-14
+- **Task 32**: ✅ `findSkillDir` 对 custom skills 改为使用 `scanCustomSkills` 的缓存树查找，避免重复文件系统遍历：添加模块级 `cachedCustomTree` 变量，`scanCustomSkills` 每次调用时更新缓存；新增 `findSkillInTree` 辅助函数递归搜索树节点（按目录名 `path.basename(node.path)` 或显示名 `node.skill?.name` 匹配）；`findSkillDir` 对 custom source 使用 `cachedCustomTree ?? scanCustomSkills(config)` 获取树后调用 `findSkillInTree`
+- **File**: `server/services/skill-scanner.ts`

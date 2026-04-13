@@ -99,11 +99,15 @@ function scanDirectory(config: AppConfig, dirPath: string, basePath: string): Tr
   return [...dirs, ...skills];
 }
 
+let cachedCustomTree: TreeNode[] | null = null;
+
 export function scanCustomSkills(config: AppConfig): TreeNode[] {
   if (!fs.existsSync(config.customSkillDir)) {
+    cachedCustomTree = [];
     return [];
   }
-  return scanDirectory(config, config.customSkillDir, config.customSkillDir);
+  cachedCustomTree = scanDirectory(config, config.customSkillDir, config.customSkillDir);
+  return cachedCustomTree;
 }
 
 /**
@@ -149,29 +153,25 @@ export function getSkillsSummary(
   };
 }
 
+function findSkillInTree(nodes: TreeNode[], name: string): string | null {
+  for (const node of nodes) {
+    if (node.type === 'skill') {
+      if (path.basename(node.path) === name || node.skill?.name === name) {
+        return node.skill?.absolutePath ?? null;
+      }
+    }
+    if (node.children) {
+      const found = findSkillInTree(node.children, name);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 export function findSkillDir(config: AppConfig, source: string, name: string): string | null {
   if (source === 'custom') {
-    const root = config.customSkillDir;
-    if (!fs.existsSync(root)) return null;
-
-    const search = (dir: string): string | null => {
-      const entries = fs.readdirSync(dir);
-      for (const entry of entries) {
-        if (entry.startsWith('.') || entry === 'node_modules') continue;
-        const fullPath = path.join(dir, entry);
-        if (!fs.statSync(fullPath).isDirectory()) continue;
-
-        if (entry === name && fs.existsSync(path.join(fullPath, 'SKILL.md'))) {
-          return fullPath;
-        }
-        // Recurse into subdirectories
-        const found = search(fullPath);
-        if (found) return found;
-      }
-      return null;
-    };
-
-    return search(root);
+    const tree = cachedCustomTree ?? scanCustomSkills(config);
+    return findSkillInTree(tree, name);
   }
 
   if (source === 'plugin') {

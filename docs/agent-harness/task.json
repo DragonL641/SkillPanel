@@ -422,7 +422,7 @@
       "steps": [
         "利用已有缓存的 scanCustomSkills 结果查找，避免重复遍历"
       ],
-      "passes": false,
+      "passes": true,
       "category": "12. [架构] analysis.ts 路由文件包含 42 行文件系统遍历逻辑（findSkillDir）",
       "dependsOn": [
         31
