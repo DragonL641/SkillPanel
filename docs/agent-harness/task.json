@@ -136,7 +136,7 @@
       "steps": [
         "记录错误日志"
       ],
-      "passes": false,
+      "passes": true,
       "category": "4. [错误处理] 无全局 Express 错误处理中间件",
       "dependsOn": [
         9

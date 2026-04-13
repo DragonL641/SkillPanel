@@ -59,3 +59,9 @@
 - **Date**: 2026-04-14
 - **Task 9**: ✅ 中间件返回 `{ error: string }` JSON 格式 — 已在 Task 8 实现中覆盖（`res.status(500).json({ error: message })`）
 - **File**: `server/index.ts`（无需修改）
+
+## Session 10 — Run 11
+
+- **Date**: 2026-04-14
+- **Task 10**: ✅ 全局错误中间件记录完整错误日志：`console.error` 输出 message + stack trace
+- **File**: `server/index.ts`

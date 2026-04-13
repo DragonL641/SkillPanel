@@ -21,7 +21,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 // Global error middleware — catches errors from all routes
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   const message = err instanceof Error ? err.message : String(err);
-  console.error('[Express]', message);
+  console.error('[Express]', message, err instanceof Error ? err.stack : '');
   res.status(500).json({ error: message });
 });
 
