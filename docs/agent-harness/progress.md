@@ -101,3 +101,9 @@
 - **Date**: 2026-04-14
 - **Task 16**: ✅ 将 `GET /skills/plugin` 路由处理器改为 `async`（POST handler 已在 Task 15 中改为 async）
 - **File**: `server/routes/plugins.ts`
+
+## Session 17 — Run 18
+
+- **Date**: 2026-04-14
+- **Task 17**: ✅ `util.promisify(execFile)` 已在 Task 15 中实现（`execFileAsync = promisify(execFile)`），所有 `execFileSync` 调用已替换为 `await execFileAsync`，无需额外修改
+- **File**: `server/routes/plugins.ts`（无需修改，已由 Task 15 覆盖）
