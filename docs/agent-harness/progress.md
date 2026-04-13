@@ -17,3 +17,9 @@
 - **Date**: 2026-04-14
 - **Task 2**: ✅ 添加模块级变量 `let cachedConfig: AppConfig | null = null`
 - **File**: `server/config.ts`
+
+## Session 3 — Run 3
+
+- **Date**: 2026-04-14
+- **Task 3**: ✅ `loadConfig()` 优先返回 `cachedConfig`，首次加载后缓存至模块级变量
+- **File**: `server/config.ts`

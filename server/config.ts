@@ -31,18 +31,20 @@ const DEFAULT_CONFIG = {
 let cachedConfig: AppConfig | null = null;
 
 export function loadConfig(): AppConfig {
+  if (cachedConfig) return cachedConfig;
   let raw: any = {};
   if (fs.existsSync(CONFIG_FILE)) {
     raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
   }
   const claudeRootDir = raw.claudeRootDir || DEFAULT_CONFIG.claudeRootDir;
-  return {
+  cachedConfig = {
     claudeRootDir,
     customSkillDir: raw.customSkillDir || DEFAULT_CONFIG.customSkillDir,
     port: raw.port || DEFAULT_CONFIG.port,
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
   };
+  return cachedConfig;
 }
 
 export function saveConfig(config: Record<string, any>): AppConfig {
