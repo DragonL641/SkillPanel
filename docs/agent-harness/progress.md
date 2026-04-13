@@ -131,3 +131,9 @@
 - **Date**: 2026-04-14
 - **Task 21**: ✅ 添加 `MAX_CACHE_ENTRIES = 500` 常量，`saveCache()` 写入前按 `analyzedAt` 排序，超出限制时删除最旧条目
 - **File**: `server/services/analyzer.ts`
+
+## Session 23 — Run 23
+
+- **Date**: 2026-04-14
+- **Task 22**: ✅ 确认性任务：`saveCache()` 中条目数检查与最旧条目删除逻辑已在 Task 21 中一并实现（按 `analyzedAt` 排序，超出 `MAX_CACHE_ENTRIES=500` 时删除最旧条目），无需额外修改
+- **File**: `server/services/analyzer.ts`（无需修改，已由 Task 21 覆盖）

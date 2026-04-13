@@ -292,7 +292,7 @@
       "steps": [
         "saveCache 时检查条目数，超出时删除最旧的"
       ],
-      "passes": false,
+      "passes": true,
       "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
       "dependsOn": [
         21
