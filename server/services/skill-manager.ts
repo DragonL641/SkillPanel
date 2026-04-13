@@ -50,8 +50,8 @@ export function enableSkill(config: AppConfig, skillRelativePath: string): void 
         `Cannot enable skill: ${symlinkPath} exists but is not a symlink`
       );
     }
-  } catch (err: any) {
-    if (err.code !== 'ENOENT') throw err;
+  } catch (err: unknown) {
+    if (!(err instanceof Error) || (err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
     // ENOENT is fine, symlink doesn't exist yet
   }
 
@@ -71,8 +71,8 @@ export function disableSkill(config: AppConfig, skillRelativePath: string): void
       );
     }
     fs.unlinkSync(symlinkPath);
-  } catch (err: any) {
-    if (err.code === 'ENOENT') {
+  } catch (err: unknown) {
+    if ((err instanceof Error) && (err as NodeJS.ErrnoException).code === 'ENOENT') {
       return; // Already disabled / doesn't exist
     }
     throw err;
@@ -95,8 +95,8 @@ export function batchToggleSkills(
   for (const p of paths) {
     try {
       toggleFn(config, p);
-    } catch (err: any) {
-      failed.push({ path: p, error: err.message });
+    } catch (err: unknown) {
+      failed.push({ path: p, error: err instanceof Error ? err.message : String(err) });
     }
   }
   return { ok: true, succeeded: paths.length - failed.length, failed };

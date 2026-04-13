@@ -227,3 +227,9 @@
 - **Date**: 2026-04-14
 - **Task 38**: ✅ 替换 App.tsx 中 3 处 `useState<any>` 为具体类型：`useState<Summary | null>(null)`、`useState<TreeNode[]>([])`、`useState<PluginInfo[]>([])`。添加 `import type { TreeNode, PluginInfo, Summary } from './types'`。tsc --noEmit 和 vite build 均通过
 - **File**: `src/App.tsx`
+
+## Session 41 — Run 42
+
+- **Date**: 2026-04-14
+- **Task 39**: ✅ 统一将所有 `catch (err: any)` 改为 `catch (err: unknown)` + `err instanceof Error ? err.message : String(err)` 模式。修改 7 处（4 个前端文件 + 2 个后端文件）：`ConfigModal.tsx`、`AnalysisPanel.tsx`、`App.tsx`（2 处）、`PluginPanel.tsx`、`skill-manager.ts`（3 处）、`plugins.ts`。对 `skill-manager.ts` 中检查 `err.code` 的场景使用 `(err as NodeJS.ErrnoException).code` 类型断言。tsc --noEmit 和 vite build 均通过，项目零 `catch (err: any)` 残留
+- **Files**: `src/components/ConfigModal.tsx`, `src/components/AnalysisPanel.tsx`, `src/App.tsx`, `src/components/PluginPanel.tsx`, `server/services/skill-manager.ts`, `server/routes/plugins.ts`

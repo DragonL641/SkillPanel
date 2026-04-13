@@ -35,8 +35,8 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
       setSummary(data.summary);
       setAnalyzedAt(data.analyzedAt);
-    } catch (err: any) {
-      setError(err.message || '分析失败');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || '分析失败');
     } finally {
       setLoading(false);
       onLoadingChange?.(false);

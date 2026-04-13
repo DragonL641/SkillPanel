@@ -91,8 +91,8 @@ function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: 
       } else {
         setUpdateStatus({ hasUpdate: result.hasUpdate, behindBy: result.behindBy });
       }
-    } catch (err: any) {
-      setUpdateStatus({ error: err.message || '检查失败' });
+    } catch (err: unknown) {
+      setUpdateStatus({ error: (err instanceof Error ? err.message : String(err)) || '检查失败' });
     } finally {
       setChecking(false);
     }

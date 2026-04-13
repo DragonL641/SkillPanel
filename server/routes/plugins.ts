@@ -22,8 +22,8 @@ router.post('/plugins/check-update/:pluginName', async (req, res) => {
     const config = loadConfig();
     const result = await checkPluginUpdateByName(config, pluginName);
     res.json(result);
-  } catch (err: any) {
-    res.json({ hasUpdate: false, error: err.message, isGitRepo: false });
+  } catch (err: unknown) {
+    res.json({ hasUpdate: false, error: err instanceof Error ? err.message : String(err), isGitRepo: false });
   }
 });
 

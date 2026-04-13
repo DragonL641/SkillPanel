@@ -35,8 +35,8 @@ export default function App() {
     try {
       const d = await fetchCustomSkills();
       setTree(d.tree);
-    } catch (err: any) {
-      setError(err.message || '加载失败');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || '加载失败');
     } finally {
       if (!silent) setInitialLoading(false);
     }
@@ -48,8 +48,8 @@ export default function App() {
     try {
       const d = await fetchPluginSkills();
       setPlugins(d.plugins);
-    } catch (err: any) {
-      setError(err.message || '加载失败');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || '加载失败');
     } finally {
       if (!silent) setInitialLoading(false);
     }
@@ -71,8 +71,8 @@ export default function App() {
       else await disableSkill(skillPath);
       await loadCustomSkills(true);
       await loadSummary();
-    } catch (err: any) {
-      setError(err.message || (enable ? '启用失败' : '禁用失败'));
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || (enable ? '启用失败' : '禁用失败'));
     }
   };
 
@@ -85,8 +85,8 @@ export default function App() {
       }
       await loadCustomSkills(true);
       await loadSummary();
-    } catch (err: any) {
-      setError(err.message || '批量操作失败');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || '批量操作失败');
     }
   };
 
@@ -96,8 +96,8 @@ export default function App() {
       await deleteSkill(skillPath);
       await loadCustomSkills(true);
       await loadSummary();
-    } catch (err: any) {
-      setError(err.message || '删除失败');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : String(err)) || '删除失败');
     }
   };
 

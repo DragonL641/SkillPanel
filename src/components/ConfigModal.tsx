@@ -57,8 +57,8 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       setApiModel(data.apiModel);
       onSaved();
       onClose();
-    } catch (err: any) {
-      setSaveError(err.message || '保存失败');
+    } catch (err: unknown) {
+      setSaveError((err instanceof Error ? err.message : String(err)) || '保存失败');
     } finally {
       setSaving(false);
     }
