@@ -28,6 +28,8 @@ const DEFAULT_CONFIG = {
   port: 3210,
 };
 
+let cachedConfig: AppConfig | null = null;
+
 export function loadConfig(): AppConfig {
   let raw: any = {};
   if (fs.existsSync(CONFIG_FILE)) {
