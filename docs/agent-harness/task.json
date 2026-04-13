@@ -474,7 +474,7 @@
       "steps": [
         "Create or modify `src/types.ts`"
       ],
-      "passes": false,
+      "passes": true,
       "category": "14. [代码规范] 前端到处使用 `any` 类型",
       "dependsOn": [
         35

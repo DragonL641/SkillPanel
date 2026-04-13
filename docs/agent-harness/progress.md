@@ -209,3 +209,9 @@
 - **Date**: 2026-04-14
 - **Task 33**: ✅ 创建统一 HTTP 错误类体系：(1) 新建 `server/errors.ts`，定义 `HttpError`（基类，携带 statusCode）、`ValidationError`（400）、`NotFoundError`（404）、`ConflictError`（409）；(2) 更新全局错误中间件，优先检查 `HttpError` 实例并使用其 `statusCode`；(3) 更新 `skill-manager.ts` 服务层抛出类型化错误——路径遍历 → `ValidationError`、技能目录不存在/无效 → `NotFoundError`、symlink 冲突 → `ConflictError`
 - **Files**: `server/errors.ts`, `server/index.ts`, `server/services/skill-manager.ts`
+
+## Session 38 — Run 38
+
+- **Date**: 2026-04-14
+- **Task 36**: ✅ 创建 `src/types.ts`，定义 8 个共享前端类型：`SkillMeta`、`TreeNode`、`PluginSkill`、`PluginInfo`、`Summary`、`SkillAnalysis`、`AppConfig`、`AppConfigResponse`。类型从 DirTree.tsx、SkillCard.tsx、PluginPanel.tsx、StatsRow.tsx、ConfigModal.tsx 的本地接口提取汇总。tsc --noEmit 和 vite build 均通过
+- **File**: `src/types.ts`
