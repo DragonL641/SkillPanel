@@ -71,7 +71,7 @@
       "steps": [
         "添加 `invalidateConfig()` 供外部调用"
       ],
-      "passes": false,
+      "passes": true,
       "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
       "dependsOn": [
         4

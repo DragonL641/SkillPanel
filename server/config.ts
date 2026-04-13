@@ -60,6 +60,10 @@ export function saveConfig(config: Record<string, any>): AppConfig {
   return loadConfig();
 }
 
+export function invalidateConfig(): void {
+  cachedConfig = null;
+}
+
 export function loadClaudeApiConfig(): ClaudeApiConfig | null {
   const config = loadConfig();
   const settingsPath = path.join(config.claudeRootDir, 'settings.json');

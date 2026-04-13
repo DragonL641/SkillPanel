@@ -29,3 +29,9 @@
 - **Date**: 2026-04-14
 - **Task 4**: ✅ `saveConfig()` 写入后清除缓存（`cachedConfig = null`）
 - **File**: `server/config.ts`
+
+## Session 5 — Run 5
+
+- **Date**: 2026-04-14
+- **Task 5**: ✅ 添加 `invalidateConfig()` 供外部调用
+- **File**: `server/config.ts`
