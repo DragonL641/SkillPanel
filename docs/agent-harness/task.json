@@ -318,7 +318,7 @@
       "steps": [
         "使用 AbortController 控制循环"
       ],
-      "passes": false,
+      "passes": true,
       "category": "10. [资源] analyzeAllSkills 启动任务无取消/优雅关闭机制",
       "dependsOn": [
         23

@@ -130,7 +130,7 @@ ${content}`;
  * Iterates custom + plugin skills, skips those with matching cache hashes.
  * Runs sequentially to avoid overwhelming the API.
  */
-export async function analyzeAllSkills(): Promise<void> {
+export async function analyzeAllSkills(signal?: AbortSignal): Promise<void> {
   const config = loadConfig();
 
   const collectFromTree = (nodes: TreeNode[]): Array<{ dir: string; key: string }> => {
@@ -160,6 +160,10 @@ export async function analyzeAllSkills(): Promise<void> {
 
   let analyzed = 0;
   for (const { dir, key } of allSkills) {
+    if (signal?.aborted) {
+      console.log('[Auto-analysis] Aborted.');
+      return;
+    }
     // Yield to the event loop between iterations to avoid blocking
     await new Promise<void>((resolve) => setImmediate(resolve));
     try {

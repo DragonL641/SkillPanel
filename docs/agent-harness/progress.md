@@ -143,3 +143,9 @@
 - **Date**: 2026-04-14
 - **Task 23**: ✅ 添加 TTL 过期机制：定义 `CACHE_TTL_MS = 30 天` 常量，`saveCache()` 写入前驱逐过期条目，`getCachedAnalysis()` 对过期条目返回 null（视为 cache miss）
 - **File**: `server/services/analyzer.ts`
+
+## Session 25 — Run 25
+
+- **Date**: 2026-04-14
+- **Task 24**: ✅ `analyzeAllSkills()` 接受可选 `AbortSignal` 参数，循环中每次迭代检查 `signal?.aborted`，中止时打印日志并提前返回；`server/index.ts` 创建 `AbortController` 实例并传递 `signal`
+- **Files**: `server/services/analyzer.ts`, `server/index.ts`
