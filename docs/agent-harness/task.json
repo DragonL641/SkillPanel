@@ -604,7 +604,7 @@
       "steps": [
         "为 API 路由添加集成测试"
       ],
-      "passes": false,
+      "passes": true,
       "category": "18. [测试] 整个项目零测试文件，无测试框架",
       "dependsOn": [
         45

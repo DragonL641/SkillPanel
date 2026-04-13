@@ -263,3 +263,9 @@
 - **Date**: 2026-04-14
 - **Task 45**: ✅ 为 `skill-manager.ts` 添加 24 个测试用例，覆盖全部 5 个导出函数（`resolveSkillDir`、`enableSkill`、`disableSkill`、`deleteSkill`、`batchToggleSkills`）。重点覆盖安全逻辑：路径遍历检测（`..`、绝对路径、混合遍历）均抛出 `ValidationError`；正常操作（创建/移除 symlink、幂等性、批量操作失败收集）均正确工作。所有测试使用真实文件系统（temp 目录），无 mock
 - **File**: `server/services/__tests__/skill-manager.test.ts`（新建）
+
+## Session 50 — Run 50
+
+- **Date**: 2026-04-14
+- **Task 46**: ✅ 为 API 路由添加 31 个集成测试，使用 supertest + Express app 工厂（`createApp()`）模式。覆盖全部主要路由：health、config GET/PUT（含验证）、skills/custom GET、enable/disable/batch-enable/batch-disable（含路径遍历、不存在技能、幂等性、部分失败）、delete、summary、analysis GET（含缓存命中）。测试使用临时目录隔离文件系统，每个测试间清除 config 缓存和 getOrCompute 缓存。为 skill-scanner 导出 `resetTreeCache()` 供测试重置内部树缓存。全部 55 个测试通过，tsc --noEmit 和 vite build 均通过
+- **Files**: `server/__tests__/app.ts`（新建），`server/__tests__/api-routes.test.ts`（新建），`server/services/skill-scanner.ts`（新增 `resetTreeCache` 导出）

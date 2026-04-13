@@ -101,6 +101,11 @@ function scanDirectory(config: AppConfig, dirPath: string, basePath: string): Tr
 
 let cachedCustomTree: TreeNode[] | null = null;
 
+/** Reset the internal tree cache (for testing). */
+export function resetTreeCache(): void {
+  cachedCustomTree = null;
+}
+
 export function scanCustomSkills(config: AppConfig): TreeNode[] {
   if (!fs.existsSync(config.customSkillDir)) {
     cachedCustomTree = [];
