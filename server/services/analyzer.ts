@@ -34,8 +34,17 @@ function loadCache(): Record<string, SkillAnalysis> {
 }
 
 const MAX_CACHE_ENTRIES = 500;
+const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 function saveCache(cache: Record<string, SkillAnalysis>): void {
+  // Evict expired entries (TTL)
+  const now = Date.now();
+  for (const [k, v] of Object.entries(cache)) {
+    if (now - new Date(v.analyzedAt).getTime() > CACHE_TTL_MS) {
+      delete cache[k];
+    }
+  }
+
   // Evict oldest entries when cache exceeds the limit
   const keys = Object.keys(cache);
   if (keys.length > MAX_CACHE_ENTRIES) {
@@ -58,7 +67,11 @@ function saveCache(cache: Record<string, SkillAnalysis>): void {
 
 export function getCachedAnalysis(key: string): SkillAnalysis | null {
   const cache = loadCache();
-  return cache[key] ?? null;
+  const entry = cache[key];
+  if (!entry) return null;
+  // Treat expired entries as cache misses
+  if (Date.now() - new Date(entry.analyzedAt).getTime() > CACHE_TTL_MS) return null;
+  return entry;
 }
 
 export async function analyzeSkill(skillDir: string, key: string, force = false): Promise<SkillAnalysis> {

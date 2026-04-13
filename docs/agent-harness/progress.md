@@ -137,3 +137,9 @@
 - **Date**: 2026-04-14
 - **Task 22**: ✅ 确认性任务：`saveCache()` 中条目数检查与最旧条目删除逻辑已在 Task 21 中一并实现（按 `analyzedAt` 排序，超出 `MAX_CACHE_ENTRIES=500` 时删除最旧条目），无需额外修改
 - **File**: `server/services/analyzer.ts`（无需修改，已由 Task 21 覆盖）
+
+## Session 24 — Run 24
+
+- **Date**: 2026-04-14
+- **Task 23**: ✅ 添加 TTL 过期机制：定义 `CACHE_TTL_MS = 30 天` 常量，`saveCache()` 写入前驱逐过期条目，`getCachedAnalysis()` 对过期条目返回 null（视为 cache miss）
+- **File**: `server/services/analyzer.ts`

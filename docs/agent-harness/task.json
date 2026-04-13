@@ -305,7 +305,7 @@
       "steps": [
         "或者添加 TTL 过期机制"
       ],
-      "passes": false,
+      "passes": true,
       "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
       "dependsOn": [
         22
