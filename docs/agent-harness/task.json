@@ -58,7 +58,7 @@
       "steps": [
         "saveConfig() 写入后清除缓存"
       ],
-      "passes": false,
+      "passes": true,
       "category": "2. [功能缺陷] loadConfig() 每次调用从磁盘读取——I/O 风暴",
       "dependsOn": [
         3

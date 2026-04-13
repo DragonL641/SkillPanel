@@ -23,3 +23,9 @@
 - **Date**: 2026-04-14
 - **Task 3**: ✅ `loadConfig()` 优先返回 `cachedConfig`，首次加载后缓存至模块级变量
 - **File**: `server/config.ts`
+
+## Session 4 — Run 4
+
+- **Date**: 2026-04-14
+- **Task 4**: ✅ `saveConfig()` 写入后清除缓存（`cachedConfig = null`）
+- **File**: `server/config.ts`

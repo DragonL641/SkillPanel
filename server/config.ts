@@ -56,6 +56,7 @@ export function saveConfig(config: Record<string, any>): AppConfig {
   };
   // Only persist user-configurable fields, not derived ones
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(merged, null, 2), 'utf-8');
+  cachedConfig = null;
   return loadConfig();
 }
 
