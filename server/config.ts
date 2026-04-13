@@ -29,6 +29,7 @@ const DEFAULT_CONFIG = {
 };
 
 let cachedConfig: AppConfig | null = null;
+let saveQueue: Promise<AppConfig> = Promise.resolve({} as AppConfig);
 
 export function loadConfig(): AppConfig {
   if (cachedConfig) return cachedConfig;
@@ -47,20 +48,23 @@ export function loadConfig(): AppConfig {
   return cachedConfig;
 }
 
-export function saveConfig(config: Record<string, any>): AppConfig {
-  const current = loadConfig();
-  const merged = {
-    claudeRootDir: config.claudeRootDir ?? current.claudeRootDir,
-    customSkillDir: config.customSkillDir ?? current.customSkillDir,
-    port: config.port ?? current.port,
-  };
-  // Only persist user-configurable fields, not derived ones
-  // Write to temp file then rename for atomic replacement
-  const tmpFile = CONFIG_FILE + '.tmp';
-  fs.writeFileSync(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
-  fs.renameSync(tmpFile, CONFIG_FILE);
-  cachedConfig = null;
-  return loadConfig();
+export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
+  saveQueue = saveQueue.then(() => {
+    const current = loadConfig();
+    const merged = {
+      claudeRootDir: config.claudeRootDir ?? current.claudeRootDir,
+      customSkillDir: config.customSkillDir ?? current.customSkillDir,
+      port: config.port ?? current.port,
+    };
+    // Only persist user-configurable fields, not derived ones
+    // Write to temp file then rename for atomic replacement
+    const tmpFile = CONFIG_FILE + '.tmp';
+    fs.writeFileSync(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
+    fs.renameSync(tmpFile, CONFIG_FILE);
+    cachedConfig = null;
+    return loadConfig();
+  });
+  return saveQueue;
 }
 
 export function invalidateConfig(): void {

@@ -41,3 +41,9 @@
 - **Date**: 2026-04-14
 - **Task 6**: ✅ `saveConfig()` 改用 write-then-rename 模式：先写 `.tmp` 临时文件，再 `fs.renameSync` 原子替换
 - **File**: `server/config.ts`
+
+## Session 7 — Run 7
+
+- **Date**: 2026-04-14
+- **Task 7**: ✅ 对并发请求加锁：添加模块级 `saveQueue` Promise 队列，`saveConfig()` 返回 `Promise<AppConfig>`，串行化并发写入
+- **Files**: `server/config.ts`, `server/routes/config.ts`

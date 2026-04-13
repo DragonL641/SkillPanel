@@ -16,7 +16,7 @@ router.get('/config', (_req, res) => {
   });
 });
 
-router.put('/config', (req, res) => {
+router.put('/config', async (req, res) => {
   const { claudeRootDir, customSkillDir, port } = req.body;
   if (port !== undefined) {
     const p = Number(port);
@@ -33,7 +33,7 @@ router.put('/config', (req, res) => {
     res.status(400).json({ error: 'Custom skill directory must be a non-empty string' });
     return;
   }
-  const updated = saveConfig(req.body);
+  const updated = await saveConfig(req.body);
   invalidate();
   const apiConfig = loadClaudeApiConfig();
   res.json({
