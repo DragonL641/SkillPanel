@@ -167,3 +167,9 @@
 - **Date**: 2026-04-14
 - **Task 28**: ✅ 服务层函数接受 `config: AppConfig` 参数，由路由层/调用方传入：`skill-scanner.ts`（`scanCustomSkills`、`isEnabled`）、`skill-manager.ts`（`resolveSkillDir`、`getSymlinkPath`、`enableSkill`、`disableSkill`、`deleteSkill`）、`plugin-scanner.ts`（`scanPlugins`）、`analyzer.ts`（`getCacheFilePath`、`loadCache`、`saveCache`、`getCachedAnalysis`、`analyzeSkill`、`analyzeAllSkills`）均改为接受 `config` 参数，服务层不再直接 import `loadConfig`；路由层在每个请求处理器中调用 `loadConfig()` 并将结果传入服务函数；`index.ts` 将启动时加载的 `config` 传入 `analyzeAllSkills(config, signal)`
 - **Files**: `server/services/skill-scanner.ts`, `server/services/skill-manager.ts`, `server/services/plugin-scanner.ts`, `server/services/analyzer.ts`, `server/routes/skills.ts`, `server/routes/plugins.ts`, `server/routes/analysis.ts`, `server/routes/summary.ts`, `server/index.ts`
+
+## Session 30 — Run 30
+
+- **Date**: 2026-04-14
+- **Task 29**: ✅ 确认性任务：config 缓存（Tasks 2-5）已使 `loadConfig()` 首次加载后返回模块级缓存，路由层调用 `loadConfig()` 无磁盘 I/O；Task 28 已使服务层接受 config 参数。短期目标"保持现有结构，依赖 config 缓存减少 I/O"已完全满足
+- **File**: 无需修改（已由 Tasks 2-5 和 Task 28 覆盖）
