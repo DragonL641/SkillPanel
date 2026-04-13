@@ -192,6 +192,12 @@
 - **Task 32**: ✅ `findSkillDir` 对 custom skills 改为使用 `scanCustomSkills` 的缓存树查找，避免重复文件系统遍历：添加模块级 `cachedCustomTree` 变量，`scanCustomSkills` 每次调用时更新缓存；新增 `findSkillInTree` 辅助函数递归搜索树节点（按目录名 `path.basename(node.path)` 或显示名 `node.skill?.name` 匹配）；`findSkillDir` 对 custom source 使用 `cachedCustomTree ?? scanCustomSkills(config)` 获取树后调用 `findSkillInTree`
 - **File**: `server/services/skill-scanner.ts`
 
+## Session 37 — Run 37
+
+- **Date**: 2026-04-14
+- **Task 35**: ✅ 全局错误中间件统一处理未分类错误：移除 `config.ts` GET /config、`skills.ts` GET /skills/custom、`plugins.ts` GET /skills/plugin 中的冗余 try-catch 块，让所有未分类错误统一传播到全局错误中间件处理（返回 `{ error: string }` JSON，500 状态码，console.error 记录日志）。保留 `plugins.ts` POST check-update 的 try-catch（业务逻辑需要返回 `{ hasUpdate: false, error: ... }` 而非标准错误格式）
+- **Files**: `server/routes/config.ts`, `server/routes/skills.ts`, `server/routes/plugins.ts`
+
 ## Session 36 — Run 36
 
 - **Date**: 2026-04-14

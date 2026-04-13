@@ -5,14 +5,8 @@ import { invalidate } from '../services/cache.js';
 const router = Router();
 
 router.get('/config', (_req, res) => {
-  try {
-    const config = loadConfig();
-    res.json(buildConfigResponse(config));
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('[Config] GET /api/config failed:', err);
-    res.status(500).json({ error: message });
-  }
+  const config = loadConfig();
+  res.json(buildConfigResponse(config));
 });
 
 router.put('/config', async (req, res) => {

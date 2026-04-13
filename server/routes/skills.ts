@@ -7,14 +7,9 @@ import { getOrCompute, invalidate } from '../services/cache.js';
 const router = Router();
 
 router.get('/skills/custom', (_req, res) => {
-  try {
-    const config = loadConfig();
-    const tree = getOrCompute('custom-skills', () => scanCustomSkills(config));
-    res.json({ tree });
-  } catch (err: any) {
-    console.error('Failed to scan custom skills:', err);
-    res.status(500).json({ error: err.message });
-  }
+  const config = loadConfig();
+  const tree = getOrCompute('custom-skills', () => scanCustomSkills(config));
+  res.json({ tree });
 });
 
 router.post('/skills/custom/enable/{*skillPath}', (req, res) => {

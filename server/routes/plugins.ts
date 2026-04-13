@@ -6,14 +6,9 @@ import { scanPlugins, checkPluginUpdateByName } from '../services/plugin-scanner
 const router = Router();
 
 router.get('/skills/plugin', async (_req, res) => {
-  try {
-    const config = loadConfig();
-    const plugins = getOrCompute('plugin-skills', () => scanPlugins(config));
-    res.json({ plugins });
-  } catch (err: any) {
-    console.error('Failed to scan plugins:', err);
-    res.status(500).json({ error: err.message });
-  }
+  const config = loadConfig();
+  const plugins = getOrCompute('plugin-skills', () => scanPlugins(config));
+  res.json({ plugins });
 });
 
 router.post('/plugins/check-update/:pluginName', async (req, res) => {

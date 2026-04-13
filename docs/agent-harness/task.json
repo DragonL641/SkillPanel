@@ -461,7 +461,7 @@
       "steps": [
         "全局错误中间件统一处理未分类错误"
       ],
-      "passes": false,
+      "passes": true,
       "category": "13. [架构] HTTP 状态码在路由间不一致",
       "dependsOn": [
         34
