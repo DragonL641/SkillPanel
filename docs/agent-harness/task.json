@@ -240,7 +240,7 @@
       "steps": [
         "这些函数本身是同步的（filesystem 操作），暂无法异步化"
       ],
-      "passes": false,
+      "passes": true,
       "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
       "dependsOn": [
         17

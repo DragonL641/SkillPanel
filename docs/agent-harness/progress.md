@@ -102,6 +102,12 @@
 - **Task 16**: ✅ 将 `GET /skills/plugin` 路由处理器改为 `async`（POST handler 已在 Task 15 中改为 async）
 - **File**: `server/routes/plugins.ts`
 
+## Session 18 — Run 19
+
+- **Date**: 2026-04-14
+- **Task 18**: ✅ 确认性任务：服务层中的 `fs.*Sync` 调用（skill-scanner、plugin-scanner、hash-utils、skill-manager）本质上为同步文件系统操作，当前阶段不进行异步化，后续通过 setImmediate 分片处理（Task 19）和环境变量跳过（Task 20）缓解阻塞影响
+- **File**: 无需修改
+
 ## Session 17 — Run 18
 
 - **Date**: 2026-04-14
