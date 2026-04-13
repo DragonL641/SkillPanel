@@ -279,7 +279,7 @@
       "steps": [
         "添加最大条目数限制（如 500 条）"
       ],
-      "passes": false,
+      "passes": true,
       "category": "9. [资源] 分析缓存文件无限增长，无驱逐策略",
       "dependsOn": [
         20

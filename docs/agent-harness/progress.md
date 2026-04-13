@@ -125,3 +125,9 @@
 - **Date**: 2026-04-14
 - **Task 19**: ✅ 在 `analyzeAllSkills()` 的 for 循环体开头添加 `await new Promise<void>(resolve => setImmediate(resolve))`，每次迭代间让出事件循环控制权，避免连续同步文件 I/O 长时间阻塞
 - **File**: `server/services/analyzer.ts`
+
+## Session 22 — Run 22
+
+- **Date**: 2026-04-14
+- **Task 21**: ✅ 添加 `MAX_CACHE_ENTRIES = 500` 常量，`saveCache()` 写入前按 `analyzedAt` 排序，超出限制时删除最旧条目
+- **File**: `server/services/analyzer.ts`

@@ -33,7 +33,21 @@ function loadCache(): Record<string, SkillAnalysis> {
   return {};
 }
 
+const MAX_CACHE_ENTRIES = 500;
+
 function saveCache(cache: Record<string, SkillAnalysis>): void {
+  // Evict oldest entries when cache exceeds the limit
+  const keys = Object.keys(cache);
+  if (keys.length > MAX_CACHE_ENTRIES) {
+    const sorted = keys.sort(
+      (a, b) => cache[a].analyzedAt.localeCompare(cache[b].analyzedAt),
+    );
+    const toRemove = sorted.length - MAX_CACHE_ENTRIES;
+    for (let i = 0; i < toRemove; i++) {
+      delete cache[sorted[i]];
+    }
+  }
+
   const cacheFile = getCacheFilePath();
   const cacheDir = path.dirname(cacheFile);
   if (!fs.existsSync(cacheDir)) {
