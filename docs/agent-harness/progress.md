@@ -77,3 +77,9 @@
 - **Date**: 2026-04-14
 - **Task 12**: ✅ 区分"文件不存在"（ENOENT，正常返回 null 不警告）和"文件存在但解析失败"（console.warn 警告）
 - **File**: `server/config.ts`
+
+## Session 13 — Run 14
+
+- **Date**: 2026-04-14
+- **Task 13**: ✅ 全局错误中间件已在 Task 8 添加，`GET /api/config` 同步处理器抛出的异常会被 Express 5 自动捕获并传递给全局错误中间件，无需额外修改
+- **File**: 无需修改（已由 Task 8 覆盖）
