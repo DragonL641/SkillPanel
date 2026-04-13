@@ -8,6 +8,7 @@ import type { PluginSkill, PluginInfo } from '../types';
 interface Props {
   plugins: PluginInfo[];
   filter?: string;
+  apiConfigDetected?: boolean;
 }
 
 type UpdateStatus = { hasUpdate: boolean; behindBy: number } | { error: string } | null;
@@ -20,7 +21,7 @@ function formatDate(iso: string): string {
   }
 }
 
-export default function PluginPanel({ plugins, filter }: Props) {
+export default function PluginPanel({ plugins, filter, apiConfigDetected }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const toggleExpand = (pluginName: string) => {
@@ -56,13 +57,13 @@ export default function PluginPanel({ plugins, filter }: Props) {
   return (
     <div className="flex flex-col gap-4">
       {filteredPlugins.map((plugin) => (
-        <PluginCard key={plugin.name} plugin={plugin} isOpen={expanded.has(plugin.name)} onToggle={() => toggleExpand(plugin.name)} />
+        <PluginCard key={plugin.name} plugin={plugin} isOpen={expanded.has(plugin.name)} onToggle={() => toggleExpand(plugin.name)} apiConfigDetected={apiConfigDetected} />
       ))}
     </div>
   );
 }
 
-function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: boolean; onToggle: () => void }) {
+function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: PluginInfo; isOpen: boolean; onToggle: () => void; apiConfigDetected?: boolean }) {
   const [checking, setChecking] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>(null);
   const [isGitRepo, setIsGitRepo] = useState<boolean | null>(null);
@@ -132,7 +133,7 @@ function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: 
       {isOpen && (
         <div className="flex flex-col gap-2.5 px-4 pb-4">
           {plugin.skills.map((skill) => (
-            <PluginSkillRow key={`${plugin.name}/${skill.path}`} skill={skill} pluginName={plugin.name} />
+            <PluginSkillRow key={`${plugin.name}/${skill.path}`} skill={skill} pluginName={plugin.name} apiConfigDetected={apiConfigDetected} />
           ))}
         </div>
       )}
@@ -140,7 +141,7 @@ function PluginCard({ plugin, isOpen, onToggle }: { plugin: PluginInfo; isOpen: 
   );
 }
 
-function PluginSkillRow({ skill, pluginName }: { skill: PluginSkill; pluginName: string }) {
+function PluginSkillRow({ skill, pluginName, apiConfigDetected }: { skill: PluginSkill; pluginName: string; apiConfigDetected?: boolean }) {
   const [analyzing, setAnalyzing] = useState(false);
   const analysisRef = useRef<AnalysisPanelHandle>(null);
 
@@ -149,16 +150,20 @@ function PluginSkillRow({ skill, pluginName }: { skill: PluginSkill; pluginName:
       <div className="flex items-center gap-2.5">
         <span className="text-[13px] font-medium text-fg-primary">{skill.name}</span>
         <span className="flex-1 text-xs text-fg-secondary truncate">{skill.description}</span>
-        <button
-          onClick={() => analysisRef.current?.triggerAnalysis()}
-          disabled={analyzing}
-          className={`flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light cursor-pointer'}`}
-        >
-          <Sparkles size={11} className={analyzing ? 'animate-pulse' : ''} />
-          {analyzing ? '分析中...' : '分析'}
-        </button>
+        {apiConfigDetected && (
+          <button
+            onClick={() => analysisRef.current?.triggerAnalysis()}
+            disabled={analyzing}
+            className={`flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light cursor-pointer'}`}
+          >
+            <Sparkles size={11} className={analyzing ? 'animate-pulse' : ''} />
+            {analyzing ? '分析中...' : '分析'}
+          </button>
+        )}
       </div>
-      <AnalysisPanel ref={analysisRef} source="plugin" name={skill.name} onLoadingChange={setAnalyzing} />
+      {apiConfigDetected && (
+        <AnalysisPanel ref={analysisRef} source="plugin" name={skill.name} onLoadingChange={setAnalyzing} />
+      )}
     </div>
   );
 }

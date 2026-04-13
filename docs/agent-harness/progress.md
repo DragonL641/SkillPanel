@@ -245,3 +245,9 @@
 - **Date**: 2026-04-14
 - **Task 42**: ✅ 方案 A：为 PluginPanel 的插件技能"分析"按钮添加 onClick 处理器，触发与自定义技能相同的分析流程。提取 `PluginSkillRow` 子组件，集成 `AnalysisPanel`（ref + `onLoadingChange`），复用已有的 `source="plugin"` API 路由。死 `<span>` 改为 `<button>`，分析中显示 `animate-pulse` + "分析中..."文案，`disabled` 防重复点击。tsc --noEmit 和 vite build 均通过
 - **File**: `src/components/PluginPanel.tsx`
+
+## Session 46 — Run 46
+
+- **Date**: 2026-04-14
+- **Task 43**: ✅ 方案 B：当 Claude API 未配置时，隐藏插件技能的分析按钮和 AnalysisPanel 避免误导。App.tsx 启动时 fetchConfig 获取 `apiConfigDetected` 状态，通过 PluginPanel → PluginCard → PluginSkillRow 逐层传递，`PluginSkillRow` 根据 `apiConfigDetected` 条件渲染"分析"按钮和 AnalysisPanel。API 未配置时按钮不显示，API 配置后按钮正常工作。tsc --noEmit 和 vite build 均通过
+- **Files**: `src/App.tsx`, `src/components/PluginPanel.tsx`

@@ -565,7 +565,7 @@
       "steps": [
         "方案 B：如果插件技能不支持分析，移除该按钮避免误导"
       ],
-      "passes": false,
+      "passes": true,
       "category": "17. [UX] PluginPanel 分析按钮无 onClick 处理器——死 UI 元素",
       "dependsOn": [
         42

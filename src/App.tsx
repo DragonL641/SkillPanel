@@ -11,6 +11,7 @@ import {
   fetchCustomSkills,
   fetchPluginSkills,
   fetchSummary,
+  fetchConfig,
   enableSkill,
   disableSkill,
   deleteSkill,
@@ -27,8 +28,16 @@ export default function App() {
   const [configOpen, setConfigOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiConfigDetected, setApiConfigDetected] = useState(false);
 
   const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
+
+  // Fetch API config status on mount to determine if analysis is available
+  useEffect(() => {
+    fetchConfig()
+      .then((data) => setApiConfigDetected(data.apiConfigDetected))
+      .catch(() => setApiConfigDetected(false));
+  }, []);
 
   const loadCustomSkills = useCallback(async (silent = false) => {
     if (!silent) setInitialLoading(true);
@@ -174,7 +183,7 @@ export default function App() {
         {!initialLoading && tab === 'custom' && (
           <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
         )}
-        {!initialLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} />}
+        {!initialLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} apiConfigDetected={apiConfigDetected} />}
       </main>
 
       {/* Config Modal */}
