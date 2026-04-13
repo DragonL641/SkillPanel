@@ -53,3 +53,9 @@
 - **Date**: 2026-04-14
 - **Task 8**: ✅ 在所有路由之后添加全局 Express 错误中间件（4 参数签名，捕获所有路由未处理错误）
 - **File**: `server/index.ts`
+
+## Session 9 — Run 10
+
+- **Date**: 2026-04-14
+- **Task 9**: ✅ 中间件返回 `{ error: string }` JSON 格式 — 已在 Task 8 实现中覆盖（`res.status(500).json({ error: message })`）
+- **File**: `server/index.ts`（无需修改）
