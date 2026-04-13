@@ -31,9 +31,14 @@ const server = app.listen(config.port, () => {
   console.log(`SkillPanel running at http://localhost:${config.port}`);
 
   // Auto-analyze all skills in background (non-blocking)
-  analyzeAllSkills().catch(err =>
-    console.error('[Auto-analysis] Error:', err instanceof Error ? err.message : err),
-  );
+  // Set SKIP_AUTO_ANALYSIS=1 to skip startup analysis
+  if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
+    analyzeAllSkills().catch(err =>
+      console.error('[Auto-analysis] Error:', err instanceof Error ? err.message : err),
+    );
+  } else {
+    console.log('[Auto-analysis] Skipped (SKIP_AUTO_ANALYSIS=1)');
+  }
 });
 
 viteExpress.bind(app, server);

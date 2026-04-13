@@ -266,7 +266,7 @@
       "steps": [
         "添加启动跳过配置项（环境变量 `SKIP_AUTO_ANALYSIS=1`）"
       ],
-      "passes": false,
+      "passes": true,
       "category": "8. [性能] analyzeAllSkills() 启动时同步文件 I/O 阻塞后台任务",
       "dependsOn": [
         19

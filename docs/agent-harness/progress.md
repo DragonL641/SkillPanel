@@ -114,6 +114,12 @@
 - **Task 17**: ✅ `util.promisify(execFile)` 已在 Task 15 中实现（`execFileAsync = promisify(execFile)`），所有 `execFileSync` 调用已替换为 `await execFileAsync`，无需额外修改
 - **File**: `server/routes/plugins.ts`（无需修改，已由 Task 15 覆盖）
 
+## Session 21 — Run 21
+
+- **Date**: 2026-04-14
+- **Task 20**: ✅ 添加环境变量 `SKIP_AUTO_ANALYSIS=1` 跳过启动时自动分析：在 `server/index.ts` 中 `analyzeAllSkills()` 调用前检查 `process.env.SKIP_AUTO_ANALYSIS !== '1'`，跳过时打印日志 `[Auto-analysis] Skipped (SKIP_AUTO_ANALYSIS=1)`
+- **File**: `server/index.ts`
+
 ## Session 19 — Run 20
 
 - **Date**: 2026-04-14
