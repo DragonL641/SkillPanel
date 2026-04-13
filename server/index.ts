@@ -18,6 +18,13 @@ app.use('/api', pluginsRoutes);
 app.use('/api', analysisRoutes);
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
+// Global error middleware — catches errors from all routes
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const message = err instanceof Error ? err.message : String(err);
+  console.error('[Express]', message);
+  res.status(500).json({ error: message });
+});
+
 const config = loadConfig();
 
 const server = app.listen(config.port, () => {

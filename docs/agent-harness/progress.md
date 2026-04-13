@@ -47,3 +47,9 @@
 - **Date**: 2026-04-14
 - **Task 7**: ✅ 对并发请求加锁：添加模块级 `saveQueue` Promise 队列，`saveConfig()` 返回 `Promise<AppConfig>`，串行化并发写入
 - **Files**: `server/config.ts`, `server/routes/config.ts`
+
+## Session 8 — Run 9
+
+- **Date**: 2026-04-14
+- **Task 8**: ✅ 在所有路由之后添加全局 Express 错误中间件（4 参数签名，捕获所有路由未处理错误）
+- **File**: `server/index.ts`
