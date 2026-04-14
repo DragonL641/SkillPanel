@@ -107,7 +107,7 @@ function scanSkillsDirectory(installPath: string): PluginSkill[] {
       skills.push({
         name: parsed.name,
         description: parsed.description,
-        path: `skills/${entry}`,
+        path: path.resolve(skillsDir, entry),
       });
     }
   }

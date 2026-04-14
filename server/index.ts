@@ -36,16 +36,6 @@ const config = loadConfig();
 
 const abortController = new AbortController();
 
-// Graceful shutdown: abort background analysis on SIGTERM/SIGINT
-process.on('SIGTERM', () => {
-  console.log('[Shutdown] SIGTERM received, aborting background analysis...');
-  abortController.abort();
-});
-process.on('SIGINT', () => {
-  console.log('[Shutdown] SIGINT received, aborting background analysis...');
-  abortController.abort();
-});
-
 const server = app.listen(config.port, () => {
   console.log(`SkillPanel running at http://localhost:${config.port}`);
 
@@ -61,3 +51,23 @@ const server = app.listen(config.port, () => {
 });
 
 viteExpress.bind(app, server);
+
+// Graceful shutdown: abort background analysis + close server
+let isShuttingDown = false;
+function shutdown(signal: string) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.log(`\n[Shutdown] ${signal} received, shutting down...`);
+  abortController.abort();
+  server.close(() => {
+    console.log('[Shutdown] Server closed.');
+    process.exit(0);
+  });
+  // Force exit after 3s if server won't close cleanly
+  setTimeout(() => {
+    console.log('[Shutdown] Force exit.');
+    process.exit(0);
+  }, 3000);
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

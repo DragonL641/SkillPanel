@@ -74,7 +74,7 @@ export function getCachedAnalysis(config: AppConfig, key: string): SkillAnalysis
   return entry;
 }
 
-export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false): Promise<SkillAnalysis> {
+export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false, signal?: AbortSignal): Promise<SkillAnalysis> {
   const hash = computeContentHash(skillDir);
   const name = path.basename(skillDir);
 
@@ -103,7 +103,7 @@ ${content}`;
     model: apiConfig.model,
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }],
-  });
+  }, { signal });
 
   const textBlock = response.content.find((block) => block.type === 'text');
   const summary = textBlock && textBlock.type === 'text' ? textBlock.text : '';
@@ -167,7 +167,7 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
       const hash = computeContentHash(dir);
       const cached = getCachedAnalysis(config, key);
       if (cached && cached.hash === hash) continue;
-      await analyzeSkill(config, dir, key);
+      await analyzeSkill(config, dir, key, false, signal);
       analyzed++;
     } catch (err) {
       console.error(`[Auto-analysis] Failed: ${key}`, err instanceof Error ? err.message : err);
