@@ -10,23 +10,31 @@ A lightweight Web UI for managing [Claude Code](https://claude.ai/code) skills. 
 - **Batch Operations** — Enable or disable multiple skills at once
 - **Auto Analysis** — Skills are automatically analyzed on server startup when content changes
 
-## Quick Start
+## Installation
 
-### Install & Run
+> **Note**: SkillPanel is published to [GitHub Packages](https://github.com/DragonL641/SkillPanel/pkgs/npm/skillpanel). You need to configure npm to use the GitHub registry for the `@dragonl641` scope.
 
-```bash
-# Clone the repo
-git clone https://github.com/DragonL641/SkillPanel.git
-cd SkillPanel
+### 1. Configure npm registry
 
-# Install dependencies
-npm install
+Create or edit `~/.npmrc`:
 
-# Start dev server
-npm run dev
+```
+@dragonl641:registry=https://npm.pkg.github.com
 ```
 
-Open http://localhost:3210 in your browser.
+### 2. Install globally
+
+```bash
+npm install -g @dragonl641/skillpanel
+```
+
+### 3. Run
+
+```bash
+skillpanel
+```
+
+Open http://localhost:3210 in your browser. Press `Ctrl+C` to stop.
 
 ### Configuration
 
@@ -54,20 +62,25 @@ Skill analysis requires a Claude API key. SkillPanel auto-detects it from `~/.cl
 
 Set `SKIP_AUTO_ANALYSIS=1` to skip auto-analysis on startup.
 
-## Tech Stack
-
-- **Backend**: TypeScript, Express 5, vite-express
-- **Frontend**: React 19, Tailwind CSS 4, Vite 8
-- **AI**: Anthropic SDK (Claude API)
-
 ## Development
 
 ```bash
+# Clone the repo
+git clone https://github.com/DragonL641/SkillPanel.git
+cd SkillPanel
+
+npm install
 npm run dev        # Start dev server (tsx + Vite HMR)
 npm run build      # Build frontend to dist/
 npm run start      # Production mode
 npm test           # Run tests (vitest)
 ```
+
+## Tech Stack
+
+- **Backend**: TypeScript, Express 5, vite-express
+- **Frontend**: React 19, Tailwind CSS 4, Vite 8
+- **AI**: Anthropic SDK (Claude API)
 
 ## Architecture
 
