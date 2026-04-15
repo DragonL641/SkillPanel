@@ -5,3 +5,5 @@ skillpanel.config.json
 *.DS_Store
 /.idea/
 /automation-logs/
+/.harness/
+/docs/superpowers/
