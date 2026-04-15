@@ -99,20 +99,11 @@ function scanDirectory(config: AppConfig, dirPath: string, basePath: string): Tr
   return [...dirs, ...skills];
 }
 
-let cachedCustomTree: TreeNode[] | null = null;
-
-/** Reset the internal tree cache (for testing). */
-export function resetTreeCache(): void {
-  cachedCustomTree = null;
-}
-
 export function scanCustomSkills(config: AppConfig): TreeNode[] {
   if (!fs.existsSync(config.customSkillDir)) {
-    cachedCustomTree = [];
     return [];
   }
-  cachedCustomTree = scanDirectory(config, config.customSkillDir, config.customSkillDir);
-  return cachedCustomTree;
+  return scanDirectory(config, config.customSkillDir, config.customSkillDir);
 }
 
 /**
@@ -175,7 +166,7 @@ function findSkillInTree(nodes: TreeNode[], name: string): string | null {
 
 export function findSkillDir(config: AppConfig, source: string, name: string): string | null {
   if (source === 'custom') {
-    const tree = cachedCustomTree ?? scanCustomSkills(config);
+    const tree = scanCustomSkills(config);
     return findSkillInTree(tree, name);
   }
 

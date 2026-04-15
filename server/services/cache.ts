@@ -14,3 +14,13 @@ export function invalidate(key?: string): void {
   if (key) cache.delete(key);
   else cache.clear();
 }
+
+export function invalidateByPrefix(prefix: string): void {
+  for (const key of cache.keys()) {
+    if (key.startsWith(prefix)) cache.delete(key);
+  }
+}
+
+export function cacheSize(): number {
+  return cache.size;
+}

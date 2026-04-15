@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { fileURLToPath } from 'url';
+import { getOrCompute, invalidateByPrefix } from './services/cache.js';
+import { logger } from './services/logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -28,24 +30,25 @@ const DEFAULT_CONFIG = {
   port: 3210,
 };
 
-let cachedConfig: AppConfig | null = null;
 let saveQueue: Promise<AppConfig> = Promise.resolve({} as AppConfig);
 
-export function loadConfig(): AppConfig {
-  if (cachedConfig) return cachedConfig;
+function buildConfig(): AppConfig {
   let raw: any = {};
   if (fs.existsSync(CONFIG_FILE)) {
     raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
   }
   const claudeRootDir = raw.claudeRootDir || DEFAULT_CONFIG.claudeRootDir;
-  cachedConfig = {
+  return {
     claudeRootDir,
     customSkillDir: raw.customSkillDir || DEFAULT_CONFIG.customSkillDir,
     port: raw.port || DEFAULT_CONFIG.port,
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
   };
-  return cachedConfig;
+}
+
+export function loadConfig(): AppConfig {
+  return getOrCompute('config', buildConfig);
 }
 
 export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
@@ -61,14 +64,10 @@ export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
     const tmpFile = CONFIG_FILE + '.tmp';
     fs.writeFileSync(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
     fs.renameSync(tmpFile, CONFIG_FILE);
-    cachedConfig = null;
-    return loadConfig();
+    invalidateByPrefix('config');
+    return buildConfig();
   });
   return saveQueue;
-}
-
-export function invalidateConfig(): void {
-  cachedConfig = null;
 }
 
 export interface ConfigResponse {
@@ -110,7 +109,7 @@ export function loadClaudeApiConfig(): ClaudeApiConfig | null {
     if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
       return null;
     }
-    console.warn('[Config] Failed to load Claude API config:', err);
+    logger.warn('failed to load Claude API config', { error: String(err) });
     return null;
   }
 }

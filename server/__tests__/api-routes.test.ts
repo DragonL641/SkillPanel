@@ -4,9 +4,8 @@ import os from 'os';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from './app.js';
-import { loadConfig, invalidateConfig } from '../config.js';
-import { invalidate } from '../services/cache.js';
-import { resetTreeCache } from '../services/skill-scanner.js';
+import { loadConfig } from '../config.js';
+import { invalidate, invalidateByPrefix } from '../services/cache.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -38,13 +37,13 @@ function setupConfig(tmpRoot: string) {
     }),
     'utf-8',
   );
-  invalidateConfig();
+  invalidateByPrefix('config');
   return { customSkillDir, claudeRootDir, configFile };
 }
 
 function cleanupConfig(configFile: string) {
   if (fs.existsSync(configFile)) fs.unlinkSync(configFile);
-  invalidateConfig();
+  invalidateByPrefix('config');
 }
 
 /** Create a skill directory with a SKILL.md inside customSkillDir */
@@ -71,7 +70,6 @@ describe('API Routes — Integration Tests', () => {
 
   beforeEach(() => {
     invalidate(); // Clear getOrCompute cache before each test
-    resetTreeCache(); // Clear skill-scanner internal tree cache
     tmpRoot = makeTmpDir();
     const setup = setupConfig(tmpRoot);
     customSkillDir = setup.customSkillDir;
@@ -93,7 +91,12 @@ describe('API Routes — Integration Tests', () => {
       const app = createApp();
       const res = await request(app).get('/api/health');
       expect(res.status).toBe(200);
-      expect(res.body).toEqual({ ok: true });
+      expect(res.body.ok).toBe(true);
+      expect(typeof res.body.uptime).toBe('number');
+      expect(typeof res.body.version).toBe('string');
+      expect(typeof res.body.api).toBe('object');
+      expect(typeof res.body.cache).toBe('object');
+      expect(typeof res.body.directories).toBe('object');
     });
   });
 
@@ -131,7 +134,7 @@ describe('API Routes — Integration Tests', () => {
         .put('/api/config')
         .send({ port: 80 });
       expect(res.status).toBe(400);
-      expect(res.body.error).toMatch(/port/i);
+      expect(res.body.error.message).toMatch(/port/i);
     });
 
     it('rejects non-integer port', async () => {
@@ -230,7 +233,7 @@ describe('API Routes — Integration Tests', () => {
       const app = createApp();
       const res = await request(app).post('/api/skills/custom/enable/..%2Fetc');
       expect(res.status).toBe(400);
-      expect(res.body.error).toMatch(/path traversal/i);
+      expect(res.body.error.message).toMatch(/path traversal/i);
     });
 
     it('returns 404 for non-existent skill', async () => {
@@ -465,7 +468,7 @@ describe('API Routes — Integration Tests', () => {
       // Force an unhandled error by requesting a skill enable with path traversal
       const res = await request(app).post('/api/skills/custom/enable/..%2F..%2F..%2Fetc%2Fpasswd');
       expect(res.status).toBe(400);
-      expect(res.body.error).toMatch(/path traversal/i);
+      expect(res.body.error.message).toMatch(/path traversal/i);
     });
   });
 });

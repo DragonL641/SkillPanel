@@ -3,9 +3,11 @@ import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
 import { loadClaudeApiConfig } from '../config.js';
 import type { AppConfig } from '../config.js';
+import { AnalysisError } from '../errors.js';
 import { computeContentHash, collectSkillContent } from './hash-utils.js';
 import { scanCustomSkills, type TreeNode } from './skill-scanner.js';
 import { scanPlugins } from './plugin-scanner.js';
+import { logger } from './logger.js';
 
 export interface SkillAnalysis {
   name: string;
@@ -89,7 +91,7 @@ export async function analyzeSkill(config: AppConfig, skillDir: string, key: str
   // Cache miss or hash changed — call Claude API
   const apiConfig = loadClaudeApiConfig();
   if (!apiConfig) {
-    throw new Error('未检测到 Claude Code API 配置，请确认 ~/.claude/settings.json 中包含 ANTHROPIC_AUTH_TOKEN');
+    throw new AnalysisError('未检测到 Claude Code API 配置，请确认 ~/.claude/settings.json 中包含 ANTHROPIC_AUTH_TOKEN');
   }
 
   const content = collectSkillContent(skillDir);
@@ -153,12 +155,12 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
 
   if (allSkills.length === 0) return;
 
-  console.log(`[Auto-analysis] Checking ${allSkills.length} skill(s)...`);
+  logger.info('auto-analysis started', { count: allSkills.length });
 
   let analyzed = 0;
   for (const { dir, key } of allSkills) {
     if (signal?.aborted) {
-      console.log('[Auto-analysis] Aborted.');
+      logger.info('auto-analysis aborted');
       return;
     }
     // Yield to the event loop between iterations to avoid blocking
@@ -170,11 +172,11 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
       await analyzeSkill(config, dir, key, false, signal);
       analyzed++;
     } catch (err) {
-      console.error(`[Auto-analysis] Failed: ${key}`, err instanceof Error ? err.message : err);
+      logger.error('auto-analysis skill failed', { key, error: err instanceof Error ? err.message : String(err) });
     }
   }
 
   if (analyzed > 0) {
-    console.log(`[Auto-analysis] Analyzed ${analyzed} skill(s).`);
+    logger.info('auto-analysis completed', { analyzed });
   }
 }

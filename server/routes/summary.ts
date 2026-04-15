@@ -8,8 +8,8 @@ const router = Router();
 
 router.get('/skills/summary', (_req, res) => {
   const config = loadConfig();
-  const tree = getOrCompute('custom-skills', () => scanCustomSkills(config));
-  const plugins = getOrCompute('plugin-skills', () => scanPlugins(config));
+  const tree = getOrCompute('skills:custom', () => scanCustomSkills(config));
+  const plugins = getOrCompute('skills:plugins', () => scanPlugins(config));
   const summary = getSkillsSummary(config, tree, plugins);
   res.json(summary);
 });
