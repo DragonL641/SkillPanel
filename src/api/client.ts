@@ -8,7 +8,7 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     let message = `HTTP ${res.status}: ${res.statusText}`;
     try {
       const data = await res.json();
-      if (data.error) message = data.error;
+      if (data.error) message = typeof data.error === 'string' ? data.error : data.error.message || message;
     } catch { /* response body not JSON, use default message */ }
     throw new Error(message);
   }
