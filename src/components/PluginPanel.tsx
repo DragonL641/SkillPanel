@@ -67,6 +67,7 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
   const [checking, setChecking] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>(null);
   const [isGitRepo, setIsGitRepo] = useState<boolean | null>(null);
+  const contentId = `plugin-content-${plugin.name}`;
 
   const handleCheckUpdate = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -95,6 +96,8 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
       {/* Plugin Header */}
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
         className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-surface-hover transition-colors text-left"
       >
         <ChevronDown size={16} className={`text-fg-muted transition-transform duration-200 ${isOpen ? '' : '-rotate-90'}`} />
@@ -131,7 +134,7 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
 
       {/* Plugin Skills */}
       {isOpen && (
-        <div className="flex flex-col gap-2.5 px-4 pb-4">
+        <div id={contentId} className="flex flex-col gap-2.5 px-4 pb-4">
           {plugin.skills.map((skill) => (
             <PluginSkillRow key={`${plugin.name}/${skill.path}`} skill={skill} pluginName={plugin.name} apiConfigDetected={apiConfigDetected} />
           ))}

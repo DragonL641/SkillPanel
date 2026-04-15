@@ -1,9 +1,4 @@
-interface Summary {
-  customTotal: number;
-  customEnabled: number;
-  pluginTotal: number;
-  grandTotal: number;
-}
+import type { Summary } from '../types';
 
 interface Props {
   data: Summary | null;
@@ -32,11 +27,11 @@ export default function StatsRow({ data }: Props) {
       ];
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-wrap gap-4">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="flex-1 flex flex-col gap-2 p-5 bg-surface-primary rounded-[var(--radius-lg)] border border-border"
+          className="flex-1 min-w-[140px] flex flex-col gap-2 p-5 bg-surface-primary rounded-[var(--radius-lg)] border border-border"
         >
           <span className="text-xs font-medium text-fg-secondary">{stat.label}</span>
           <span className={`font-mono text-3xl font-bold text-fg-primary ${stat.accent ?? ''}`}>

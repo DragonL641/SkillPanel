@@ -1,16 +1,12 @@
 import { useState, useRef } from 'react';
 import { Sparkles, Trash2 } from 'lucide-react';
 import AnalysisPanel, { type AnalysisPanelHandle } from './AnalysisPanel';
+import type { SkillMeta } from '../types';
 
-interface SkillMeta {
-  name: string;
-  description: string;
-  enabled: boolean;
-  absolutePath?: string;
-}
+type SkillCardMeta = Pick<SkillMeta, 'name' | 'description' | 'enabled' | 'absolutePath'>;
 
 interface Props {
-  skill: SkillMeta;
+  skill: SkillCardMeta;
   path: string;
   source: 'custom' | 'plugin';
   onToggle?: (path: string, enable: boolean) => void;
@@ -20,6 +16,7 @@ interface Props {
 export default function SkillCard({ skill, path, source, onToggle, onDelete }: Props) {
   const isPlugin = source === 'plugin';
   const [analyzing, setAnalyzing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const analysisRef = useRef<AnalysisPanelHandle>(null);
 
   return (
@@ -55,6 +52,9 @@ export default function SkillCard({ skill, path, source, onToggle, onDelete }: P
         {!isPlugin && onToggle && (
           <button
             onClick={() => onToggle(path, !skill.enabled)}
+            role="switch"
+            aria-checked={skill.enabled}
+            aria-label={skill.enabled ? '禁用技能' : '启用技能'}
             className={`relative w-9 h-5 rounded-full transition-colors shrink-0 ${skill.enabled ? 'bg-accent' : 'bg-border'}`}
           >
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-fg-inverse transition-transform ${skill.enabled ? 'left-[18px]' : 'left-0.5'}`} />
@@ -71,17 +71,33 @@ export default function SkillCard({ skill, path, source, onToggle, onDelete }: P
         <div className="flex-1" />
         {!isPlugin && onDelete && (
           <button
-            onClick={() => {
-              if (window.confirm(`确定删除 Skill「${skill.name}」？此操作不可撤销。`)) {
-                onDelete(path);
-              }
-            }}
+            onClick={() => setConfirmDelete(true)}
+            aria-label="删除技能"
             className="p-1.5 text-danger rounded-[var(--radius-md)] hover:bg-danger-light transition-colors shrink-0"
           >
             <Trash2 size={14} />
           </button>
         )}
       </div>
+
+      {/* Confirm delete */}
+      {confirmDelete && (
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-danger">确定删除「{skill.name}」？</span>
+          <button
+            onClick={() => { onDelete(path); setConfirmDelete(false); }}
+            className="px-2 py-1 text-white bg-danger rounded hover:bg-red-600 transition-colors"
+          >
+            删除
+          </button>
+          <button
+            onClick={() => setConfirmDelete(false)}
+            className="px-2 py-1 text-fg-secondary border border-border rounded hover:bg-surface-hover transition-colors"
+          >
+            取消
+          </button>
+        </div>
+      )}
 
       {/* Analysis panel */}
       <AnalysisPanel ref={analysisRef} source={source} name={skill.name} onLoadingChange={setAnalyzing} />

@@ -1,22 +1,7 @@
 import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import SkillCard from './SkillCard';
-
-interface SkillMeta {
-  name: string;
-  description: string;
-  enabled: boolean;
-  hash: string;
-  absolutePath?: string;
-}
-
-interface TreeNode {
-  type: 'dir' | 'skill';
-  name: string;
-  path: string;
-  children?: TreeNode[];
-  skill?: SkillMeta;
-}
+import type { TreeNode } from '../types';
 
 interface Props {
   nodes: TreeNode[];
@@ -91,6 +76,7 @@ function TreeNodeItem({
       <div className="flex items-center gap-3">
         <button
           onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
           className="flex items-center gap-1"
         >
           <ChevronRight
@@ -119,7 +105,7 @@ function TreeNodeItem({
       </div>
 
       {/* Skills Grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {skills.map((child) => (
           <TreeNodeItem
             key={child.path}

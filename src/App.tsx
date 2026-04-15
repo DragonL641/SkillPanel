@@ -1,68 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Settings, RefreshCw } from 'lucide-react';
 import TabSwitch from './components/TabSwitch';
 import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
-import type { TreeNode, PluginInfo, Summary } from './types';
-import { getErrorMessage } from './utils/getErrorMessage';
-import {
-  fetchCustomSkills,
-  fetchPluginSkills,
-  fetchSummary,
-  fetchConfig,
-  enableSkill,
-  disableSkill,
-  deleteSkill,
-  batchEnableSkills,
-  batchDisableSkills,
-} from './api/client';
+import { useSkills } from './hooks/useSkills';
+import { usePlugins } from './hooks/usePlugins';
+import { fetchConfig } from './api/client';
 
 export default function App() {
   const [tab, setTab] = useState<'custom' | 'plugin'>('custom');
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [tree, setTree] = useState<TreeNode[]>([]);
-  const [plugins, setPlugins] = useState<PluginInfo[]>([]);
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
 
-  const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
+  const {
+    tree, summary, loading: skillsLoading, error,
+    loadCustomSkills, loadSummary,
+    handleToggleSkill, handleBatchToggle, handleDeleteSkill,
+    clearError,
+  } = useSkills();
 
-  // Fetch API config status on mount to determine if analysis is available
+  const { plugins, loadPlugins } = usePlugins();
+
+  // Fetch API config status on mount
   useEffect(() => {
     fetchConfig()
       .then((data) => setApiConfigDetected(data.apiConfigDetected))
       .catch(() => setApiConfigDetected(false));
-  }, []);
-
-  const loadCustomSkills = useCallback(async (silent = false) => {
-    if (!silent) setInitialLoading(true);
-    setError(null);
-    try {
-      const d = await fetchCustomSkills();
-      setTree(d.tree);
-    } catch (err: unknown) {
-      setError(getErrorMessage(err) || '加载失败');
-    } finally {
-      if (!silent) setInitialLoading(false);
-    }
-  }, []);
-
-  const loadPluginSkills = useCallback(async (silent = false) => {
-    if (!silent) setInitialLoading(true);
-    setError(null);
-    try {
-      const d = await fetchPluginSkills();
-      setPlugins(d.plugins);
-    } catch (err: unknown) {
-      setError(getErrorMessage(err) || '加载失败');
-    } finally {
-      if (!silent) setInitialLoading(false);
-    }
   }, []);
 
   useEffect(() => {
@@ -71,56 +37,19 @@ export default function App() {
 
   useEffect(() => {
     if (tab === 'custom') loadCustomSkills(false);
-    else loadPluginSkills(false);
+    else loadPlugins(false);
   }, [tab]);
-
-  const handleToggleSkill = async (skillPath: string, enable: boolean) => {
-    setError(null);
-    try {
-      if (enable) await enableSkill(skillPath);
-      else await disableSkill(skillPath);
-      await loadCustomSkills(true);
-      await loadSummary();
-    } catch (err: unknown) {
-      setError(getErrorMessage(err) || (enable ? '启用失败' : '禁用失败'));
-    }
-  };
-
-  const handleBatchToggle = async (paths: string[], enable: boolean) => {
-    setError(null);
-    try {
-      const result = enable ? await batchEnableSkills(paths) : await batchDisableSkills(paths);
-      if (result.failed.length > 0) {
-        setError(`${result.failed.length} 个 skill 操作失败`);
-      }
-      await loadCustomSkills(true);
-      await loadSummary();
-    } catch (err: unknown) {
-      setError(getErrorMessage(err) || '批量操作失败');
-    }
-  };
-
-  const handleDeleteSkill = async (skillPath: string) => {
-    setError(null);
-    try {
-      await deleteSkill(skillPath);
-      await loadCustomSkills(true);
-      await loadSummary();
-    } catch (err: unknown) {
-      setError(getErrorMessage(err) || '删除失败');
-    }
-  };
 
   const handleRefresh = async () => {
     if (tab === 'custom') await loadCustomSkills(true);
-    else await loadPluginSkills(true);
+    else await loadPlugins(true);
     await loadSummary();
   };
 
   return (
     <div className="min-h-screen bg-surface-secondary">
       {/* Header */}
-      <header className="bg-surface-primary border-b border-border px-8 py-4 flex items-center gap-4">
+      <header className="bg-surface-primary border-b border-border px-8 py-4 flex flex-wrap items-center gap-2 sm:gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-accent rounded-[var(--radius-md)]" />
@@ -133,13 +62,14 @@ export default function App() {
         <div className="flex-1" />
 
         {/* Search */}
-        <div className="flex items-center gap-2 px-3.5 py-2.5 bg-surface-primary border border-border rounded-[var(--radius-md)] w-[300px]">
+        <div className="flex items-center gap-2 px-3.5 py-2.5 bg-surface-primary border border-border rounded-[var(--radius-md)] w-full sm:w-[300px]">
           <Search size={16} className="text-fg-muted shrink-0" />
           <input
             type="text"
             placeholder="搜索技能..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label="搜索技能"
             className="text-[13px] bg-transparent focus:outline-none w-full text-fg-primary placeholder:text-fg-muted"
           />
         </div>
@@ -147,6 +77,7 @@ export default function App() {
         {/* Refresh */}
         <button
           onClick={handleRefresh}
+          aria-label="刷新"
           className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
         >
           <RefreshCw size={18} />
@@ -155,6 +86,7 @@ export default function App() {
         {/* Config */}
         <button
           onClick={() => setConfigOpen(true)}
+          aria-label="设置"
           className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
         >
           <Settings size={18} />
@@ -167,7 +99,7 @@ export default function App() {
         {error && (
           <div className="bg-danger-light border border-danger/20 text-danger text-sm px-4 py-2.5 rounded-[var(--radius-lg)] flex items-center justify-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-danger/60 hover:text-danger ml-2 text-lg">&times;</button>
+            <button onClick={clearError} aria-label="关闭错误提示" className="text-danger/60 hover:text-danger ml-2 text-lg">&times;</button>
           </div>
         )}
 
@@ -175,15 +107,15 @@ export default function App() {
         <StatsRow data={summary} />
 
         {/* Loading */}
-        {initialLoading && (
+        {skillsLoading && (
           <div className="text-fg-muted text-sm py-4 text-center">加载中...</div>
         )}
 
         {/* Content */}
-        {!initialLoading && tab === 'custom' && (
+        {!skillsLoading && tab === 'custom' && (
           <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
         )}
-        {!initialLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} apiConfigDetected={apiConfigDetected} />}
+        {!skillsLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} apiConfigDetected={apiConfigDetected} />}
       </main>
 
       {/* Config Modal */}

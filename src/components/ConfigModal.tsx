@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle, AlertTriangle } from 'lucide-react';
 import { fetchConfig, saveConfig } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
+import type { AppConfig, AppConfigResponse } from '../types';
 
 interface Props {
   open: boolean;
@@ -9,28 +10,20 @@ interface Props {
   onSaved: () => void;
 }
 
-interface Config {
-  claudeRootDir?: string;
-  customSkillDir?: string;
-  port?: number;
-}
-
-interface ConfigResponse extends Config {
-  apiConfigDetected: boolean;
-  apiModel: string | null;
-}
-
 export default function ConfigModal({ open, onClose, onSaved }: Props) {
-  const [config, setConfig] = useState<Config>({});
+  const [config, setConfig] = useState<AppConfig>({});
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
   const [apiModel, setApiModel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
       fetchConfig()
-        .then((data: ConfigResponse) => {
+        .then((data: AppConfigResponse) => {
           setConfig({
             claudeRootDir: data.claudeRootDir,
             customSkillDir: data.customSkillDir,
@@ -43,9 +36,47 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
     }
   }, [open]);
 
+  // Escape key + focus trap
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    // Focus first focusable element
+    requestAnimationFrame(() => {
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      focusable?.[0]?.focus();
+    });
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onClose]);
+
   if (!open) return null;
 
-  const handleChange = (field: keyof Config, value: string | number) => {
+  const handleChange = (field: keyof AppConfig, value: string | number) => {
     setConfig((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -53,7 +84,7 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
     setSaving(true);
     setSaveError(null);
     try {
-      const data: ConfigResponse = await saveConfig(config);
+      const data: AppConfigResponse = await saveConfig(config);
       setApiConfigDetected(data.apiConfigDetected);
       setApiModel(data.apiModel);
       onSaved();
@@ -71,14 +102,17 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       onClick={onClose}
     >
       <div
-        className="bg-surface-primary rounded-[var(--radius-xl)] shadow-[0_4px_24px_rgba(0,0,0,0.1)] w-full max-w-[500px] overflow-hidden"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        className="bg-surface-primary rounded-[var(--radius-xl)] shadow-[0_4px_24px_rgba(0,0,0,0.1)] w-full max-w-[500px] mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center px-6 py-5 border-b border-border">
           <h2 className="text-lg font-bold text-fg-primary">配置</h2>
           <div className="flex-1" />
-          <button onClick={onClose} className="p-1.5 text-fg-secondary hover:text-fg-primary transition-colors">
+          <button onClick={onClose} aria-label="关闭" className="p-1.5 text-fg-secondary hover:text-fg-primary transition-colors">
             <X size={18} />
           </button>
         </div>
