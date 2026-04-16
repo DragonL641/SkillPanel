@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Settings, RefreshCw } from 'lucide-react';
-import TabSwitch from './components/TabSwitch';
+import TabSwitch, { type TabKey } from './components/TabSwitch';
 import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
@@ -12,7 +12,7 @@ import { fetchConfig } from './api/client';
 import type { AppConfigResponse } from './types';
 
 export default function App() {
-  const [tab, setTab] = useState<'custom' | 'plugin'>('custom');
+  const [tab, setTab] = useState<TabKey>('global');
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
@@ -44,13 +44,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (tab === 'custom') loadCustomSkills(false);
-    else loadPlugins(false);
+    if (tab === 'global') loadCustomSkills(false);
+    else if (tab === 'plugin') loadPlugins(false);
   }, [tab]);
 
   const handleRefresh = async () => {
-    if (tab === 'custom') await loadCustomSkills(true);
-    else await loadPlugins(true);
+    if (tab === 'global') await loadCustomSkills(true);
+    else if (tab === 'plugin') await loadPlugins(true);
     await loadSummary();
   };
 
@@ -133,7 +133,7 @@ export default function App() {
         )}
 
         {/* Content */}
-        {!skillsLoading && tab === 'custom' && (
+        {!skillsLoading && tab === 'global' && (
           <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
         )}
         {!skillsLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} apiConfigDetected={apiConfigDetected} />}

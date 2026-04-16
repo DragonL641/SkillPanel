@@ -1,4 +1,4 @@
-import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse, SearchResult, SearchResponse } from '../types';
+import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse, SearchResult, SearchResponse, ProjectInfo, ProjectSkillsResponse } from '../types';
 
 const BASE = '/api';
 
@@ -96,3 +96,37 @@ export const fetchSkillSearch = (params: { q?: string; source?: string; enabled?
   if (params.enabled) searchParams.set('enabled', params.enabled);
   return apiFetch<SearchResponse>(`${BASE}/skills/search?${searchParams.toString()}`);
 };
+
+export const fetchProjects = () =>
+  apiFetch<{ projects: ProjectInfo[] }>(`${BASE}/projects`);
+
+export const registerProject = (projectPath: string) =>
+  apiFetch<{ ok: boolean; project: { name: string; path: string } }>(`${BASE}/projects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: projectPath }),
+  });
+
+export const unregisterProject = (name: string) =>
+  apiFetch<{ ok: boolean }>(`${BASE}/projects/${name}`, { method: 'DELETE' });
+
+export const fetchProjectSkills = (name: string) =>
+  apiFetch<ProjectSkillsResponse>(`${BASE}/projects/${name}/skills`);
+
+export const enableProjectSkill = (projectName: string, skillPath: string) =>
+  apiFetch<{ ok: boolean; path: string }>(`${BASE}/projects/${projectName}/skills/enable/${skillPath}`, { method: 'POST' });
+
+export const disableProjectSkill = (projectName: string, skillPath: string) =>
+  apiFetch<{ ok: boolean; path: string }>(`${BASE}/projects/${projectName}/skills/disable/${skillPath}`, { method: 'POST' });
+
+export const batchEnableProjectSkills = (projectName: string, paths: string[]) =>
+  apiFetch<{ ok: boolean; succeeded: number; failed: Array<{ path: string; error: string }> }>(
+    `${BASE}/projects/${projectName}/skills/batch-enable`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paths }) },
+  );
+
+export const batchDisableProjectSkills = (projectName: string, paths: string[]) =>
+  apiFetch<{ ok: boolean; succeeded: number; failed: Array<{ path: string; error: string }> }>(
+    `${BASE}/projects/${projectName}/skills/batch-disable`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paths }) },
+  );

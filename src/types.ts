@@ -61,7 +61,33 @@ export interface AnalysisResponse {
 export interface AppConfig {
   claudeRootDir?: string;
   customSkillDir?: string;
+  customSkillDirs?: string[];
+  projects?: Array<{ name: string; path: string }>;
   port?: number;
+}
+
+/** A registered project */
+export interface ProjectInfo {
+  name: string;
+  path: string;
+  skillsDir: string;
+  globalEnabledCount: number;
+  projectEnabledCount: number;
+}
+
+/** A skill in project context */
+export interface ProjectSkill {
+  name: string;
+  description: string;
+  path: string;
+  source: 'global' | 'project';
+  enabled: boolean;
+}
+
+/** Response from GET /api/projects/:name/skills */
+export interface ProjectSkillsResponse {
+  globalSkills: ProjectSkill[];
+  projectSkills: ProjectSkill[];
 }
 
 /** Full config response including read-only API detection fields */

@@ -1,13 +1,16 @@
-import { FolderCode, Puzzle } from 'lucide-react';
+import { FolderCode, FolderTree, Puzzle } from 'lucide-react';
+
+export type TabKey = 'global' | 'project' | 'plugin';
 
 interface Props {
-  active: 'custom' | 'plugin';
-  onChange: (tab: 'custom' | 'plugin') => void;
+  active: TabKey;
+  onChange: (tab: TabKey) => void;
 }
 
-const tabs: { key: 'custom' | 'plugin'; label: string; icon: typeof FolderCode }[] = [
-  { key: 'custom', label: '自定义技能', icon: FolderCode },
-  { key: 'plugin', label: '插件管理', icon: Puzzle },
+const tabs: { key: TabKey; label: string; icon: typeof FolderCode }[] = [
+  { key: 'global', label: '全局 Skill 管理', icon: FolderCode },
+  { key: 'project', label: '项目级 Skill 管理', icon: FolderTree },
+  { key: 'plugin', label: '插件技能管理', icon: Puzzle },
 ];
 
 export default function TabSwitch({ active, onChange }: Props) {
