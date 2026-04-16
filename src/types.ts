@@ -90,6 +90,21 @@ export interface ProjectSkillsResponse {
   projectSkills: ProjectSkill[];
 }
 
+/** A single search result item */
+export interface SearchResult {
+  name: string;
+  description: string;
+  path: string;
+  source: string;
+  enabled: boolean;
+}
+
+/** Response from GET /api/skills/search */
+export interface SearchResponse {
+  results: SearchResult[];
+  total: number;
+}
+
 /** Full config response including read-only API detection fields */
 export interface AppConfigResponse extends AppConfig {
   configured: boolean;

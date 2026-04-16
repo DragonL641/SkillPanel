@@ -16,13 +16,14 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
   const [pickerOpen, setPickerOpen] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const handleAdd = async (path: string) => {
+  const handlePick = async (path: string) => {
+    if (!path) return;
     setAdding(true);
     try {
       await onAdd(path);
+      setPickerOpen(false);
     } finally {
       setAdding(false);
-      setPickerOpen(false);
     }
   };
 
@@ -32,7 +33,7 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
       <div className="flex items-center justify-between px-4 py-5">
         <span className="text-sm font-semibold text-fg-primary">项目列表</span>
         <button
-          onClick={() => setPickerOpen(true)}
+          onClick={() => setPickerOpen(v => !v)}
           className="flex items-center gap-1 px-2 py-1 rounded-[var(--radius-md)] border border-border hover:bg-surface-hover transition-colors"
           aria-label="添加项目"
         >
@@ -40,6 +41,18 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
           <span className="text-[11px] font-medium text-fg-secondary">添加</span>
         </button>
       </div>
+
+      {/* Dir picker for adding project */}
+      {pickerOpen && (
+        <div className="px-4 pb-3">
+          <DirPicker
+            value=""
+            onChange={handlePick}
+            label="项目路径"
+            hint={adding ? '添加中...' : '选择项目根目录'}
+          />
+        </div>
+      )}
 
       {/* Project list */}
       <div className="flex-1 overflow-y-auto px-4 pb-4 flex flex-col gap-2">
@@ -92,14 +105,6 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
           <div className="text-fg-muted text-xs text-center py-4">加载中...</div>
         )}
       </div>
-
-      {/* Dir picker for adding project */}
-      {pickerOpen && (
-        <DirPicker
-          onSelect={handleAdd}
-          onCancel={() => setPickerOpen(false)}
-        />
-      )}
     </aside>
   );
 }
