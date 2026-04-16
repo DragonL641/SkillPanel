@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, CheckCircle, AlertTriangle } from 'lucide-react';
+import { X, CheckCircle, AlertTriangle, Folder, FolderPlus } from 'lucide-react';
 import { fetchConfig, saveConfig } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
+import DirPicker from './DirPicker';
 import type { AppConfig, AppConfigResponse } from '../types';
 
 interface Props {
@@ -16,6 +17,8 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
   const [apiModel, setApiModel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [addingDir, setAddingDir] = useState(false);
+  const [newDirPath, setNewDirPath] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -27,6 +30,7 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
           setConfig({
             claudeRootDir: data.claudeRootDir,
             customSkillDir: data.customSkillDir,
+            customSkillDirs: data.customSkillDirs,
             port: data.port,
           });
           setApiConfigDetected(data.apiConfigDetected);
@@ -80,11 +84,35 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
     setConfig((prev) => ({ ...prev, [field]: value }));
   };
 
+  const removeDir = (index: number) => {
+    const dirs = [...(config.customSkillDirs || [])];
+    dirs.splice(index, 1);
+    setConfig((prev) => ({ ...prev, customSkillDirs: dirs }));
+  };
+
+  const addDir = (dirPath: string) => {
+    if (!dirPath) {
+      setAddingDir(false);
+      return;
+    }
+    const dirs = [...(config.customSkillDirs || [])];
+    if (!dirs.includes(dirPath)) {
+      dirs.push(dirPath);
+      setConfig((prev) => ({ ...prev, customSkillDirs: dirs }));
+    }
+    setAddingDir(false);
+    setNewDirPath('');
+  };
+
   const handleSave = async () => {
     setSaving(true);
     setSaveError(null);
     try {
-      const data: AppConfigResponse = await saveConfig(config);
+      const payload: AppConfig = {
+        ...config,
+        customSkillDir: config.customSkillDirs?.[0] || '',
+      };
+      const data: AppConfigResponse = await saveConfig(payload);
       setApiConfigDetected(data.apiConfigDetected);
       setApiModel(data.apiModel);
       onSaved();
@@ -132,13 +160,31 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-fg-primary">自定义 Skill 仓库目录</label>
-            <input
-              type="text"
-              value={config.customSkillDir ?? ''}
-              onChange={(e) => handleChange('customSkillDir', e.target.value)}
-              className="w-full px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
-            />
+            <label className="text-[13px] font-medium text-fg-primary">自定义技能目录</label>
+            <p className="text-[11px] text-fg-muted">支持添加多个目录</p>
+            <div className="flex flex-col gap-2">
+              {(config.customSkillDirs || []).map((dir, i) => (
+                <div key={i} className="flex items-center gap-2 px-3 py-2 bg-surface-primary border border-border rounded-[var(--radius-md)]">
+                  <Folder size={14} className="text-fg-muted shrink-0" />
+                  <span className="text-[13px] font-mono text-fg-primary flex-1 truncate">{dir}</span>
+                  <button onClick={() => removeDir(i)} className="text-fg-muted hover:text-danger transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              {addingDir ? (
+                <DirPicker
+                  value={newDirPath}
+                  onChange={addDir}
+                  label="选择目录"
+                />
+              ) : (
+                <button onClick={() => setAddingDir(true)} className="flex items-center justify-center gap-1.5 py-2 border border-dashed border-border rounded-[var(--radius-md)] text-accent hover:bg-accent-light transition-colors">
+                  <FolderPlus size={14} />
+                  <span className="text-[12px] font-medium">添加目录</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
