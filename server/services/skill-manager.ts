@@ -5,19 +5,30 @@ import { ValidationError, NotFoundError, ConflictError } from '../errors.js';
 import { getErrorMessage } from '../utils.js';
 
 export function resolveSkillDir(config: AppConfig, skillRelativePath: string): string {
-  const resolved = path.resolve(config.customSkillDir, skillRelativePath);
-  const base = path.resolve(config.customSkillDir);
+  // Try each custom skill directory
+  for (const dir of config.customSkillDirs) {
+    const resolved = path.resolve(dir, skillRelativePath);
+    const base = path.resolve(dir);
+    if (resolved.startsWith(base + path.sep) && fs.existsSync(resolved)) {
+      return resolved;
+    }
+  }
+  // Fallback to first dir for validation/error messages
+  const fallbackDir = config.customSkillDirs[0] || config.customSkillDir;
+  const resolved = path.resolve(fallbackDir, skillRelativePath);
+  const base = path.resolve(fallbackDir);
   if (!resolved.startsWith(base + path.sep) && resolved !== base) {
     throw new ValidationError('Invalid skill path: path traversal detected');
   }
   return resolved;
 }
 
-function getSymlinkPath(config: AppConfig, skillDirName: string): string {
-  return path.join(config.claudeSkillsDir, skillDirName);
+function getSymlinkPath(skillsDir: string, skillDirName: string): string {
+  return path.join(skillsDir, skillDirName);
 }
 
-export function enableSkill(config: AppConfig, skillRelativePath: string): void {
+export function enableSkill(config: AppConfig, skillRelativePath: string, targetSkillsDir?: string): void {
+  const skillsDir = targetSkillsDir ?? config.claudeSkillsDir;
   const skillDir = resolveSkillDir(config, skillRelativePath);
   const skillBasename = path.basename(skillDir);
 
@@ -28,18 +39,18 @@ export function enableSkill(config: AppConfig, skillRelativePath: string): void 
   }
 
   // Ensure claude skills directory exists
-  if (!fs.existsSync(config.claudeSkillsDir)) {
-    fs.mkdirSync(config.claudeSkillsDir, { recursive: true });
+  if (!fs.existsSync(skillsDir)) {
+    fs.mkdirSync(skillsDir, { recursive: true });
   }
 
-  const symlinkPath = getSymlinkPath(config, skillBasename);
+  const symlinkPath = getSymlinkPath(skillsDir, skillBasename);
 
   // If symlink already exists and points to the right target, skip
   try {
     const stat = fs.lstatSync(symlinkPath);
     if (stat.isSymbolicLink()) {
       const target = fs.readlinkSync(symlinkPath);
-      const resolved = path.resolve(config.claudeSkillsDir, target);
+      const resolved = path.resolve(skillsDir, target);
       if (resolved === path.resolve(skillDir)) {
         return; // Already enabled
       }
@@ -59,10 +70,11 @@ export function enableSkill(config: AppConfig, skillRelativePath: string): void 
   fs.symlinkSync(skillDir, symlinkPath);
 }
 
-export function disableSkill(config: AppConfig, skillRelativePath: string): void {
+export function disableSkill(config: AppConfig, skillRelativePath: string, targetSkillsDir?: string): void {
+  const skillsDir = targetSkillsDir ?? config.claudeSkillsDir;
   const skillDir = resolveSkillDir(config, skillRelativePath);
   const skillBasename = path.basename(skillDir);
-  const symlinkPath = getSymlinkPath(config, skillBasename);
+  const symlinkPath = getSymlinkPath(skillsDir, skillBasename);
 
   try {
     const stat = fs.lstatSync(symlinkPath);
@@ -90,12 +102,13 @@ export function batchToggleSkills(
   config: AppConfig,
   paths: string[],
   action: 'enable' | 'disable',
+  targetSkillsDir?: string,
 ): BatchToggleResult {
   const toggleFn = action === 'enable' ? enableSkill : disableSkill;
   const failed: Array<{ path: string; error: string }> = [];
   for (const p of paths) {
     try {
-      toggleFn(config, p);
+      toggleFn(config, p, targetSkillsDir);
     } catch (err: unknown) {
       failed.push({ path: p, error: getErrorMessage(err) });
     }

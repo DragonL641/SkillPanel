@@ -20,6 +20,7 @@ function makeConfig(tmpRoot: string): AppConfig {
   fs.mkdirSync(path.join(claudeRootDir, 'skills'), { recursive: true });
   return {
     customSkillDir,
+    customSkillDirs: [customSkillDir],
     claudeRootDir,
     port: 3210,
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
