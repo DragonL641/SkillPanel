@@ -22,13 +22,13 @@ export interface TreeNode {
   skill?: SkillMeta;
 }
 
-function isEnabled(config: AppConfig, skillDir: string, skillName: string): boolean {
-  const symlinkPath = path.join(config.claudeSkillsDir, skillName);
+function isEnabled(skillsDir: string, skillDir: string, skillName: string): boolean {
+  const symlinkPath = path.join(skillsDir, skillName);
   try {
     const stat = fs.lstatSync(symlinkPath);
     if (stat.isSymbolicLink()) {
       const target = fs.readlinkSync(symlinkPath);
-      const resolved = path.resolve(config.claudeSkillsDir, target);
+      const resolved = path.resolve(skillsDir, target);
       return resolved === path.resolve(skillDir);
     }
   } catch {
@@ -72,7 +72,7 @@ function scanDirectory(config: AppConfig, dirPath: string, basePath: string): Tr
         skill: {
           name: skillName,
           description: parsedData.description || '',
-          enabled: isEnabled(config, fullPath, entry),
+          enabled: isEnabled(config.claudeSkillsDir, fullPath, entry),
           hash: computeContentHash(fullPath).slice(0, 12),
           hasAnalysis: false,
           absolutePath: fullPath,
@@ -100,10 +100,21 @@ function scanDirectory(config: AppConfig, dirPath: string, basePath: string): Tr
 }
 
 export function scanCustomSkills(config: AppConfig): TreeNode[] {
-  if (!fs.existsSync(config.customSkillDir)) {
-    return [];
+  const roots: TreeNode[] = [];
+  for (const dir of config.customSkillDirs) {
+    if (!fs.existsSync(dir)) continue;
+    const dirName = path.basename(dir);
+    const children = scanDirectory(config, dir, dir);
+    if (children.length > 0) {
+      roots.push({
+        type: 'dir',
+        name: dirName,
+        path: dirName,
+        children,
+      });
+    }
   }
-  return scanDirectory(config, config.customSkillDir, config.customSkillDir);
+  return roots;
 }
 
 /**

@@ -216,8 +216,11 @@ describe('API Routes — Integration Tests', () => {
       const res = await request(app).get('/api/skills/custom');
       expect(res.status).toBe(200);
       expect(res.body.tree).toHaveLength(1);
-      expect(res.body.tree[0].type).toBe('skill');
-      expect(res.body.tree[0].name).toBe('my-skill');
+      // Top-level node is a dir group (basename of customSkillDir)
+      expect(res.body.tree[0].type).toBe('dir');
+      expect(res.body.tree[0].children).toHaveLength(1);
+      expect(res.body.tree[0].children[0].type).toBe('skill');
+      expect(res.body.tree[0].children[0].name).toBe('my-skill');
     });
 
     it('groups skills in nested directories', async () => {
@@ -235,11 +238,15 @@ describe('API Routes — Integration Tests', () => {
       const app = createApp();
       const res = await request(app).get('/api/skills/custom');
       expect(res.status).toBe(200);
+      // Top-level is the source dir group
       expect(res.body.tree).toHaveLength(1);
       expect(res.body.tree[0].type).toBe('dir');
-      expect(res.body.tree[0].name).toBe('category');
+      // Inside the source group: 'category' dir
       expect(res.body.tree[0].children).toHaveLength(1);
-      expect(res.body.tree[0].children[0].name).toBe('nested-skill');
+      expect(res.body.tree[0].children[0].type).toBe('dir');
+      expect(res.body.tree[0].children[0].name).toBe('category');
+      expect(res.body.tree[0].children[0].children).toHaveLength(1);
+      expect(res.body.tree[0].children[0].children[0].name).toBe('nested-skill');
     });
   });
 

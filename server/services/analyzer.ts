@@ -137,7 +137,7 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
     for (const node of nodes) {
       if (node.type === 'skill' && node.skill) {
         result.push({
-          dir: path.join(config.customSkillDir, node.path),
+          dir: node.skill.absolutePath,
           key: `custom/${node.skill.name}`,
         });
       }
