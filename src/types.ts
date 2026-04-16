@@ -66,6 +66,7 @@ export interface AppConfig {
 
 /** Full config response including read-only API detection fields */
 export interface AppConfigResponse extends AppConfig {
+  configured: boolean;
   apiConfigDetected: boolean;
   apiModel: string | null;
 }

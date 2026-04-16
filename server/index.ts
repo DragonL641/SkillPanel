@@ -15,6 +15,7 @@ import summaryRoutes from './routes/summary.js';
 import pluginsRoutes from './routes/plugins.js';
 import analysisRoutes from './routes/analysis.js';
 import searchRoutes from './routes/search.js';
+import fsRoutes from './routes/fs.js';
 import { analyzeAllSkills } from './services/analyzer.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -39,6 +40,7 @@ app.use('/api', summaryRoutes);
 app.use('/api', pluginsRoutes);
 app.use('/api', analysisRoutes);
 app.use('/api', searchRoutes);
+app.use('/api', fsRoutes);
 
 app.get('/api/health', (_req, res) => {
   const config = loadConfig();
@@ -76,9 +78,10 @@ const abortController = new AbortController();
 const server = app.listen(config.port, () => {
   logger.info('server started', { port: config.port });
 
-  // Auto-analyze all skills in background (non-blocking)
-  // Set SKIP_AUTO_ANALYSIS=1 to skip startup analysis
-  if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
+  if (!config.customSkillDir) {
+    logger.info('first run detected — please complete setup via the web UI');
+  } else if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
+    // Auto-analyze all skills in background (non-blocking)
     analyzeAllSkills(config, abortController.signal).catch(err =>
       logger.error('auto-analysis error', { error: err instanceof Error ? err.message : String(err) }),
     );

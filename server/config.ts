@@ -26,7 +26,7 @@ export interface ClaudeApiConfig {
 
 const DEFAULT_CONFIG = {
   claudeRootDir: path.join(os.homedir(), '.claude'),
-  customSkillDir: path.join(os.homedir(), 'Projects', 'myskill'),
+  customSkillDir: '',
   port: 3210,
 };
 
@@ -49,6 +49,11 @@ function buildConfig(): AppConfig {
 
 export function loadConfig(): AppConfig {
   return getOrCompute('config', buildConfig);
+}
+
+export function isConfigured(): boolean {
+  const config = loadConfig();
+  return !!config.customSkillDir && fs.existsSync(config.customSkillDir);
 }
 
 export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
@@ -74,6 +79,7 @@ export interface ConfigResponse {
   claudeRootDir: string;
   customSkillDir: string;
   port: number;
+  configured: boolean;
   apiConfigDetected: boolean;
   apiModel: string | null;
 }
@@ -84,6 +90,7 @@ export function buildConfigResponse(config: AppConfig): ConfigResponse {
     claudeRootDir: config.claudeRootDir,
     customSkillDir: config.customSkillDir,
     port: config.port,
+    configured: !!config.customSkillDir,
     apiConfigDetected: !!apiConfig,
     apiModel: apiConfig?.model || null,
   };

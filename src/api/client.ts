@@ -1,4 +1,4 @@
-import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse } from '../types';
+import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse, SearchResult, SearchResponse } from '../types';
 
 const BASE = '/api';
 
@@ -74,3 +74,25 @@ export const batchDisableSkills = (paths: string[]) =>
       body: JSON.stringify({ paths }),
     },
   );
+
+export interface DirEntry {
+  name: string;
+  type: 'dir';
+}
+
+export interface BrowseResult {
+  path: string;
+  parent: string | null;
+  entries: DirEntry[];
+}
+
+export const fetchDirList = (dirPath: string) =>
+  apiFetch<BrowseResult>(`${BASE}/fs/browse?path=${encodeURIComponent(dirPath)}`);
+
+export const fetchSkillSearch = (params: { q?: string; source?: string; enabled?: string }) => {
+  const searchParams = new URLSearchParams();
+  if (params.q) searchParams.set('q', params.q);
+  if (params.source) searchParams.set('source', params.source);
+  if (params.enabled) searchParams.set('enabled', params.enabled);
+  return apiFetch<SearchResponse>(`${BASE}/skills/search?${searchParams.toString()}`);
+};

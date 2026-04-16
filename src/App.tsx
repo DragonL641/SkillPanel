@@ -5,15 +5,19 @@ import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
+import SetupWizard from './components/SetupWizard';
 import { useSkills } from './hooks/useSkills';
 import { usePlugins } from './hooks/usePlugins';
 import { fetchConfig } from './api/client';
+import type { AppConfigResponse } from './types';
 
 export default function App() {
   const [tab, setTab] = useState<'custom' | 'plugin'>('custom');
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
+  const [initialConfig, setInitialConfig] = useState<AppConfigResponse | null>(null);
+  const [configured, setConfigured] = useState<boolean | null>(null);
 
   const {
     tree, summary, loading: skillsLoading, error,
@@ -24,10 +28,14 @@ export default function App() {
 
   const { plugins, loadPlugins } = usePlugins();
 
-  // Fetch API config status on mount
+  // Fetch config on mount, detect first-run state
   useEffect(() => {
     fetchConfig()
-      .then((data) => setApiConfigDetected(data.apiConfigDetected))
+      .then((data) => {
+        setApiConfigDetected(data.apiConfigDetected);
+        setConfigured(data.configured);
+        if (!data.configured) setInitialConfig(data);
+      })
       .catch(() => setApiConfigDetected(false));
   }, []);
 
@@ -45,6 +53,19 @@ export default function App() {
     else await loadPlugins(true);
     await loadSummary();
   };
+
+  // Show setup wizard on first run
+  if (configured === false && initialConfig) {
+    return (
+      <SetupWizard
+        initialConfig={initialConfig}
+        onComplete={() => {
+          setConfigured(true);
+          setInitialConfig(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-surface-secondary">
