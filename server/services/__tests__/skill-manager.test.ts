@@ -25,6 +25,7 @@ function makeConfig(tmpRoot: string): AppConfig {
     port: 3210,
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
+    projects: [],
   };
 }
 

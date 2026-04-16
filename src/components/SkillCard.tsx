@@ -85,7 +85,7 @@ export default function SkillCard({ skill, path, source, onToggle, onDelete }: P
         <div className="flex items-center gap-2 text-xs">
           <span className="text-danger">确定删除「{skill.name}」？</span>
           <button
-            onClick={() => { onDelete(path); setConfirmDelete(false); }}
+            onClick={() => { onDelete?.(path); setConfirmDelete(false); }}
             className="px-2 py-1 text-white bg-danger rounded hover:bg-red-600 transition-colors"
           >
             删除

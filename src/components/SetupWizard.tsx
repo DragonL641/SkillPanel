@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function SetupWizard({ initialConfig, onComplete }: Props) {
-  const [claudeRootDir, setClaudeRootDir] = useState(initialConfig.claudeRootDir);
+  const [claudeRootDir, setClaudeRootDir] = useState(initialConfig.claudeRootDir ?? '');
   const [customSkillDir, setCustomSkillDir] = useState(initialConfig.customSkillDir || '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
