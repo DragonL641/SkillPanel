@@ -39,7 +39,7 @@ export function createApp() {
       cache: { size: cacheSize() },
       directories: {
         claudeRoot: fs.existsSync(config.claudeRootDir),
-        customSkillDir: fs.existsSync(config.customSkillDir),
+        customSkillDirs: config.customSkillDirs.filter(d => fs.existsSync(d)).length,
         claudeSkillsDir: fs.existsSync(config.claudeSkillsDir),
       },
     });

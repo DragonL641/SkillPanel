@@ -10,7 +10,7 @@ router.get('/config', (_req, res) => {
 });
 
 router.put('/config', async (req, res) => {
-  const { claudeRootDir, customSkillDir, port } = req.body;
+  const { claudeRootDir, customSkillDir, customSkillDirs, projects, port } = req.body;
   if (port !== undefined) {
     const p = Number(port);
     if (!Number.isInteger(p) || p < 1024 || p > 65535) {
@@ -25,6 +25,18 @@ router.put('/config', async (req, res) => {
   if (customSkillDir !== undefined && (typeof customSkillDir !== 'string' || !customSkillDir.trim())) {
     res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Custom skill directory must be a non-empty string' } });
     return;
+  }
+  if (customSkillDirs !== undefined) {
+    if (!Array.isArray(customSkillDirs) || customSkillDirs.some((d: any) => typeof d !== 'string' || !d.trim())) {
+      res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'customSkillDirs must be an array of non-empty strings' } });
+      return;
+    }
+  }
+  if (projects !== undefined) {
+    if (!Array.isArray(projects) || projects.some((p: any) => typeof p !== 'object' || !p || typeof p.name !== 'string' || typeof p.path !== 'string')) {
+      res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'projects must be an array of { name: string, path: string }' } });
+      return;
+    }
   }
   const updated = await saveConfig(req.body);
   invalidateByPrefix('config');

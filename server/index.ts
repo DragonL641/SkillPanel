@@ -53,7 +53,7 @@ app.get('/api/health', (_req, res) => {
     cache: { size: cacheSize() },
     directories: {
       claudeRoot: fs.existsSync(config.claudeRootDir),
-      customSkillDir: fs.existsSync(config.customSkillDir),
+      customSkillDirs: config.customSkillDirs.filter(d => fs.existsSync(d)).length,
       claudeSkillsDir: fs.existsSync(config.claudeSkillsDir),
     },
   });
@@ -78,7 +78,7 @@ const abortController = new AbortController();
 const server = app.listen(config.port, () => {
   logger.info('server started', { port: config.port });
 
-  if (!config.customSkillDir) {
+  if (config.customSkillDirs.length === 0) {
     logger.info('first run detected — please complete setup via the web UI');
   } else if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
     // Auto-analyze all skills in background (non-blocking)

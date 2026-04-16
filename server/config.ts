@@ -9,10 +9,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const CONFIG_FILE = path.join(PROJECT_ROOT, 'skillpanel.config.json');
 
+export interface ProjectConfig {
+  name: string;
+  path: string;
+}
+
 export interface AppConfig {
   claudeRootDir: string;
-  customSkillDir: string;
+  customSkillDir: string;       // kept for backward compat, derived from customSkillDirs[0]
+  customSkillDirs: string[];    // NEW
   port: number;
+  projects: ProjectConfig[];    // NEW
   // Auto-derived from claudeRootDir
   claudeSkillsDir: string;
   claudePluginsDir: string;
@@ -38,10 +45,23 @@ function buildConfig(): AppConfig {
     raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
   }
   const claudeRootDir = raw.claudeRootDir || DEFAULT_CONFIG.claudeRootDir;
+
+  // Migrate customSkillDir -> customSkillDirs (backward compat)
+  let customSkillDirs: string[];
+  if (raw.customSkillDirs && Array.isArray(raw.customSkillDirs) && raw.customSkillDirs.length > 0) {
+    customSkillDirs = raw.customSkillDirs;
+  } else if (raw.customSkillDir) {
+    customSkillDirs = [raw.customSkillDir];
+  } else {
+    customSkillDirs = [];
+  }
+
   return {
     claudeRootDir,
-    customSkillDir: raw.customSkillDir || DEFAULT_CONFIG.customSkillDir,
+    customSkillDir: customSkillDirs[0] || '',
+    customSkillDirs,
     port: raw.port || DEFAULT_CONFIG.port,
+    projects: Array.isArray(raw.projects) ? raw.projects : [],
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
   };
@@ -53,7 +73,7 @@ export function loadConfig(): AppConfig {
 
 export function isConfigured(): boolean {
   const config = loadConfig();
-  return !!config.customSkillDir && fs.existsSync(config.customSkillDir);
+  return config.customSkillDirs.length > 0 && fs.existsSync(config.customSkillDirs[0]);
 }
 
 export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
@@ -62,7 +82,9 @@ export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
     const merged = {
       claudeRootDir: config.claudeRootDir ?? current.claudeRootDir,
       customSkillDir: config.customSkillDir ?? current.customSkillDir,
+      customSkillDirs: config.customSkillDirs ?? current.customSkillDirs,
       port: config.port ?? current.port,
+      projects: config.projects ?? current.projects,
     };
     // Only persist user-configurable fields, not derived ones
     // Write to temp file then rename for atomic replacement
@@ -78,7 +100,9 @@ export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
 export interface ConfigResponse {
   claudeRootDir: string;
   customSkillDir: string;
+  customSkillDirs: string[];
   port: number;
+  projects: ProjectConfig[];
   configured: boolean;
   apiConfigDetected: boolean;
   apiModel: string | null;
@@ -89,8 +113,10 @@ export function buildConfigResponse(config: AppConfig): ConfigResponse {
   return {
     claudeRootDir: config.claudeRootDir,
     customSkillDir: config.customSkillDir,
+    customSkillDirs: config.customSkillDirs,
     port: config.port,
-    configured: !!config.customSkillDir,
+    projects: config.projects,
+    configured: config.customSkillDirs.length > 0,
     apiConfigDetected: !!apiConfig,
     apiModel: apiConfig?.model || null,
   };

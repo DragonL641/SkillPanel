@@ -32,8 +32,9 @@ function setupConfig(tmpRoot: string) {
     configFile,
     JSON.stringify({
       claudeRootDir,
-      customSkillDir,
+      customSkillDirs: [customSkillDir],
       port: 3210,
+      projects: [],
     }),
     'utf-8',
   );
@@ -110,7 +111,9 @@ describe('API Routes — Integration Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.claudeRootDir).toBe(claudeRootDir);
       expect(res.body.customSkillDir).toBe(customSkillDir);
+      expect(res.body.customSkillDirs).toEqual([customSkillDir]);
       expect(res.body.port).toBe(3210);
+      expect(res.body.projects).toEqual([]);
       expect(typeof res.body.apiConfigDetected).toBe('boolean');
     });
   });
@@ -158,6 +161,40 @@ describe('API Routes — Integration Tests', () => {
       const res = await request(app)
         .put('/api/config')
         .send({ customSkillDir: '  ' });
+      expect(res.status).toBe(400);
+    });
+
+    it('accepts customSkillDirs array', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .put('/api/config')
+        .send({ customSkillDirs: [customSkillDir] });
+      expect(res.status).toBe(200);
+      expect(res.body.customSkillDirs).toEqual([customSkillDir]);
+    });
+
+    it('rejects customSkillDirs with empty strings', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .put('/api/config')
+        .send({ customSkillDirs: ['valid-path', ''] });
+      expect(res.status).toBe(400);
+    });
+
+    it('accepts projects array', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .put('/api/config')
+        .send({ projects: [{ name: 'my-project', path: '/tmp/my-project' }] });
+      expect(res.status).toBe(200);
+      expect(res.body.projects).toEqual([{ name: 'my-project', path: '/tmp/my-project' }]);
+    });
+
+    it('rejects invalid projects array', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .put('/api/config')
+        .send({ projects: [{ name: 'missing-path' }] });
       expect(res.status).toBe(400);
     });
   });
