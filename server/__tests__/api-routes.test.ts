@@ -47,6 +47,14 @@ function cleanupConfig(configFile: string) {
   invalidateByPrefix('config');
 }
 
+/** Create a project directory with .claude subdirectory */
+function createProjectDir(tmpRoot: string, name: string): string {
+  const projectDir = path.join(tmpRoot, name);
+  fs.mkdirSync(projectDir, { recursive: true });
+  fs.mkdirSync(path.join(projectDir, '.claude'), { recursive: true });
+  return projectDir;
+}
+
 /** Create a skill directory with a SKILL.md inside customSkillDir */
 function createSkill(customSkillDir: string, name: string, description = 'A test skill') {
   const skillDir = path.join(customSkillDir, name);
@@ -500,6 +508,134 @@ describe('API Routes — Integration Tests', () => {
       expect(res.body.summary).toBe('Test analysis summary');
       expect(res.body.hash).toBe('abc123');
       expect(res.body.model).toBe('test-model');
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Project API
+  // -----------------------------------------------------------------------
+  describe('Project API', () => {
+    it('POST /api/projects — registers a project', async () => {
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      const res = await request(app)
+        .post('/api/projects')
+        .send({ path: projectDir });
+      expect(res.status).toBe(200);
+      expect(res.body.ok).toBe(true);
+      expect(res.body.project.name).toBe('test-project');
+      expect(res.body.project.path).toBe(path.resolve(projectDir));
+    });
+
+    it('POST /api/projects — rejects invalid path', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .post('/api/projects')
+        .send({ path: '' });
+      expect(res.status).toBe(400);
+    });
+
+    it('POST /api/projects — rejects non-existent path', async () => {
+      const app = createApp();
+      const res = await request(app)
+        .post('/api/projects')
+        .send({ path: '/nonexistent/path' });
+      expect(res.status).toBe(400);
+    });
+
+    it('POST /api/projects — rejects duplicate name', async () => {
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      const res = await request(app)
+        .post('/api/projects')
+        .send({ path: projectDir });
+      expect(res.status).toBe(409);
+    });
+
+    it('GET /api/projects — lists registered projects', async () => {
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      const res = await request(app).get('/api/projects');
+      expect(res.status).toBe(200);
+      expect(res.body.projects).toHaveLength(1);
+      expect(res.body.projects[0].name).toBe('test-project');
+      expect(res.body.projects[0].path).toBe(path.resolve(projectDir));
+      expect(typeof res.body.projects[0].globalEnabledCount).toBe('number');
+      expect(typeof res.body.projects[0].projectEnabledCount).toBe('number');
+    });
+
+    it('DELETE /api/projects/:name — unregisters a project', async () => {
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      const delRes = await request(app).delete('/api/projects/test-project');
+      expect(delRes.status).toBe(200);
+      // Verify project is gone
+      const listRes = await request(app).get('/api/projects');
+      expect(listRes.body.projects).toHaveLength(0);
+    });
+
+    it('DELETE /api/projects/:name — returns 404 for unknown', async () => {
+      const app = createApp();
+      const res = await request(app).delete('/api/projects/unknown');
+      expect(res.status).toBe(404);
+    });
+
+    it('POST /api/projects/:name/skills/enable — enables skill for project', async () => {
+      createSkill(customSkillDir, 'my-skill');
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      const res = await request(app)
+        .post('/api/projects/test-project/skills/enable/my-skill');
+      expect(res.status).toBe(200);
+      expect(res.body.ok).toBe(true);
+      // Verify symlink exists in project's .claude/skills/
+      const symlinkPath = path.join(projectDir, '.claude', 'skills', 'my-skill');
+      expect(fs.lstatSync(symlinkPath).isSymbolicLink()).toBe(true);
+    });
+
+    it('POST /api/projects/:name/skills/disable — disables skill for project', async () => {
+      createSkill(customSkillDir, 'my-skill');
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      // Enable first
+      await request(app).post('/api/projects/test-project/skills/enable/my-skill');
+      // Then disable
+      const res = await request(app)
+        .post('/api/projects/test-project/skills/disable/my-skill');
+      expect(res.status).toBe(200);
+      expect(res.body.ok).toBe(true);
+      // Verify symlink removed
+      const symlinkPath = path.join(projectDir, '.claude', 'skills', 'my-skill');
+      expect(fs.existsSync(symlinkPath)).toBe(false);
+    });
+
+    it('GET /api/projects/:name/skills — returns global and project skills', async () => {
+      createSkill(customSkillDir, 'global-skill');
+      createSkill(customSkillDir, 'project-skill');
+      const projectDir = createProjectDir(tmpRoot, 'test-project');
+      const app = createApp();
+      await request(app).post('/api/projects').send({ path: projectDir });
+      // Enable globally
+      await request(app).post('/api/skills/custom/enable/global-skill');
+      // Enable for project
+      await request(app).post('/api/projects/test-project/skills/enable/project-skill');
+      const res = await request(app).get('/api/projects/test-project/skills');
+      expect(res.status).toBe(200);
+      expect(res.body.globalSkills).toHaveLength(1);
+      expect(res.body.globalSkills[0].name).toBe('global-skill');
+      expect(res.body.projectSkills).toHaveLength(1);
+      expect(res.body.projectSkills[0].name).toBe('project-skill');
+    });
+
+    it('GET /api/projects/:name/skills — returns 404 for unknown project', async () => {
+      const app = createApp();
+      const res = await request(app).get('/api/projects/unknown/skills');
+      expect(res.status).toBe(404);
     });
   });
 
