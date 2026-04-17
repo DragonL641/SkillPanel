@@ -1,4 +1,5 @@
-import { Globe, Folder } from 'lucide-react';
+import { useState } from 'react';
+import { Globe, Folder, Trash2 } from 'lucide-react';
 import type { ProjectSkillsResponse } from '../types';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function ProjectSkillView({ projectName, skills, onToggle, onAddClick }: Props) {
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   return (
     <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-5">
       {/* Header */}
@@ -78,23 +80,36 @@ export default function ProjectSkillView({ projectName, skills, onToggle, onAddC
                 <div className="flex items-center gap-2">
                   <span className="text-[13px] font-semibold text-fg-primary">{skill.name}</span>
                   <div className="flex-1" />
-                  <button
-                    onClick={() => onToggle(skill.path, false)}
-                    className="text-fg-muted hover:text-danger transition-colors"
-                    aria-label={`删除项目技能 ${skill.name}`}
-                  >
-                    <span className="text-xs">×</span>
-                  </button>
+                  {confirmDelete === skill.path ? null : (
+                    <button
+                      onClick={() => setConfirmDelete(skill.path)}
+                      className="p-1.5 text-danger rounded-[var(--radius-md)] hover:bg-danger-light transition-colors shrink-0"
+                      aria-label={`删除项目技能 ${skill.name}`}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </div>
                 {skill.description && (
                   <p className="text-[11px] text-fg-secondary leading-relaxed line-clamp-2">{skill.description}</p>
                 )}
-                <div className="flex items-center gap-1.5">
-                  <div className="relative w-9 h-5 rounded-full bg-accent transition-colors">
-                    <span className="absolute top-0.5 left-[18px] w-4 h-4 rounded-full bg-fg-inverse transition-transform" />
+                {confirmDelete === skill.path && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-danger">确定删除「{skill.name}」？</span>
+                    <button
+                      onClick={() => { onToggle(skill.path, false); setConfirmDelete(null); }}
+                      className="px-2 py-1 text-white bg-danger rounded hover:bg-red-600 transition-colors"
+                    >
+                      删除
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(null)}
+                      className="px-2 py-1 text-fg-secondary border border-border rounded hover:bg-surface-hover transition-colors"
+                    >
+                      取消
+                    </button>
                   </div>
-                  <span className="text-[11px] text-success font-medium">已启用</span>
-                </div>
+                )}
               </div>
             ))}
           </div>

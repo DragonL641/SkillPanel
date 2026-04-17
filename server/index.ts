@@ -80,18 +80,17 @@ const abortController = new AbortController();
 const server = app.listen(config.port, () => {
   logger.info('server started', { port: config.port });
 
-  if (config.customSkillDirs.length === 0) {
-    logger.info('first run detected — please complete setup via the web UI');
-  } else if (process.env.SKIP_AUTO_ANALYSIS !== '1') {
+  if (config.customSkillDirs.length > 0 && process.env.SKIP_AUTO_ANALYSIS !== '1') {
     // Auto-analyze all skills in background (non-blocking)
     analyzeAllSkills(config, abortController.signal).catch(err =>
       logger.error('auto-analysis error', { error: err instanceof Error ? err.message : String(err) }),
     );
-  } else {
+  } else if (process.env.SKIP_AUTO_ANALYSIS === '1') {
     logger.info('auto-analysis skipped', { reason: 'SKIP_AUTO_ANALYSIS=1' });
   }
 });
 
+viteExpress.config({ ignorePaths: /^\/api/ });
 viteExpress.bind(app, server);
 
 // Graceful shutdown: abort background analysis + close server

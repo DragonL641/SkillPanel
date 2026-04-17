@@ -12,6 +12,10 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     } catch { /* response body not JSON, use default message */ }
     throw new Error(message);
   }
+  const ct = res.headers.get('content-type') || '';
+  if (!ct.includes('application/json')) {
+    throw new Error(`Expected JSON but got ${ct || 'unknown content type'} from ${url}`);
+  }
   return (await res.json()) as T;
 }
 
@@ -88,6 +92,13 @@ export interface BrowseResult {
 
 export const fetchDirList = (dirPath: string) =>
   apiFetch<BrowseResult>(`${BASE}/fs/browse?path=${encodeURIComponent(dirPath)}`);
+
+export const pickFolder = (title?: string) =>
+  apiFetch<{ path: string | null }>(`${BASE}/fs/pick`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  });
 
 export const fetchSkillSearch = (params: { q?: string; source?: string; enabled?: string }) => {
   const searchParams = new URLSearchParams();

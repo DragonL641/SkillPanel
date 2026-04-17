@@ -5,7 +5,6 @@ import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
-import SetupWizard from './components/SetupWizard';
 import ProjectSidebar from './components/ProjectSidebar';
 import ProjectSkillView from './components/ProjectSkillView';
 import AddSkillModal from './components/AddSkillModal';
@@ -13,15 +12,12 @@ import { useSkills } from './hooks/useSkills';
 import { usePlugins } from './hooks/usePlugins';
 import { useProjects } from './hooks/useProjects';
 import { fetchConfig } from './api/client';
-import type { AppConfigResponse } from './types';
 
 export default function App() {
   const [tab, setTab] = useState<TabKey>('global');
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
-  const [initialConfig, setInitialConfig] = useState<AppConfigResponse | null>(null);
-  const [configured, setConfigured] = useState<boolean | null>(null);
   const [addSkillModalOpen, setAddSkillModalOpen] = useState(false);
 
   const {
@@ -39,14 +35,10 @@ export default function App() {
     addProject, removeProject, toggleProjectSkill,
   } = useProjects();
 
-  // Fetch config on mount, detect first-run state
+  // Fetch config on mount
   useEffect(() => {
     fetchConfig()
-      .then((data) => {
-        setApiConfigDetected(data.apiConfigDetected);
-        setConfigured(data.configured);
-        if (!data.configured) setInitialConfig(data);
-      })
+      .then((data) => setApiConfigDetected(data.apiConfigDetected))
       .catch(() => setApiConfigDetected(false));
   }, []);
 
@@ -81,19 +73,6 @@ export default function App() {
     await loadSummary();
   };
 
-  // Show setup wizard on first run
-  if (configured === false && initialConfig) {
-    return (
-      <SetupWizard
-        initialConfig={initialConfig}
-        onComplete={() => {
-          setConfigured(true);
-          setInitialConfig(null);
-        }}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen bg-surface-secondary">
       {/* Header */}
@@ -109,7 +88,8 @@ export default function App() {
 
         <div className="flex-1" />
 
-        {/* Search */}
+        {/* Search — only shown on global/plugin tabs where it filters content */}
+        {tab !== 'project' && (
         <div className="flex items-center gap-2 px-3.5 py-2.5 bg-surface-primary border border-border rounded-[var(--radius-md)] w-full sm:w-[300px]">
           <Search size={16} className="text-fg-muted shrink-0" />
           <input
@@ -121,6 +101,7 @@ export default function App() {
             className="text-[13px] bg-transparent focus:outline-none w-full text-fg-primary placeholder:text-fg-muted"
           />
         </div>
+        )}
 
         {/* Refresh */}
         <button
@@ -152,8 +133,8 @@ export default function App() {
             </div>
           )}
 
-          {/* Stats */}
-          <StatsRow data={summary} />
+          {/* Stats — only relevant on global tab */}
+          {tab === 'global' && <StatsRow data={summary} />}
 
           {/* Loading */}
           {skillsLoading && (
@@ -203,6 +184,10 @@ export default function App() {
         <AddSkillModal
           open={addSkillModalOpen}
           projectName={selectedProject}
+          enabledPaths={new Set([
+            ...(projectSkills?.globalSkills ?? []).map(s => s.path),
+            ...(projectSkills?.projectSkills ?? []).map(s => s.path),
+          ])}
           onClose={() => setAddSkillModalOpen(false)}
           onAdded={() => {
             loadProjectSkills(selectedProject);

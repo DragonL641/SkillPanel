@@ -3,10 +3,17 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { ValidationError } from '../errors.js';
+import { pickFolder } from '../services/native-dialog.js';
 
 const router = Router();
 
 const HOME = os.homedir();
+
+router.post('/fs/pick', async (req, res) => {
+  const { title } = req.body as { title?: string };
+  const selected = await pickFolder(title);
+  res.json({ path: selected });
+});
 
 router.get('/fs/browse', (req, res) => {
   const rawPath = req.query.path as string || HOME;

@@ -71,11 +71,6 @@ export function loadConfig(): AppConfig {
   return getOrCompute('config', buildConfig);
 }
 
-export function isConfigured(): boolean {
-  const config = loadConfig();
-  return config.customSkillDirs.length > 0 && fs.existsSync(config.customSkillDirs[0]);
-}
-
 export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
   saveQueue = saveQueue.then(() => {
     const current = loadConfig();
@@ -103,7 +98,6 @@ export interface ConfigResponse {
   customSkillDirs: string[];
   port: number;
   projects: ProjectConfig[];
-  configured: boolean;
   apiConfigDetected: boolean;
   apiModel: string | null;
 }
@@ -116,7 +110,6 @@ export function buildConfigResponse(config: AppConfig): ConfigResponse {
     customSkillDirs: config.customSkillDirs,
     port: config.port,
     projects: config.projects,
-    configured: config.customSkillDirs.length > 0,
     apiConfigDetected: !!apiConfig,
     apiModel: apiConfig?.model || null,
   };

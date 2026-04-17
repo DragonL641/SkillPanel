@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Folder, ChevronRight, ArrowUp, Check } from 'lucide-react';
-import { fetchDirList, type BrowseResult } from '../api/client';
+import { fetchDirList, pickFolder, type BrowseResult } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
 
 interface Props {
@@ -30,7 +30,18 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
     }
   };
 
-  const openBrowser = () => {
+  const handleBrowse = async () => {
+    try {
+      const result = await pickFolder(label);
+      if (result.path) {
+        onChange(result.path);
+      }
+      // User cancelled or selected — either way, done
+      return;
+    } catch {
+      // Native dialog unavailable (headless, SSH, etc.) — fallback to web browser
+    }
+    // Fallback: open web-based directory browser
     setBrowsing(true);
     loadDir(value || '~');
   };
@@ -60,7 +71,7 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
             {value || '未选择'}
           </div>
           <button
-            onClick={openBrowser}
+            onClick={handleBrowse}
             className="px-3 py-2.5 text-[13px] font-medium text-fg-primary bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors shrink-0"
           >
             浏览

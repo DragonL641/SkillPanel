@@ -43,7 +43,7 @@ function TreeNodeItem({
   onDelete?: (path: string) => void;
   filter?: string;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   if (filter && !nodeMatches(node, filter)) {
     return null;
@@ -105,6 +105,7 @@ function TreeNodeItem({
       </div>
 
       {/* Skills Grid */}
+      {expanded && (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {skills.map((child) => (
           <TreeNodeItem
@@ -117,6 +118,7 @@ function TreeNodeItem({
           />
         ))}
       </div>
+      )}
 
       {/* Nested dirs */}
       {expanded && dirs.map((child) => (

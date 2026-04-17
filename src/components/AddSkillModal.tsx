@@ -1,23 +1,28 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { fetchCustomSkills, enableProjectSkill } from '../api/client';
+import { fetchCustomSkills, batchEnableProjectSkills } from '../api/client';
 import type { TreeNode } from '../types';
 
 interface Props {
   open: boolean;
   projectName: string;
+  enabledPaths: Set<string>;
   onClose: () => void;
   onAdded: () => void;
 }
 
-export default function AddSkillModal({ open, projectName, onClose, onAdded }: Props) {
+export default function AddSkillModal({ open, projectName, enabledPaths, onClose, onAdded }: Props) {
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(false);
-  const [adding, setAdding] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setLoading(true);
+      setSelected(new Set());
+      setError(null);
       fetchCustomSkills()
         .then(data => setTree(data.tree))
         .catch(console.error)
@@ -27,24 +32,12 @@ export default function AddSkillModal({ open, projectName, onClose, onAdded }: P
 
   if (!open) return null;
 
-  const handleAdd = async (skillPath: string) => {
-    setAdding(skillPath);
-    try {
-      await enableProjectSkill(projectName, skillPath);
-      onAdded();
-    } catch (err) {
-      console.error('Failed to add skill:', err);
-    } finally {
-      setAdding(null);
-    }
-  };
-
-  // Flatten tree to get all skills
+  // Flatten tree, filter out already-enabled skills
   const allSkills: Array<{ name: string; path: string; description: string; dirName: string }> = [];
   for (const dir of tree) {
     if (dir.children) {
       for (const child of dir.children) {
-        if (child.type === 'skill' && child.skill) {
+        if (child.type === 'skill' && child.skill && !enabledPaths.has(child.path)) {
           allSkills.push({
             name: child.skill.name,
             path: child.path,
@@ -55,6 +48,34 @@ export default function AddSkillModal({ open, projectName, onClose, onAdded }: P
       }
     }
   }
+
+  const toggleSelect = (path: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
+      return next;
+    });
+  };
+
+  const handleConfirm = async () => {
+    if (selected.size === 0) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const result = await batchEnableProjectSkills(projectName, [...selected]);
+      if (result.failed && result.failed.length > 0) {
+        setError(`${result.failed.length} 个技能添加失败: ${result.failed.map(f => f.path).join(', ')}`);
+      } else {
+        onAdded();
+        onClose();
+      }
+    } catch (err) {
+      setError('添加失败，请重试');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
@@ -71,17 +92,31 @@ export default function AddSkillModal({ open, projectName, onClose, onAdded }: P
           </button>
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="mx-6 mt-3 px-3 py-2 bg-danger-light text-danger text-xs rounded-[var(--radius-md)] flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="text-danger font-bold ml-2">×</button>
+          </div>
+        )}
+
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3">
           {loading && <div className="text-fg-muted text-sm text-center py-4">加载中...</div>}
           {!loading && allSkills.length === 0 && (
-            <div className="text-fg-muted text-sm text-center py-4">暂无可添加的技能</div>
+            <div className="text-fg-muted text-sm text-center py-4">所有技能已添加</div>
           )}
           {!loading && allSkills.map(skill => (
-            <div
+            <label
               key={skill.path}
-              className="flex items-center gap-3 p-3 bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors"
+              className="flex items-center gap-3 p-3 bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors cursor-pointer"
             >
+              <input
+                type="checkbox"
+                checked={selected.has(skill.path)}
+                onChange={() => toggleSelect(skill.path)}
+                className="w-4 h-4 shrink-0 accent-[var(--color-accent)]"
+              />
               <div className="flex-1 flex flex-col gap-1">
                 <span className="text-[13px] font-medium text-fg-primary">{skill.name}</span>
                 {skill.description && (
@@ -89,16 +124,25 @@ export default function AddSkillModal({ open, projectName, onClose, onAdded }: P
                 )}
                 <span className="text-[10px] text-fg-muted">{skill.dirName}</span>
               </div>
-              <button
-                onClick={() => handleAdd(skill.path)}
-                disabled={adding === skill.path}
-                className="px-2.5 py-1 text-[11px] font-medium text-accent border border-border rounded-[var(--radius-md)] hover:bg-accent-light disabled:opacity-50 transition-colors shrink-0"
-              >
-                {adding === skill.path ? '添加中...' : '添加'}
-              </button>
-            </div>
+            </label>
           ))}
         </div>
+
+        {/* Footer */}
+        {!loading && allSkills.length > 0 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-border">
+            <span className="text-xs text-fg-muted">
+              {selected.size > 0 ? `已选 ${selected.size} 项` : '请选择要添加的技能'}
+            </span>
+            <button
+              onClick={handleConfirm}
+              disabled={selected.size === 0 || submitting}
+              className="px-4 py-1.5 bg-accent text-fg-inverse rounded-[var(--radius-md)] text-xs font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {submitting ? '添加中...' : '确认添加'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

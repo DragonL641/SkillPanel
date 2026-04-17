@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Folder, FolderOpen, Plus, X } from 'lucide-react';
 import DirPicker from './DirPicker';
+import { pickFolder } from '../api/client';
 import type { ProjectInfo } from '../types';
 
 interface Props {
@@ -15,6 +16,24 @@ interface Props {
 export default function ProjectSidebar({ projects, selected, onSelect, onAdd, onRemove, loading }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [adding, setAdding] = useState(false);
+
+  const handleAdd = async () => {
+    try {
+      const result = await pickFolder('选择项目目录');
+      if (result.path) {
+        setAdding(true);
+        try {
+          await onAdd(result.path);
+        } finally {
+          setAdding(false);
+        }
+      }
+      return;
+    } catch {
+      // 原生对话框不可用，降级到 web 浏览器
+    }
+    setPickerOpen(true);
+  };
 
   const handlePick = async (path: string) => {
     if (!path) return;
@@ -33,8 +52,9 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
       <div className="flex items-center justify-between px-4 py-5">
         <span className="text-sm font-semibold text-fg-primary">项目列表</span>
         <button
-          onClick={() => setPickerOpen(v => !v)}
-          className="flex items-center gap-1 px-2 py-1 rounded-[var(--radius-md)] border border-border hover:bg-surface-hover transition-colors"
+          onClick={handleAdd}
+          disabled={adding}
+          className="flex items-center gap-1 px-2 py-1 rounded-[var(--radius-md)] border border-border hover:bg-surface-hover transition-colors disabled:opacity-50"
           aria-label="添加项目"
         >
           <Plus size={14} className="text-fg-secondary" />
