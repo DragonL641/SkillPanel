@@ -1,5 +1,6 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { fetchAnalysis, triggerAnalysis } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
 
@@ -23,6 +24,7 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
 
   const handleAnalyze = async () => {
     setLoading(true);
@@ -37,7 +39,7 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
       setSummary(data.summary);
       setAnalyzedAt(data.analyzedAt);
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '分析失败');
+      setError(getErrorMessage(err) || t('analysis.failed'));
     } finally {
       setLoading(false);
       onLoadingChange?.(false);
@@ -79,7 +81,7 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
         className="flex items-center gap-1 text-[11px] text-fg-muted hover:text-accent transition-colors mt-1"
       >
         <ChevronRight size={12} className="transition-transform" />
-        原理分析
+        {t('analysis.expand')}
       </button>
     );
   }
@@ -91,12 +93,12 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
         className="flex items-center gap-1 text-[11px] text-fg-muted hover:text-accent transition-colors mb-2"
       >
         <ChevronRight size={12} className="rotate-90 transition-transform" />
-        收起分析
+        {t('analysis.collapse')}
       </button>
 
       {loading && (
         <div className="text-fg-muted text-xs py-2">
-          正在分析，请稍候...
+          {t('analysis.loading')}
         </div>
       )}
 
@@ -107,14 +109,14 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
           </p>
           {analyzedAt && (
             <p className="text-fg-muted text-[10px] mt-1 font-mono">
-              分析时间: {new Date(analyzedAt).toLocaleString()}
+              {t('analysis.timestamp', { date: new Date(analyzedAt).toLocaleString(i18n.language) })}
             </p>
           )}
           <button
             onClick={handleAnalyze}
             className="text-[11px] text-accent hover:text-accent-hover transition-colors mt-2"
           >
-            重新分析
+            {t('analysis.reanalyze')}
           </button>
         </div>
       )}
@@ -125,12 +127,12 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
 
       {!loading && !summary && !error && (
         <div className="flex items-center gap-2 py-1">
-          <span className="text-fg-muted text-xs">未分析</span>
+          <span className="text-fg-muted text-xs">{t('analysis.notAnalyzed')}</span>
           <button
             onClick={handleAnalyze}
             className="text-xs text-accent hover:text-accent-hover transition-colors"
           >
-            开始分析
+            {t('analysis.startAnalysis')}
           </button>
         </div>
       )}
