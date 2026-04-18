@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, RefreshCw, Sparkles } from 'lucide-react';
 import { checkPluginUpdate } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
@@ -13,15 +14,16 @@ interface Props {
 
 type UpdateStatus = { hasUpdate: boolean; behindBy: number } | { error: string } | null;
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale: string): string {
   try {
-    return new Date(iso).toLocaleDateString('zh-CN');
+    return new Date(iso).toLocaleDateString(locale);
   } catch {
     return iso;
   }
 }
 
 export default function PluginPanel({ plugins, filter, apiConfigDetected }: Props) {
+  const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const toggleExpand = (pluginName: string) => {
@@ -49,7 +51,7 @@ export default function PluginPanel({ plugins, filter, apiConfigDetected }: Prop
   if (filteredPlugins.length === 0) {
     return (
       <div className="flex items-center justify-center py-12 text-fg-muted text-sm">
-        {normalizedFilter ? '没有匹配的插件' : '暂无已安装的插件'}
+        {normalizedFilter ? t('plugin.noMatch') : t('plugin.noPlugins')}
       </div>
     );
   }
@@ -64,6 +66,7 @@ export default function PluginPanel({ plugins, filter, apiConfigDetected }: Prop
 }
 
 function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: PluginInfo; isOpen: boolean; onToggle: () => void; apiConfigDetected?: boolean }) {
+  const { t, i18n } = useTranslation();
   const [checking, setChecking] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>(null);
   const [isGitRepo, setIsGitRepo] = useState<boolean | null>(null);
@@ -82,14 +85,14 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
         setUpdateStatus({ hasUpdate: result.hasUpdate, behindBy: result.behindBy });
       }
     } catch (err: unknown) {
-      setUpdateStatus({ error: getErrorMessage(err) || '检查失败' });
+      setUpdateStatus({ error: getErrorMessage(err) || t('plugin.checkFailed') });
     } finally {
       setChecking(false);
     }
   };
 
   const versionLabel = plugin.version !== 'unknown' ? `v${plugin.version}` : '';
-  const dateLabel = plugin.lastUpdated ? formatDate(plugin.lastUpdated) : '';
+  const dateLabel = plugin.lastUpdated ? formatDate(plugin.lastUpdated, i18n.language) : '';
 
   return (
     <div className="bg-surface-primary rounded-[var(--radius-lg)] border border-border overflow-hidden">
@@ -113,10 +116,10 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
           <span className="font-mono text-[10px] text-fg-muted">{dateLabel}</span>
         )}
         {updateStatus && !('error' in updateStatus) && !updateStatus.hasUpdate && (
-          <span className="text-xs text-success font-medium">已是最新</span>
+          <span className="text-xs text-success font-medium">{t('plugin.upToDate')}</span>
         )}
         {updateStatus && !('error' in updateStatus) && updateStatus.hasUpdate && (
-          <span className="text-xs text-warning">落后 {updateStatus.behindBy} 个 commit</span>
+          <span className="text-xs text-warning">{t('plugin.behind', { count: updateStatus.behindBy })}</span>
         )}
         {updateStatus && 'error' in updateStatus && (
           <span className="text-xs text-danger">{updateStatus.error}</span>
@@ -127,7 +130,7 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
             className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-fg-secondary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors"
           >
             <RefreshCw size={12} className={checking ? 'animate-spin' : ''} />
-            {checking ? '检查中...' : '检查更新'}
+            {checking ? t('plugin.checking') : t('plugin.checkUpdate')}
           </span>
         )}
       </button>
@@ -145,6 +148,7 @@ function PluginCard({ plugin, isOpen, onToggle, apiConfigDetected }: { plugin: P
 }
 
 function PluginSkillRow({ skill, pluginName, apiConfigDetected }: { skill: PluginSkill; pluginName: string; apiConfigDetected?: boolean }) {
+  const { t } = useTranslation();
   const [analyzing, setAnalyzing] = useState(false);
   const analysisRef = useRef<AnalysisPanelHandle>(null);
 
@@ -160,7 +164,7 @@ function PluginSkillRow({ skill, pluginName, apiConfigDetected }: { skill: Plugi
             className={`flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light cursor-pointer'}`}
           >
             <Sparkles size={11} className={analyzing ? 'animate-pulse' : ''} />
-            {analyzing ? '分析中...' : '分析'}
+            {analyzing ? t('skill.analyzing') : t('skill.analyze')}
           </button>
         )}
       </div>
