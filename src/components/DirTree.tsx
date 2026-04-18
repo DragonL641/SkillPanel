@@ -138,6 +138,8 @@ function TreeNodeItem({
 }
 
 export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filter }: Props) {
+  const { t } = useTranslation();
+
   if (!nodes.length) {
     return (
       <div className="text-fg-muted text-sm py-8 text-center">
