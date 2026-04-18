@@ -8,6 +8,7 @@ import ConfigModal from './components/ConfigModal';
 import ProjectSidebar from './components/ProjectSidebar';
 import ProjectSkillView from './components/ProjectSkillView';
 import AddSkillModal from './components/AddSkillModal';
+import LangSwitch from './components/LangSwitch';
 import { useSkills } from './hooks/useSkills';
 import { usePlugins } from './hooks/usePlugins';
 import { useProjects } from './hooks/useProjects';
@@ -111,6 +112,9 @@ export default function App() {
         >
           <RefreshCw size={18} />
         </button>
+
+        {/* Language */}
+        <LangSwitch />
 
         {/* Config */}
         <button
