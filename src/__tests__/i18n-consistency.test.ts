@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import zhCN from '../../public/locales/zh-CN/translation.json';
-import en from '../../public/locales/en/translation.json';
+import zhCN from '../locales/zh-CN.json';
+import en from '../locales/en.json';
 
 function collectKeys(obj: Record<string, unknown>, prefix = ''): string[] {
   const keys: string[] = [];
