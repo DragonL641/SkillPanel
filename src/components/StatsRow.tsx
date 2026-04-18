@@ -1,29 +1,25 @@
+import { useTranslation } from 'react-i18next';
 import type { Summary } from '../types';
 
 interface Props {
   data: Summary | null;
 }
 
-interface StatItem {
-  label: string;
-  value: string;
-  sub: string;
-  accent?: string;
-}
-
 export default function StatsRow({ data }: Props) {
-  const stats: StatItem[] = data
+  const { t } = useTranslation();
+
+  const stats = data
     ? [
-        { label: '自定义技能', value: String(data.customTotal), sub: `共 ${data.customTotal} 个自定义技能` },
-        { label: '已启用', value: String(data.customEnabled), sub: `${data.customTotal ? Math.round((data.customEnabled / data.customTotal) * 100) : 0}% 启用率`, accent: 'text-success' },
-        { label: '插件技能', value: String(data.pluginTotal), sub: '来自已安装插件' },
-        { label: '总计', value: String(data.grandTotal), sub: '所有技能总数' },
+        { label: t('stats.customSkills'), value: String(data.customTotal), sub: t('stats.customCount', { count: data.customTotal }) },
+        { label: t('stats.enabled'), value: String(data.customEnabled), sub: t('stats.enabledRate', { rate: data.customTotal ? Math.round((data.customEnabled / data.customTotal) * 100) : 0 }), accent: 'text-success' },
+        { label: t('stats.pluginSkills'), value: String(data.pluginTotal), sub: t('stats.fromPlugins') },
+        { label: t('stats.total'), value: String(data.grandTotal), sub: t('stats.totalDesc') },
       ]
     : [
-        { label: '自定义技能', value: '-', sub: '' },
-        { label: '已启用', value: '-', sub: '' },
-        { label: '插件技能', value: '-', sub: '' },
-        { label: '总计', value: '-', sub: '' },
+        { label: t('stats.customSkills'), value: '-', sub: '' },
+        { label: t('stats.enabled'), value: '-', sub: '' },
+        { label: t('stats.pluginSkills'), value: '-', sub: '' },
+        { label: t('stats.total'), value: '-', sub: '' },
       ];
 
   return (

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FolderCode, FolderTree, Puzzle } from 'lucide-react';
 
 export type TabKey = 'global' | 'project' | 'plugin';
@@ -7,16 +8,18 @@ interface Props {
   onChange: (tab: TabKey) => void;
 }
 
-const tabs: { key: TabKey; label: string; icon: typeof FolderCode }[] = [
-  { key: 'global', label: '全局 Skill 管理', icon: FolderCode },
-  { key: 'project', label: '项目级 Skill 管理', icon: FolderTree },
-  { key: 'plugin', label: '插件技能管理', icon: Puzzle },
+const tabKeys: { key: TabKey; labelKey: string; icon: typeof FolderCode }[] = [
+  { key: 'global', labelKey: 'tab.global', icon: FolderCode },
+  { key: 'project', labelKey: 'tab.project', icon: FolderTree },
+  { key: 'plugin', labelKey: 'tab.plugin', icon: Puzzle },
 ];
 
 export default function TabSwitch({ active, onChange }: Props) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex gap-1 p-1 bg-surface-tertiary rounded-[var(--radius-md)]">
-      {tabs.map((tab) => {
+      {tabKeys.map((tab) => {
         const Icon = tab.icon;
         const isActive = active === tab.key;
         return (
@@ -30,7 +33,7 @@ export default function TabSwitch({ active, onChange }: Props) {
             }`}
           >
             <Icon size={14} />
-            {tab.label}
+            {t(tab.labelKey)}
           </button>
         );
       })}

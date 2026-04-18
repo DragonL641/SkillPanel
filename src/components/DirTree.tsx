@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import SkillCard from './SkillCard';
 import type { TreeNode } from '../types';
@@ -43,6 +44,7 @@ function TreeNodeItem({
   onDelete?: (path: string) => void;
   filter?: string;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
 
   if (filter && !nodeMatches(node, filter)) {
@@ -86,21 +88,21 @@ function TreeNodeItem({
           <span className="text-base font-semibold text-fg-primary">{node.name}</span>
         </button>
         <span className="flex items-center px-2 py-0.5 bg-surface-tertiary rounded-full text-[11px] font-medium text-fg-secondary">
-          {childCount} 个技能
+          {t('dirTree.skillCount', { count: childCount })}
         </span>
         <div className="flex-1" />
         <button
           onClick={() => onBatchToggle?.(collectSkillPaths(node), true)}
           className="text-xs font-medium text-accent hover:text-accent-hover transition-colors"
         >
-          全部启用
+          {t('dirTree.enableAll')}
         </button>
         <span className="text-xs text-fg-muted">|</span>
         <button
           onClick={() => onBatchToggle?.(collectSkillPaths(node), false)}
           className="text-xs font-medium text-fg-muted hover:text-danger transition-colors"
         >
-          全部禁用
+          {t('dirTree.disableAll')}
         </button>
       </div>
 
@@ -139,7 +141,7 @@ export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filt
   if (!nodes.length) {
     return (
       <div className="text-fg-muted text-sm py-8 text-center">
-        暂无自定义 skills
+        {t('dirTree.empty')}
       </div>
     );
   }
