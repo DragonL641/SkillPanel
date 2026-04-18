@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { fetchCustomSkills, batchEnableProjectSkills } from '../api/client';
 import type { TreeNode } from '../types';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function AddSkillModal({ open, projectName, enabledPaths, onClose, onAdded }: Props) {
+  const { t } = useTranslation();
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -65,13 +67,13 @@ export default function AddSkillModal({ open, projectName, enabledPaths, onClose
     try {
       const result = await batchEnableProjectSkills(projectName, [...selected]);
       if (result.failed && result.failed.length > 0) {
-        setError(`${result.failed.length} 个技能添加失败: ${result.failed.map(f => f.path).join(', ')}`);
+        setError(t('addSkill.batchFailed', { count: result.failed.length, paths: result.failed.map(f => f.path).join(', ') }));
       } else {
         onAdded();
         onClose();
       }
     } catch (err) {
-      setError('添加失败，请重试');
+      setError(t('addSkill.failed'));
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +87,7 @@ export default function AddSkillModal({ open, projectName, enabledPaths, onClose
       >
         {/* Header */}
         <div className="flex items-center px-6 py-4 border-b border-border">
-          <h3 className="text-base font-bold text-fg-primary">添加技能到「{projectName}」</h3>
+          <h3 className="text-base font-bold text-fg-primary">{t('addSkill.title', { name: projectName })}</h3>
           <div className="flex-1" />
           <button onClick={onClose} className="text-fg-secondary hover:text-fg-primary">
             <X size={18} />
@@ -102,9 +104,9 @@ export default function AddSkillModal({ open, projectName, enabledPaths, onClose
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3">
-          {loading && <div className="text-fg-muted text-sm text-center py-4">加载中...</div>}
+          {loading && <div className="text-fg-muted text-sm text-center py-4">{t('addSkill.loading')}</div>}
           {!loading && allSkills.length === 0 && (
-            <div className="text-fg-muted text-sm text-center py-4">所有技能已添加</div>
+            <div className="text-fg-muted text-sm text-center py-4">{t('addSkill.allAdded')}</div>
           )}
           {!loading && allSkills.map(skill => (
             <label
@@ -132,14 +134,14 @@ export default function AddSkillModal({ open, projectName, enabledPaths, onClose
         {!loading && allSkills.length > 0 && (
           <div className="flex items-center justify-between px-6 py-4 border-t border-border">
             <span className="text-xs text-fg-muted">
-              {selected.size > 0 ? `已选 ${selected.size} 项` : '请选择要添加的技能'}
+              {selected.size > 0 ? t('addSkill.selected', { count: selected.size }) : t('addSkill.selectPrompt')}
             </span>
             <button
               onClick={handleConfirm}
               disabled={selected.size === 0 || submitting}
               className="px-4 py-1.5 bg-accent text-fg-inverse rounded-[var(--radius-md)] text-xs font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? '添加中...' : '确认添加'}
+              {submitting ? t('addSkill.adding') : t('addSkill.confirm')}
             </button>
           </div>
         )}

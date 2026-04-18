@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Folder, FolderOpen, Plus, X } from 'lucide-react';
 import DirPicker from './DirPicker';
 import { pickFolder } from '../api/client';
@@ -14,12 +15,13 @@ interface Props {
 }
 
 export default function ProjectSidebar({ projects, selected, onSelect, onAdd, onRemove, loading }: Props) {
+  const { t } = useTranslation();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [adding, setAdding] = useState(false);
 
   const handleAdd = async () => {
     try {
-      const result = await pickFolder('选择项目目录');
+      const result = await pickFolder(t('project.selectDir'));
       if (result.path) {
         setAdding(true);
         try {
@@ -50,15 +52,15 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
     <aside className="w-[260px] shrink-0 bg-surface-primary border-r border-border flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-5">
-        <span className="text-sm font-semibold text-fg-primary">项目列表</span>
+        <span className="text-sm font-semibold text-fg-primary">{t('project.listTitle')}</span>
         <button
           onClick={handleAdd}
           disabled={adding}
           className="flex items-center gap-1 px-2 py-1 rounded-[var(--radius-md)] border border-border hover:bg-surface-hover transition-colors disabled:opacity-50"
-          aria-label="添加项目"
+          aria-label={t('project.addAria')}
         >
           <Plus size={14} className="text-fg-secondary" />
-          <span className="text-[11px] font-medium text-fg-secondary">添加</span>
+          <span className="text-[11px] font-medium text-fg-secondary">{t('project.add')}</span>
         </button>
       </div>
 
@@ -68,8 +70,8 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
           <DirPicker
             value=""
             onChange={handlePick}
-            label="项目路径"
-            hint={adding ? '添加中...' : '选择项目根目录'}
+            label={t('project.dirLabel')}
+            hint={adding ? t('project.adding') : t('project.dirHint')}
           />
         </div>
       )}
@@ -99,7 +101,7 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
                 <button
                   onClick={(e) => { e.stopPropagation(); onRemove(project.name); }}
                   className="text-fg-muted hover:text-danger transition-colors"
-                  aria-label={`删除项目 ${project.name}`}
+                  aria-label={t('project.removeAria', { name: project.name })}
                 >
                   <X size={12} />
                 </button>
@@ -108,7 +110,7 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
               <div className="flex items-center gap-1.5 pl-[22px]">
                 <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-accent' : 'bg-success'}`} />
                 <span className="text-[11px] text-fg-secondary">
-                  {project.projectEnabledCount} 项目级 + {project.globalEnabledCount} 全局
+                  {t('project.skillCount', { project: project.projectEnabledCount, global: project.globalEnabledCount })}
                 </span>
               </div>
             </div>
@@ -117,12 +119,12 @@ export default function ProjectSidebar({ projects, selected, onSelect, onAdd, on
 
         {projects.length === 0 && !loading && (
           <div className="text-fg-muted text-xs text-center py-8">
-            暂无项目
+            {t('project.empty')}
           </div>
         )}
 
         {loading && (
-          <div className="text-fg-muted text-xs text-center py-4">加载中...</div>
+          <div className="text-fg-muted text-xs text-center py-4">{t('project.loading')}</div>
         )}
       </div>
     </aside>
