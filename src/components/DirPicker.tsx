@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Folder, ChevronRight, ArrowUp, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { fetchDirList, pickFolder, type BrowseResult } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function DirPicker({ value, onChange, label, hint, optional }: Props) {
+  const { t } = useTranslation();
   const [browsing, setBrowsing] = useState(false);
   const [dir, setDir] = useState<BrowseResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
       const result = await fetchDirList(path);
       setDir(result);
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '无法加载目录');
+      setError(getErrorMessage(err) || t('dirPicker.loadError'));
     } finally {
       setLoading(false);
     }
@@ -68,20 +70,20 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
         <label className="text-[13px] font-medium text-fg-primary">{label}</label>
         <div className="flex items-center gap-2">
           <div className="flex-1 px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] font-mono text-fg-secondary truncate">
-            {value || '未选择'}
+            {value || t('dirPicker.notSelected')}
           </div>
           <button
             onClick={handleBrowse}
             className="px-3 py-2.5 text-[13px] font-medium text-fg-primary bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors shrink-0"
           >
-            浏览
+            {t('dirPicker.browse')}
           </button>
           {value && (
             <button
               onClick={() => onChange('')}
               className="text-xs text-fg-muted hover:text-danger transition-colors shrink-0"
             >
-              清除
+              {t('dirPicker.clear')}
             </button>
           )}
         </div>
@@ -95,7 +97,7 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
       <div className="flex items-center justify-between">
         <label className="text-[13px] font-medium text-fg-primary">{label}</label>
         <button onClick={() => setBrowsing(false)} className="text-xs text-fg-muted hover:text-fg-primary transition-colors">
-          关闭
+          {t('dirPicker.close')}
         </button>
       </div>
 
@@ -114,7 +116,7 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
               className="flex items-center gap-1.5 w-full px-2 py-1.5 text-xs text-fg-secondary hover:bg-surface-hover rounded transition-colors"
             >
               <ArrowUp size={12} />
-              <span>返回上级</span>
+              <span>{t('dirPicker.goUp')}</span>
             </button>
           )}
         </div>
@@ -122,13 +124,13 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
         {/* Directory list */}
         <div className="max-h-[200px] overflow-y-auto">
           {loading && (
-            <div className="px-3 py-4 text-xs text-fg-muted text-center">加载中...</div>
+            <div className="px-3 py-4 text-xs text-fg-muted text-center">{t('dirPicker.loading')}</div>
           )}
           {error && (
             <div className="px-3 py-4 text-xs text-danger text-center">{error}</div>
           )}
           {!loading && !error && dir?.entries.length === 0 && (
-            <div className="px-3 py-4 text-xs text-fg-muted text-center">此目录下没有子目录</div>
+            <div className="px-3 py-4 text-xs text-fg-muted text-center">{t('dirPicker.empty')}</div>
           )}
           {!loading && !error && dir?.entries.map((entry) => (
             <button
@@ -150,7 +152,7 @@ export default function DirPicker({ value, onChange, label, hint, optional }: Pr
             className="flex items-center gap-1.5 text-xs font-medium text-accent hover:text-accent-hover transition-colors"
           >
             <Check size={13} />
-            选择当前目录
+            {t('dirPicker.selectCurrent')}
           </button>
         </div>
       </div>

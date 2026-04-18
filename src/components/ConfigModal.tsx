@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle, AlertTriangle, Folder, FolderPlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { fetchConfig, saveConfig } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
 import DirPicker from './DirPicker';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function ConfigModal({ open, onClose, onSaved }: Props) {
+  const { t } = useTranslation();
   const [config, setConfig] = useState<AppConfig>({});
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
   const [apiModel, setApiModel] = useState<string | null>(null);
@@ -118,7 +120,7 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       onSaved();
       onClose();
     } catch (err: unknown) {
-      setSaveError(getErrorMessage(err) || '保存失败');
+      setSaveError(getErrorMessage(err) || t('config.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -138,9 +140,9 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
       >
         {/* Header */}
         <div className="flex items-center px-6 py-5 border-b border-border">
-          <h2 className="text-lg font-bold text-fg-primary">配置</h2>
+          <h2 className="text-lg font-bold text-fg-primary">{t('config.title')}</h2>
           <div className="flex-1" />
-          <button onClick={onClose} aria-label="关闭" className="p-1.5 text-fg-secondary hover:text-fg-primary transition-colors">
+          <button onClick={onClose} aria-label={t('config.close')} className="p-1.5 text-fg-secondary hover:text-fg-primary transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -148,20 +150,20 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
         {/* Body */}
         <div className="flex flex-col gap-5 p-6">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-fg-primary">Claude Code 目录</label>
+            <label className="text-[13px] font-medium text-fg-primary">{t('config.claudeDir')}</label>
             <input
               type="text"
               value={config.claudeRootDir ?? ''}
               onChange={(e) => handleChange('claudeRootDir', e.target.value)}
-              placeholder="~/.claude"
+              placeholder={t('config.claudeDirPlaceholder')}
               className="w-full px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
             />
-            <p className="text-[11px] text-fg-muted">skills/ 和 plugins/ 目录将从此自动推导</p>
+            <p className="text-[11px] text-fg-muted">{t('config.claudeDirHint')}</p>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-fg-primary">自定义技能目录</label>
-            <p className="text-[11px] text-fg-muted">支持添加多个目录</p>
+            <label className="text-[13px] font-medium text-fg-primary">{t('config.customDir')}</label>
+            <p className="text-[11px] text-fg-muted">{t('config.customDirHint')}</p>
             <div className="flex flex-col gap-2">
               {(config.customSkillDirs || []).map((dir, i) => (
                 <div key={i} className="flex items-center gap-2 px-3 py-2 bg-surface-primary border border-border rounded-[var(--radius-md)]">
@@ -176,19 +178,19 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
                 <DirPicker
                   value={newDirPath}
                   onChange={addDir}
-                  label="选择目录"
+                  label={t('config.selectDir')}
                 />
               ) : (
                 <button onClick={() => setAddingDir(true)} className="flex items-center justify-center gap-1.5 py-2 border border-dashed border-border rounded-[var(--radius-md)] text-accent hover:bg-accent-light transition-colors">
                   <FolderPlus size={14} />
-                  <span className="text-[12px] font-medium">添加目录</span>
+                  <span className="text-[12px] font-medium">{t('config.addDir')}</span>
                 </button>
               )}
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-fg-primary">端口</label>
+            <label className="text-[13px] font-medium text-fg-primary">{t('config.port')}</label>
             <input
               type="number"
               value={config.port ?? ''}
@@ -206,17 +208,17 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
                 <AlertTriangle size={16} className="text-warning" />
               )}
               <span className={`text-[13px] font-semibold ${apiConfigDetected ? 'text-success' : 'text-warning'}`}>
-                {apiConfigDetected ? 'API 配置已检测到' : 'API 配置未检测到'}
+                {apiConfigDetected ? t('config.apiDetected') : t('config.apiNotDetected')}
               </span>
             </div>
             {apiConfigDetected && apiModel && (
-              <span className="font-mono text-xs text-fg-secondary">模型: {apiModel}</span>
+              <span className="font-mono text-xs text-fg-secondary">{t('config.model', { model: apiModel })}</span>
             )}
             {!apiConfigDetected && (
-              <span className="text-xs text-fg-secondary">分析功能不可用</span>
+              <span className="text-xs text-fg-secondary">{t('config.analysisUnavailable')}</span>
             )}
             <p className="text-[11px] text-fg-muted">
-              从 {config.claudeRootDir || '~/.claude'}/settings.json 自动读取
+              {t('config.apiSource', { dir: config.claudeRootDir || '~/.claude' })}
             </p>
           </div>
 
@@ -231,14 +233,14 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
             onClick={onClose}
             className="px-4 py-2 text-[13px] font-medium text-fg-primary bg-surface-primary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors"
           >
-            取消
+            {t('skill.cancel')}
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
             className="px-4 py-2 text-[13px] font-semibold text-fg-inverse bg-accent rounded-[var(--radius-md)] hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
-            {saving ? '保存中...' : '保存配置'}
+            {saving ? t('config.saving') : t('config.save')}
           </button>
         </div>
       </div>
