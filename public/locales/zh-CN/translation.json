@@ -1,0 +1,143 @@
+{
+  "app": {
+    "searchPlaceholder": "搜索技能...",
+    "searchLabel": "搜索技能",
+    "loading": "加载中...",
+    "refresh": "刷新",
+    "settings": "设置",
+    "closeError": "关闭错误提示",
+    "addProjectFirst": "请先添加项目",
+    "selectProject": "请选择一个项目"
+  },
+  "tab": {
+    "global": "全局 Skill 管理",
+    "project": "项目级 Skill 管理",
+    "plugin": "插件技能管理"
+  },
+  "stats": {
+    "customSkills": "自定义技能",
+    "customCount": "共 {{count}} 个自定义技能",
+    "enabled": "已启用",
+    "enabledRate": "{{rate}}% 启用率",
+    "pluginSkills": "插件技能",
+    "fromPlugins": "来自已安装插件",
+    "total": "总计",
+    "totalDesc": "所有技能总数"
+  },
+  "dirTree": {
+    "skillCount": "{{count}} 个技能",
+    "enableAll": "全部启用",
+    "disableAll": "全部禁用",
+    "empty": "暂无自定义 skills"
+  },
+  "skill": {
+    "enabled": "已启用",
+    "disabled": "未启用",
+    "enableAria": "启用技能",
+    "disableAria": "禁用技能",
+    "enableFailed": "启用失败",
+    "disableFailed": "禁用失败",
+    "analyze": "分析",
+    "analyzing": "分析中...",
+    "deleteAria": "删除技能",
+    "confirmDelete": "确定删除「{{name}}」？",
+    "deleteLabel": "删除",
+    "cancel": "取消",
+    "deleteFailed": "删除失败",
+    "batchFailed": "{{count}} 个 skill 操作失败",
+    "batchFailedFallback": "批量操作失败",
+    "loadFailed": "加载失败"
+  },
+  "analysis": {
+    "failed": "分析失败",
+    "expand": "原理分析",
+    "collapse": "收起分析",
+    "loading": "正在分析，请稍候...",
+    "timestamp": "分析时间: {{date}}",
+    "reanalyze": "重新分析",
+    "notAnalyzed": "未分析",
+    "startAnalysis": "开始分析"
+  },
+  "plugin": {
+    "noMatch": "没有匹配的插件",
+    "noPlugins": "暂无已安装的插件",
+    "checkFailed": "检查失败",
+    "upToDate": "已是最新",
+    "behind": "落后 {{count}} 个 commit",
+    "checking": "检查中...",
+    "checkUpdate": "检查更新"
+  },
+  "config": {
+    "title": "配置",
+    "close": "关闭",
+    "saveFailed": "保存失败",
+    "claudeDir": "Claude Code 目录",
+    "claudeDirPlaceholder": "~/.claude",
+    "claudeDirHint": "skills/ 和 plugins/ 目录将从此自动推导",
+    "customDir": "自定义技能目录",
+    "customDirHint": "支持添加多个目录",
+    "selectDir": "选择目录",
+    "addDir": "添加目录",
+    "port": "端口",
+    "apiDetected": "API 配置已检测到",
+    "apiNotDetected": "API 配置未检测到",
+    "model": "模型: {{model}}",
+    "analysisUnavailable": "分析功能不可用",
+    "apiSource": "从 {{dir}}/settings.json 自动读取",
+    "saving": "保存中...",
+    "save": "保存配置"
+  },
+  "dirPicker": {
+    "loadError": "无法加载目录",
+    "notSelected": "未选择",
+    "browse": "浏览",
+    "clear": "清除",
+    "close": "关闭",
+    "goUp": "返回上级",
+    "loading": "加载中...",
+    "empty": "此目录下没有子目录",
+    "selectCurrent": "选择当前目录"
+  },
+  "project": {
+    "selectDir": "选择项目目录",
+    "listTitle": "项目列表",
+    "addAria": "添加项目",
+    "add": "添加",
+    "dirLabel": "项目路径",
+    "adding": "添加中...",
+    "dirHint": "选择项目根目录",
+    "removeAria": "删除项目 {{name}}",
+    "skillCount": "{{project}} 项目级 + {{global}} 全局",
+    "empty": "暂无项目",
+    "loading": "加载中...",
+    "loadFailed": "加载失败"
+  },
+  "projectSkill": {
+    "activeSkills": "已生效技能",
+    "skillCount": "{{count}} 个技能",
+    "addSkill": "添加技能",
+    "globalReadOnly": "全局技能（只读）",
+    "global": "全局",
+    "projectSkills": "项目级技能",
+    "deleteAria": "删除项目技能 {{name}}",
+    "confirmDelete": "确定删除「{{name}}」？",
+    "deleteLabel": "删除",
+    "cancel": "取消",
+    "empty": "暂无已生效技能"
+  },
+  "addSkill": {
+    "batchFailed": "{{count}} 个技能添加失败: {{paths}}",
+    "failed": "添加失败，请重试",
+    "title": "添加技能到「{{name}}」",
+    "loading": "加载中...",
+    "allAdded": "所有技能已添加",
+    "selected": "已选 {{count}} 项",
+    "selectPrompt": "请选择要添加的技能",
+    "adding": "添加中...",
+    "confirm": "确认添加"
+  },
+  "langSwitch": {
+    "zh": "中",
+    "en": "EN"
+  }
+}

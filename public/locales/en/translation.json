@@ -1,0 +1,143 @@
+{
+  "app": {
+    "searchPlaceholder": "Search skills...",
+    "searchLabel": "Search skills",
+    "loading": "Loading...",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "closeError": "Dismiss error",
+    "addProjectFirst": "Please add a project first",
+    "selectProject": "Please select a project"
+  },
+  "tab": {
+    "global": "Global Skills",
+    "project": "Project Skills",
+    "plugin": "Plugin Skills"
+  },
+  "stats": {
+    "customSkills": "Custom Skills",
+    "customCount": "{{count}} custom skills total",
+    "enabled": "Enabled",
+    "enabledRate": "{{rate}}% enabled",
+    "pluginSkills": "Plugin Skills",
+    "fromPlugins": "From installed plugins",
+    "total": "Total",
+    "totalDesc": "All skills combined"
+  },
+  "dirTree": {
+    "skillCount": "{{count}} skills",
+    "enableAll": "Enable All",
+    "disableAll": "Disable All",
+    "empty": "No custom skills yet"
+  },
+  "skill": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "enableAria": "Enable skill",
+    "disableAria": "Disable skill",
+    "enableFailed": "Failed to enable",
+    "disableFailed": "Failed to disable",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "deleteAria": "Delete skill",
+    "confirmDelete": "Delete \"{{name}}\"?",
+    "deleteLabel": "Delete",
+    "cancel": "Cancel",
+    "deleteFailed": "Failed to delete",
+    "batchFailed": "{{count}} skill(s) failed",
+    "batchFailedFallback": "Batch operation failed",
+    "loadFailed": "Failed to load"
+  },
+  "analysis": {
+    "failed": "Analysis failed",
+    "expand": "How it works",
+    "collapse": "Collapse",
+    "loading": "Analyzing, please wait...",
+    "timestamp": "Analyzed: {{date}}",
+    "reanalyze": "Re-analyze",
+    "notAnalyzed": "Not analyzed",
+    "startAnalysis": "Start analysis"
+  },
+  "plugin": {
+    "noMatch": "No matching plugins",
+    "noPlugins": "No plugins installed",
+    "checkFailed": "Check failed",
+    "upToDate": "Up to date",
+    "behind": "{{count}} commit(s) behind",
+    "checking": "Checking...",
+    "checkUpdate": "Check for updates"
+  },
+  "config": {
+    "title": "Settings",
+    "close": "Close",
+    "saveFailed": "Failed to save",
+    "claudeDir": "Claude Code Directory",
+    "claudeDirPlaceholder": "~/.claude",
+    "claudeDirHint": "skills/ and plugins/ directories will be derived from this",
+    "customDir": "Custom Skill Directories",
+    "customDirHint": "Supports multiple directories",
+    "selectDir": "Select directory",
+    "addDir": "Add directory",
+    "port": "Port",
+    "apiDetected": "API configuration detected",
+    "apiNotDetected": "API configuration not detected",
+    "model": "Model: {{model}}",
+    "analysisUnavailable": "Analysis unavailable",
+    "apiSource": "Auto-loaded from {{dir}}/settings.json",
+    "saving": "Saving...",
+    "save": "Save Settings"
+  },
+  "dirPicker": {
+    "loadError": "Failed to load directory",
+    "notSelected": "Not selected",
+    "browse": "Browse",
+    "clear": "Clear",
+    "close": "Close",
+    "goUp": "Go up",
+    "loading": "Loading...",
+    "empty": "No subdirectories",
+    "selectCurrent": "Select this directory"
+  },
+  "project": {
+    "selectDir": "Select project directory",
+    "listTitle": "Projects",
+    "addAria": "Add project",
+    "add": "Add",
+    "dirLabel": "Project path",
+    "adding": "Adding...",
+    "dirHint": "Select project root directory",
+    "removeAria": "Remove project {{name}}",
+    "skillCount": "{{project}} project + {{global}} global",
+    "empty": "No projects",
+    "loading": "Loading...",
+    "loadFailed": "Failed to load"
+  },
+  "projectSkill": {
+    "activeSkills": "Active Skills",
+    "skillCount": "{{count}} skills",
+    "addSkill": "Add Skill",
+    "globalReadOnly": "Global Skills (read-only)",
+    "global": "Global",
+    "projectSkills": "Project Skills",
+    "deleteAria": "Delete project skill {{name}}",
+    "confirmDelete": "Delete \"{{name}}\"?",
+    "deleteLabel": "Delete",
+    "cancel": "Cancel",
+    "empty": "No active skills"
+  },
+  "addSkill": {
+    "batchFailed": "{{count}} skill(s) failed to add: {{paths}}",
+    "failed": "Failed to add, please retry",
+    "title": "Add skills to \"{{name}}\"",
+    "loading": "Loading...",
+    "allAdded": "All skills already added",
+    "selected": "{{count}} selected",
+    "selectPrompt": "Select skills to add",
+    "adding": "Adding...",
+    "confirm": "Confirm"
+  },
+  "langSwitch": {
+    "zh": "中",
+    "en": "EN"
+  }
+}

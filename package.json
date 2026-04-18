@@ -31,9 +31,12 @@
     "@anthropic-ai/sdk": "~0.86.1",
     "express": "^5.2.1",
     "gray-matter": "^4.0.3",
+    "i18next": "^26.0.5",
+    "i18next-browser-languagedetector": "^8.2.1",
     "lucide-react": "^1.8.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-i18next": "^17.0.4",
     "tsx": "^4.21.0",
     "vite-express": "^0.22.1"
   },
