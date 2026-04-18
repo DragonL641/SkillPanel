@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { AppConfig, ProjectConfig } from '../config.js';
+import type { TreeNode } from './skill-scanner.js';
 
 export interface ProjectSkillInfo {
   name: string;
@@ -92,7 +93,7 @@ export function buildProjectInfo(
 }
 
 /** Flatten skill tree to get all skills with their absolute paths */
-export function flattenSkillTree(nodes: any[]): Array<{ name: string; description: string; relativePath: string; absolutePath: string }> {
+export function flattenSkillTree(nodes: TreeNode[]): Array<{ name: string; description: string; relativePath: string; absolutePath: string }> {
   const result: Array<{ name: string; description: string; relativePath: string; absolutePath: string }> = [];
   for (const node of nodes) {
     if (node.type === 'skill' && node.skill) {

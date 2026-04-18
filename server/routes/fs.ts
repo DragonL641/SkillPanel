@@ -11,8 +11,13 @@ const HOME = os.homedir();
 
 router.post('/fs/pick', async (req, res) => {
   const { title } = req.body as { title?: string };
-  const selected = await pickFolder(title);
-  res.json({ path: selected });
+  try {
+    const selected = await pickFolder(title);
+    res.json({ path: selected });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to open folder picker';
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message } });
+  }
 });
 
 router.get('/fs/browse', (req, res) => {

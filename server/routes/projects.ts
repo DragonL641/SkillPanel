@@ -5,14 +5,14 @@ import { loadConfig, saveConfig } from '../config.js';
 import { enableSkill, disableSkill, batchToggleSkills } from '../services/skill-manager.js';
 import { buildProjectInfo, getProjectSkills, getProjectSkillsDir, flattenSkillTree } from '../services/project-scanner.js';
 import { scanCustomSkills } from '../services/skill-scanner.js';
-import { invalidateByPrefix } from '../services/cache.js';
+import { getOrCompute, invalidateByPrefix } from '../services/cache.js';
 
 const router = Router();
 
 // GET /api/projects
 router.get('/projects', (_req, res) => {
   const config = loadConfig();
-  const tree = scanCustomSkills(config);
+  const tree = getOrCompute('skills:custom', () => scanCustomSkills(config));
   const allSkillPaths = flattenSkillTree(tree).map(s => s.absolutePath);
   const projects = (config.projects || []).map(p =>
     buildProjectInfo(config, p, allSkillPaths)
@@ -40,7 +40,7 @@ router.post('/projects', async (req, res) => {
     return;
   }
   projects.push({ name, path: resolved });
-  await saveConfig({ customSkillDirs: config.customSkillDirs, projects });
+  await saveConfig({ projects });
   invalidateByPrefix('config');
   res.json({ ok: true, project: { name, path: resolved } });
 });
@@ -56,7 +56,7 @@ router.delete('/projects/:name', async (req, res) => {
     return;
   }
   projects.splice(idx, 1);
-  await saveConfig({ customSkillDirs: config.customSkillDirs, projects });
+  await saveConfig({ projects });
   invalidateByPrefix('config');
   res.json({ ok: true });
 });
@@ -70,7 +70,7 @@ router.get('/projects/:name/skills', (req, res) => {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: `Project "${name}" not found` } });
     return;
   }
-  const tree = scanCustomSkills(config);
+  const tree = getOrCompute('skills:custom', () => scanCustomSkills(config));
   const allSkills = flattenSkillTree(tree);
   const result = getProjectSkills(config, project, allSkills);
   res.json(result);

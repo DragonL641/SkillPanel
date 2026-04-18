@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import request from 'supertest';
 import { createApp } from './app.js';
 import { loadConfig } from '../config.js';
@@ -482,10 +482,9 @@ describe('API Routes — Integration Tests', () => {
     });
 
     it('returns cached analysis when available', async () => {
-      // Write a cache file directly
+      // Write a cache file directly (cache is stored in ~/.skillpanel/)
       createSkill(customSkillDir, 'cached-skill');
-      const config = loadConfig();
-      const cacheDir = path.join(path.dirname(config.customSkillDir), '.skillpanel');
+      const cacheDir = path.join(os.homedir(), '.skillpanel');
       fs.mkdirSync(cacheDir, { recursive: true });
       const cacheData = {
         'custom/cached-skill': {

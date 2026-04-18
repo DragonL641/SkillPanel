@@ -30,7 +30,7 @@ router.post('/analysis/:source/:name', async (req, res) => {
   const config = loadConfig();
   const skillDir = findSkillDir(config, source, name);
   if (!skillDir) {
-    res.status(404).json({ error: `Skill not found: ${source}/${name}` });
+    res.status(404).json({ error: { code: 'NOT_FOUND', message: `Skill not found: ${source}/${name}` } });
     return;
   }
 

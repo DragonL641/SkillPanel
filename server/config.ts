@@ -72,7 +72,7 @@ export function loadConfig(): AppConfig {
 }
 
 export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
-  saveQueue = saveQueue.then(() => {
+  saveQueue = saveQueue.then(async () => {
     const current = loadConfig();
     const merged = {
       claudeRootDir: config.claudeRootDir ?? current.claudeRootDir,
@@ -84,8 +84,8 @@ export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
     // Only persist user-configurable fields, not derived ones
     // Write to temp file then rename for atomic replacement
     const tmpFile = CONFIG_FILE + '.tmp';
-    fs.writeFileSync(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
-    fs.renameSync(tmpFile, CONFIG_FILE);
+    await fs.promises.writeFile(tmpFile, JSON.stringify(merged, null, 2), 'utf-8');
+    await fs.promises.rename(tmpFile, CONFIG_FILE);
     invalidateByPrefix('config');
     return buildConfig();
   });
@@ -118,10 +118,10 @@ export function buildConfigResponse(config: AppConfig): ConfigResponse {
 export function loadClaudeApiConfig(): ClaudeApiConfig | null {
   const config = loadConfig();
   const settingsPath = path.join(config.claudeRootDir, 'settings.json');
-  if (!fs.existsSync(settingsPath)) return null;
 
   try {
-    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    const raw = fs.readFileSync(settingsPath, 'utf-8');
+    const settings = JSON.parse(raw);
     const env = settings.env || {};
     const apiKey = env.ANTHROPIC_AUTH_TOKEN || env.ANTHROPIC_API_KEY;
     if (!apiKey) return null;
@@ -131,7 +131,6 @@ export function loadClaudeApiConfig(): ClaudeApiConfig | null {
       model: env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'claude-sonnet-4-6',
     };
   } catch (err) {
-    // Distinguish "file not found" (normal, no warning) from "file exists but parse failed" (warn)
     if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
       return null;
     }

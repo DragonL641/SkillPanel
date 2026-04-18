@@ -12,6 +12,7 @@ const tsxBin = path.join(__dirname, 'node_modules', '.bin', 'tsx');
 const child = spawn(tsxBin, [serverPath], {
   stdio: 'inherit',
   env: { ...process.env },
+  shell: process.platform === 'win32',
 });
 
 child.on('error', (err) => {

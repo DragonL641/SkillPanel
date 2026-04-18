@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import type { AppConfig } from '../config.js';
 import { ValidationError, NotFoundError, ConflictError } from '../errors.js';
 import { getErrorMessage } from '../utils.js';
@@ -67,7 +68,12 @@ export function enableSkill(config: AppConfig, skillRelativePath: string, target
     // ENOENT is fine, symlink doesn't exist yet
   }
 
-  fs.symlinkSync(skillDir, symlinkPath);
+  // Use 'junction' on Windows for directory symlinks (no admin rights needed)
+  if (os.platform() === 'win32') {
+    fs.symlinkSync(skillDir, symlinkPath, 'junction');
+  } else {
+    fs.symlinkSync(skillDir, symlinkPath);
+  }
 }
 
 export function disableSkill(config: AppConfig, skillRelativePath: string, targetSkillsDir?: string): void {

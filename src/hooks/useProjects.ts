@@ -8,19 +8,23 @@ import {
   disableProjectSkill,
 } from '../api/client';
 import type { ProjectInfo, ProjectSkillsResponse } from '../types';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 export function useProjects() {
   const [projects, setProjects] = useState<ProjectInfo[]>([]);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [projectSkills, setProjectSkills] = useState<ProjectSkillsResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const clearError = useCallback(() => setError(null), []);
 
   const loadProjects = useCallback(async () => {
     try {
       const data = await fetchProjects();
       setProjects(data.projects);
     } catch (err) {
-      console.error('Failed to load projects:', err);
+      setError(getErrorMessage(err));
     }
   }, []);
 
@@ -30,7 +34,7 @@ export function useProjects() {
       const data = await fetchProjectSkills(name);
       setProjectSkills(data);
     } catch (err) {
-      console.error('Failed to load project skills:', err);
+      setError(getErrorMessage(err));
       setProjectSkills(null);
     } finally {
       setLoading(false);
@@ -38,25 +42,37 @@ export function useProjects() {
   }, []);
 
   const addProject = useCallback(async (projectPath: string) => {
-    await registerProject(projectPath);
-    await loadProjects();
+    try {
+      await registerProject(projectPath);
+      await loadProjects();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
   }, [loadProjects]);
 
   const removeProject = useCallback(async (name: string) => {
-    await unregisterProject(name);
-    if (selectedProject === name) {
-      setSelectedProject(null);
-      setProjectSkills(null);
+    try {
+      await unregisterProject(name);
+      if (selectedProject === name) {
+        setSelectedProject(null);
+        setProjectSkills(null);
+      }
+      await loadProjects();
+    } catch (err) {
+      setError(getErrorMessage(err));
     }
-    await loadProjects();
   }, [selectedProject, loadProjects]);
 
   const toggleProjectSkill = useCallback(async (skillPath: string, enable: boolean) => {
     if (!selectedProject) return;
-    const fn = enable ? enableProjectSkill : disableProjectSkill;
-    await fn(selectedProject, skillPath);
-    await loadProjectSkills(selectedProject);
-    await loadProjects();
+    try {
+      const fn = enable ? enableProjectSkill : disableProjectSkill;
+      await fn(selectedProject, skillPath);
+      await loadProjectSkills(selectedProject);
+      await loadProjects();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
   }, [selectedProject, loadProjectSkills, loadProjects]);
 
   return {
@@ -64,6 +80,8 @@ export function useProjects() {
     selectedProject,
     projectSkills,
     loading,
+    error,
+    clearError,
     loadProjects,
     loadProjectSkills,
     setSelectedProject,

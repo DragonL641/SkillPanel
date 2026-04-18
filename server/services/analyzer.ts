@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import Anthropic from '@anthropic-ai/sdk';
 import { loadClaudeApiConfig } from '../config.js';
-import type { AppConfig } from '../config.js';
+import type { AppConfig, ClaudeApiConfig } from '../config.js';
 import { AnalysisError } from '../errors.js';
 import { computeContentHash, collectSkillContent } from './hash-utils.js';
 import { scanCustomSkills, type TreeNode } from './skill-scanner.js';
@@ -17,8 +18,8 @@ export interface SkillAnalysis {
   model: string;
 }
 
-function getCacheFilePath(config: AppConfig): string {
-  const cacheDir = path.join(path.dirname(config.customSkillDir), '.skillpanel');
+function getCacheFilePath(_config: AppConfig): string {
+  const cacheDir = path.join(os.homedir(), '.skillpanel');
   return path.join(cacheDir, 'analysis-cache.json');
 }
 
@@ -76,6 +77,19 @@ export function getCachedAnalysis(config: AppConfig, key: string): SkillAnalysis
   return entry;
 }
 
+// Lazily-initialized Anthropic client, keyed by API config identity
+let _cachedClient: Anthropic | null = null;
+let _cachedClientKey: string = '';
+
+function getAnthropicClient(apiConfig: ClaudeApiConfig): Anthropic {
+  const key = `${apiConfig.apiKey}:${apiConfig.baseURL ?? ''}`;
+  if (!_cachedClient || _cachedClientKey !== key) {
+    _cachedClient = new Anthropic({ apiKey: apiConfig.apiKey, baseURL: apiConfig.baseURL });
+    _cachedClientKey = key;
+  }
+  return _cachedClient;
+}
+
 export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false, signal?: AbortSignal): Promise<SkillAnalysis> {
   const hash = computeContentHash(skillDir);
   const name = path.basename(skillDir);
@@ -100,7 +114,10 @@ export async function analyzeSkill(config: AppConfig, skillDir: string, key: str
 Skill 内容：
 ${content}`;
 
-  const client = new Anthropic({ apiKey: apiConfig.apiKey, baseURL: apiConfig.baseURL });
+  // Yield after synchronous pre-computation before blocking API call
+  await new Promise<void>((resolve) => setImmediate(resolve));
+
+  const client = getAnthropicClient(apiConfig);
   const response = await client.messages.create({
     model: apiConfig.model,
     max_tokens: 1024,
