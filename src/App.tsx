@@ -9,12 +9,14 @@ import ProjectSidebar from './components/ProjectSidebar';
 import ProjectSkillView from './components/ProjectSkillView';
 import AddSkillModal from './components/AddSkillModal';
 import LangSwitch from './components/LangSwitch';
+import { useTranslation } from 'react-i18next';
 import { useSkills } from './hooks/useSkills';
 import { usePlugins } from './hooks/usePlugins';
 import { useProjects } from './hooks/useProjects';
 import { fetchConfig } from './api/client';
 
 export default function App() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<TabKey>('global');
   const [search, setSearch] = useState('');
   const [configOpen, setConfigOpen] = useState(false);
@@ -95,10 +97,10 @@ export default function App() {
           <Search size={16} className="text-fg-muted shrink-0" />
           <input
             type="text"
-            placeholder="搜索技能..."
+            placeholder={t('app.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            aria-label="搜索技能"
+            aria-label={t('app.searchLabel')}
             className="text-[13px] bg-transparent focus:outline-none w-full text-fg-primary placeholder:text-fg-muted"
           />
         </div>
@@ -107,7 +109,7 @@ export default function App() {
         {/* Refresh */}
         <button
           onClick={handleRefresh}
-          aria-label="刷新"
+          aria-label={t('app.refresh')}
           className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
         >
           <RefreshCw size={18} />
@@ -119,7 +121,7 @@ export default function App() {
         {/* Config */}
         <button
           onClick={() => setConfigOpen(true)}
-          aria-label="设置"
+          aria-label={t('app.settings')}
           className="p-2 text-fg-secondary hover:text-fg-primary hover:bg-surface-hover rounded-[var(--radius-md)] transition-colors"
         >
           <Settings size={18} />
@@ -133,7 +135,7 @@ export default function App() {
           {error && (
             <div className="bg-danger-light border border-danger/20 text-danger text-sm px-4 py-2.5 rounded-[var(--radius-lg)] flex items-center justify-between">
               <span>{error}</span>
-              <button onClick={clearError} aria-label="关闭错误提示" className="text-danger/60 hover:text-danger ml-2 text-lg">&times;</button>
+              <button onClick={clearError} aria-label={t('app.closeError')} className="text-danger/60 hover:text-danger ml-2 text-lg">&times;</button>
             </div>
           )}
 
@@ -142,7 +144,7 @@ export default function App() {
 
           {/* Loading */}
           {skillsLoading && (
-            <div className="text-fg-muted text-sm py-4 text-center">加载中...</div>
+            <div className="text-fg-muted text-sm py-4 text-center">{t('app.loading')}</div>
           )}
 
           {/* Content */}
@@ -176,7 +178,7 @@ export default function App() {
               />
             ) : (
               <div className="flex items-center justify-center h-full text-fg-muted text-sm">
-                {projects.length === 0 ? '请先添加项目' : '请选择一个项目'}
+                {projects.length === 0 ? t('app.addProjectFirst') : t('app.selectProject')}
               </div>
             )}
           </div>

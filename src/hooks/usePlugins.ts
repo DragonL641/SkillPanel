@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PluginInfo } from '../types';
 import { getErrorMessage } from '../utils/getErrorMessage';
 import { fetchPluginSkills } from '../api/client';
@@ -7,6 +8,7 @@ export function usePlugins() {
   const [plugins, setPlugins] = useState<PluginInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const loadPlugins = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -15,7 +17,7 @@ export function usePlugins() {
       const d = await fetchPluginSkills();
       setPlugins(d.plugins);
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '加载失败');
+      setError(getErrorMessage(err) || t('skill.loadFailed'));
     } finally {
       if (!silent) setLoading(false);
     }

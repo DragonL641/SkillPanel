@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TreeNode, Summary } from '../types';
 import { getErrorMessage } from '../utils/getErrorMessage';
 import {
@@ -16,6 +17,7 @@ export function useSkills() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const loadSummary = useCallback(() => fetchSummary().then(setSummary), []);
 
@@ -26,7 +28,7 @@ export function useSkills() {
       const d = await fetchCustomSkills();
       setTree(d.tree);
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '加载失败');
+      setError(getErrorMessage(err) || t('skill.loadFailed'));
     } finally {
       if (!silent) setLoading(false);
     }
@@ -40,7 +42,7 @@ export function useSkills() {
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || (enable ? '启用失败' : '禁用失败'));
+      setError(getErrorMessage(err) || (enable ? t('skill.enableFailed') : t('skill.disableFailed')));
     }
   };
 
@@ -49,12 +51,12 @@ export function useSkills() {
     try {
       const result = enable ? await batchEnableSkills(paths) : await batchDisableSkills(paths);
       if (result.failed.length > 0) {
-        setError(`${result.failed.length} 个 skill 操作失败`);
+        setError(t('skill.batchFailed', { count: result.failed.length }));
       }
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '批量操作失败');
+      setError(getErrorMessage(err) || t('skill.batchFailedFallback'));
     }
   };
 
@@ -65,7 +67,7 @@ export function useSkills() {
       await loadCustomSkills(true);
       await loadSummary();
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || '删除失败');
+      setError(getErrorMessage(err) || t('skill.deleteFailed'));
     }
   };
 
