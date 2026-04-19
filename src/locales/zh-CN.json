@@ -44,11 +44,14 @@
     "deleteLabel": "删除",
     "cancel": "取消",
     "deleteFailed": "删除失败",
+    "detailAria": "查看技能详情",
+    "analyzeAria": "分析技能",
     "batchFailed": "{{count}} 个 skill 操作失败",
     "batchFailedFallback": "批量操作失败",
     "loadFailed": "加载失败"
   },
   "analysis": {
+    "title": "AI 分析",
     "failed": "分析失败",
     "expand": "原理分析",
     "collapse": "收起分析",
@@ -56,7 +59,8 @@
     "timestamp": "分析时间: {{date}}",
     "reanalyze": "重新分析",
     "notAnalyzed": "未分析",
-    "startAnalysis": "开始分析"
+    "startAnalysis": "开始分析",
+    "apiNotConfigured": "未检测到 API Key，请在 设置 → Claude Code 目录 中确认 ~/.claude/settings.json 包含 ANTHROPIC_API_KEY。"
   },
   "plugin": {
     "noMatch": "没有匹配的插件",
@@ -78,6 +82,7 @@
     "customDirHint": "支持添加多个目录",
     "selectDir": "选择目录",
     "addDir": "添加目录",
+    "picking": "打开中...",
     "port": "端口",
     "apiDetected": "API 配置已检测到",
     "apiNotDetected": "API 配置未检测到",
@@ -139,5 +144,23 @@
   "langSwitch": {
     "zh": "中",
     "en": "EN"
+  },
+  "group": {
+    "folder": "文件夹",
+    "group": "分组",
+    "batchManage": "批量管理",
+    "selected": "已选 {{count}} 项",
+    "moveTo": "移至",
+    "newGroup": "新分组",
+    "removeGroup": "移除分组",
+    "other": "其他",
+    "editGroup": "编辑分组",
+    "deleteGroup": "删除分组",
+    "rename": "重命名",
+    "changeColor": "更改颜色",
+    "groupName": "分组名称",
+    "createGroup": "创建",
+    "confirmDelete": "确定删除分组「{{name}}」？其内技能将移至「其他」。",
+    "emptyGroup": "此分组暂无技能"
   }
 }

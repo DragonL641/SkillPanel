@@ -14,12 +14,20 @@ export interface ProjectConfig {
   path: string;
 }
 
+export interface SkillGroup {
+  id: string;
+  name: string;
+  color: string;
+  skills: string[];
+}
+
 export interface AppConfig {
   claudeRootDir: string;
   customSkillDir: string;       // kept for backward compat, derived from customSkillDirs[0]
   customSkillDirs: string[];    // NEW
   port: number;
   projects: ProjectConfig[];    // NEW
+  groups: SkillGroup[];
   // Auto-derived from claudeRootDir
   claudeSkillsDir: string;
   claudePluginsDir: string;
@@ -39,19 +47,24 @@ const DEFAULT_CONFIG = {
 
 let saveQueue: Promise<AppConfig> = Promise.resolve({} as AppConfig);
 
+function expandTilde(p: string): string {
+  if (p.startsWith('~')) return path.join(os.homedir(), p.slice(1));
+  return p;
+}
+
 function buildConfig(): AppConfig {
   let raw: any = {};
   if (fs.existsSync(CONFIG_FILE)) {
     raw = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
   }
-  const claudeRootDir = raw.claudeRootDir || DEFAULT_CONFIG.claudeRootDir;
+  const claudeRootDir = expandTilde(raw.claudeRootDir || DEFAULT_CONFIG.claudeRootDir);
 
   // Migrate customSkillDir -> customSkillDirs (backward compat)
   let customSkillDirs: string[];
   if (raw.customSkillDirs && Array.isArray(raw.customSkillDirs) && raw.customSkillDirs.length > 0) {
-    customSkillDirs = raw.customSkillDirs;
+    customSkillDirs = raw.customSkillDirs.map(expandTilde);
   } else if (raw.customSkillDir) {
-    customSkillDirs = [raw.customSkillDir];
+    customSkillDirs = [expandTilde(raw.customSkillDir)];
   } else {
     customSkillDirs = [];
   }
@@ -62,6 +75,7 @@ function buildConfig(): AppConfig {
     customSkillDirs,
     port: raw.port || DEFAULT_CONFIG.port,
     projects: Array.isArray(raw.projects) ? raw.projects : [],
+    groups: Array.isArray(raw.groups) ? raw.groups : [],
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
   };
@@ -80,6 +94,7 @@ export function saveConfig(config: Record<string, any>): Promise<AppConfig> {
       customSkillDirs: config.customSkillDirs ?? current.customSkillDirs,
       port: config.port ?? current.port,
       projects: config.projects ?? current.projects,
+      groups: config.groups ?? current.groups,
     };
     // Only persist user-configurable fields, not derived ones
     // Write to temp file then rename for atomic replacement
@@ -98,26 +113,27 @@ export interface ConfigResponse {
   customSkillDirs: string[];
   port: number;
   projects: ProjectConfig[];
+  groups: SkillGroup[];
   apiConfigDetected: boolean;
   apiModel: string | null;
 }
 
-export function buildConfigResponse(config: AppConfig): ConfigResponse {
-  const apiConfig = loadClaudeApiConfig();
+export function buildConfigResponse(config: AppConfig, detectDir?: string): ConfigResponse {
+  const apiConfig = detectDir ? detectApiConfigFromDir(detectDir) : loadClaudeApiConfig();
   return {
     claudeRootDir: config.claudeRootDir,
     customSkillDir: config.customSkillDir,
     customSkillDirs: config.customSkillDirs,
     port: config.port,
     projects: config.projects,
+    groups: config.groups,
     apiConfigDetected: !!apiConfig,
     apiModel: apiConfig?.model || null,
   };
 }
 
-export function loadClaudeApiConfig(): ClaudeApiConfig | null {
-  const config = loadConfig();
-  const settingsPath = path.join(config.claudeRootDir, 'settings.json');
+export function detectApiConfigFromDir(claudeRootDir: string): ClaudeApiConfig | null {
+  const settingsPath = path.join(expandTilde(claudeRootDir), 'settings.json');
 
   try {
     const raw = fs.readFileSync(settingsPath, 'utf-8');
@@ -134,7 +150,12 @@ export function loadClaudeApiConfig(): ClaudeApiConfig | null {
     if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
       return null;
     }
-    logger.warn('failed to load Claude API config', { error: String(err) });
+    logger.warn('failed to load Claude API config', { dir: claudeRootDir, error: String(err) });
     return null;
   }
+}
+
+export function loadClaudeApiConfig(): ClaudeApiConfig | null {
+  const config = loadConfig();
+  return detectApiConfigFromDir(config.claudeRootDir);
 }

@@ -90,7 +90,7 @@ function getAnthropicClient(apiConfig: ClaudeApiConfig): Anthropic {
   return _cachedClient;
 }
 
-export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false, signal?: AbortSignal): Promise<SkillAnalysis> {
+export async function analyzeSkill(config: AppConfig, skillDir: string, key: string, force = false, signal?: AbortSignal, lang: string = 'zh'): Promise<SkillAnalysis> {
   const hash = computeContentHash(skillDir);
   const name = path.basename(skillDir);
 
@@ -105,14 +105,15 @@ export async function analyzeSkill(config: AppConfig, skillDir: string, key: str
   // Cache miss or hash changed — call Claude API
   const apiConfig = loadClaudeApiConfig();
   if (!apiConfig) {
-    throw new AnalysisError('未检测到 Claude Code API 配置，请确认 ~/.claude/settings.json 中包含 ANTHROPIC_AUTH_TOKEN');
+    throw new AnalysisError('Claude Code API configuration not detected. Please verify that ~/.claude/settings.json contains ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN.');
   }
 
   const content = collectSkillContent(skillDir);
-  const prompt = `分析以下 Claude Code skill 的执行步骤，用中文输出，仅列出该 skill 实际的执行步骤（步骤化），不要包含概述或依赖信息。
-
-Skill 内容：
-${content}`;
+  const prompts: Record<string, string> = {
+    zh: `分析以下 Claude Code skill 的执行步骤，用中文输出，仅列出该 skill 实际的执行步骤（步骤化），不要包含概述或依赖信息。\n\nSkill 内容：\n${content}`,
+    en: `Analyze the execution steps of the following Claude Code skill. Output in English, list only the actual execution steps (step by step), without overview or dependency information.\n\nSkill content:\n${content}`,
+  };
+  const prompt = prompts[lang] || prompts.zh;
 
   // Yield after synchronous pre-computation before blocking API call
   await new Promise<void>((resolve) => setImmediate(resolve));
@@ -155,7 +156,7 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
       if (node.type === 'skill' && node.skill) {
         result.push({
           dir: node.skill.absolutePath,
-          key: `custom/${node.skill.name}`,
+          key: `custom/${node.skill.name}:zh`,
         });
       }
       if (node.children) result.push(...collectFromTree(node.children));
@@ -166,7 +167,7 @@ export async function analyzeAllSkills(config: AppConfig, signal?: AbortSignal):
   const allSkills = collectFromTree(scanCustomSkills(config));
   for (const plugin of scanPlugins(config)) {
     for (const skill of plugin.skills) {
-      allSkills.push({ dir: skill.path, key: `plugin/${skill.name}` });
+      allSkills.push({ dir: skill.path, key: `plugin/${skill.name}:zh` });
     }
   }
 

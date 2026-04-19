@@ -12,6 +12,7 @@ import analysisRoutes from '../routes/analysis.js';
 import searchRoutes from '../routes/search.js';
 import fsRoutes from '../routes/fs.js';
 import projectsRoutes from '../routes/projects.js';
+import groupsRoutes from '../routes/groups.js';
 
 /**
  * Create an Express app for testing, without listen() or vite-express binding.
@@ -28,6 +29,7 @@ export function createApp() {
   app.use('/api', searchRoutes);
   app.use('/api', fsRoutes);
 app.use('/api', projectsRoutes);
+  app.use('/api', groupsRoutes);
 
   // Health route — mirrors server/index.ts
   app.get('/api/health', (_req, res) => {

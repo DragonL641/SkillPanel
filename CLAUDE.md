@@ -16,7 +16,7 @@ npx vitest         # Run tests (vitest, no npm script defined)
 npx vitest --run   # Single run (no watch)
 ```
 
-No linter is configured.
+No linter is configured. No vitest config — runs with defaults.
 
 ## Architecture
 
@@ -33,14 +33,24 @@ No linter is configured.
   - `plugin-scanner.ts` — Reads `~/.claude/plugins/installed_plugins.json`, discovers skills via `marketplace.json` or `skills/` dir
   - `skill-manager.ts` — Creates/removes symlinks in `~/.claude/skills/` to enable/disable skills. Validates paths, handles edge cases (already enabled/disabled, missing directories)
   - `analyzer.ts` — Calls Claude API for skill analysis, caches results by content hash in `~/.skillpanel/analysis-cache.json`
-  - `cache.ts` — In-memory TTL cache (5s default) used by route handlers for list operations. `getOrCompute()` pattern with `invalidate()` on mutations
+  - `cache.ts` — In-memory TTL cache (5s default) used by route handlers for list operations. `getOrCompute()` pattern with `invalidate()` on mutations. Cache keys follow conventions: `'config'`, `'skills:custom'`, `'skills:plugins'`; mutations call `invalidateByPrefix('skills:')`
 
 ### Frontend (`src/`)
 
 - React + Tailwind CSS (v4, imported via `@import "tailwindcss"` in index.css)
+- Tailwind v4 `@theme` in `index.css` defines semantic color tokens (`surface-primary`, `fg-primary`, `accent`, `success`, `danger`, `warning`, `border`, etc.) — use these instead of raw color values
 - `App.tsx` — Main shell: tabs (global/plugin/project), search, data fetching, project sidebar, and modal orchestration
-- `api/client.ts` — Fetch wrapper for all `/api/*` endpoints
+- `api/client.ts` — `apiFetch<T>()` wrapper that handles error parsing and content-type validation; all API calls are one-liners using it
+- State managed via custom hooks (`src/hooks/useSkills.ts`, `usePlugins.ts`, `useProjects.ts`) — no global state library
+- i18n via `i18next` + `react-i18next` with `zh-CN` (default/fallback) and `en` locales in `src/locales/`. Components use `const { t } = useTranslation()`
 - `components/` — UI components: `DirTree` (recursive directory tree), `SkillCard`, `AnalysisPanel` (expandable AI analysis), `PluginPanel` (plugin groups), `TabSwitch`, `StatsRow`, `ConfigModal`, `ProjectSidebar`, `ProjectSkillView`, `AddSkillModal`, `DirPicker`
+
+### Key Patterns
+
+- **Express 5 wildcards**: Routes use `{*paramName}` syntax (e.g. `/enable/{*skillPath}`). Parameter values can be arrays — handlers normalize: `Array.isArray(raw) ? raw.join('/') : raw`
+- **Config persistence**: `config.ts` uses a serial promise chain (`saveQueue`) for atomic writes (write to `.tmp`, then `rename`)
+- **Claude API config**: Derived from `~/.claude/settings.json` `env` object — NOT stored in app config. Reads `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`. Default model: `claude-sonnet-4-6`
+- **Environment variables**: `NODE_ENV` (production mode), `SKIP_AUTO_ANALYSIS=1` (skip startup analysis)
 
 ### Key API Routes
 

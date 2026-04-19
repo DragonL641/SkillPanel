@@ -384,7 +384,7 @@
           "name": "PluginCard",
           "reusable": true,
           "clip": true,
-          "width": "fill_container",
+          "width": 500,
           "fill": "$surface-primary",
           "cornerRadius": "$radius-lg",
           "stroke": {
@@ -596,1306 +596,6 @@
     },
     {
       "type": "frame",
-      "id": "csQur",
-      "x": 1738,
-      "y": 0,
-      "name": "Custom Skills",
-      "clip": true,
-      "width": 1280,
-      "height": 900,
-      "fill": "$surface-secondary",
-      "layout": "vertical",
-      "children": [
-        {
-          "type": "frame",
-          "id": "y0VOG",
-          "name": "Header",
-          "width": "fill_container",
-          "fill": "$surface-primary",
-          "stroke": {
-            "thickness": {
-              "bottom": 1
-            },
-            "fill": "$border-default"
-          },
-          "gap": 16,
-          "padding": [
-            16,
-            32
-          ],
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "QZ8jZ",
-              "name": "Logo",
-              "gap": 10,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "7tgZ2",
-                  "name": "logoIcon",
-                  "width": 28,
-                  "height": 28,
-                  "fill": "$accent-primary",
-                  "cornerRadius": "$radius-md"
-                },
-                {
-                  "type": "text",
-                  "id": "yRGMB",
-                  "name": "logoText",
-                  "fill": "$foreground-primary",
-                  "content": "SkillPanel",
-                  "fontFamily": "Inter",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "N20KO",
-              "name": "TabBar",
-              "fill": "$surface-tertiary",
-              "cornerRadius": "$radius-md",
-              "gap": 4,
-              "padding": [
-                6,
-                4
-              ],
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "5lHdp",
-                  "name": "TabActive",
-                  "fill": "$surface-primary",
-                  "cornerRadius": "$radius-sm",
-                  "effect": {
-                    "type": "shadow",
-                    "shadowType": "outer",
-                    "color": "#0000000a",
-                    "offset": {
-                      "x": 0,
-                      "y": 1
-                    },
-                    "blur": 2
-                  },
-                  "padding": [
-                    6,
-                    14
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "p1qsX",
-                      "name": "tabActiveText",
-                      "fill": "$foreground-primary",
-                      "content": "自定义技能",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "4WOjO",
-                  "name": "TabInactive",
-                  "cornerRadius": "$radius-sm",
-                  "padding": [
-                    6,
-                    14
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "rQGpU",
-                      "name": "tabInactiveText",
-                      "fill": "$foreground-secondary",
-                      "content": "插件管理",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "500"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "SWYPH",
-              "name": "spacer",
-              "width": "fill_container",
-              "height": 1
-            },
-            {
-              "id": "PMyna",
-              "type": "ref",
-              "ref": "EozFl",
-              "name": "headerSearch",
-              "x": 898,
-              "y": 17,
-              "height": "fit_content",
-              "descendants": {
-                "k9FIJ": {
-                  "x": 14,
-                  "y": 11.5
-                },
-                "RzZ7K": {
-                  "x": 38,
-                  "y": 10
-                }
-              }
-            },
-            {
-              "type": "frame",
-              "id": "5i2MN",
-              "name": "ConfigBtn",
-              "cornerRadius": "$radius-md",
-              "padding": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "icon_font",
-                  "id": "R7JTh",
-                  "name": "configIcon",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "settings",
-                  "iconFontFamily": "lucide",
-                  "fill": "$foreground-secondary"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "gzZK4",
-          "name": "MainContent",
-          "clip": true,
-          "width": "fill_container",
-          "height": "fill_container",
-          "layout": "vertical",
-          "gap": 24,
-          "padding": [
-            24,
-            32
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "G55Ic",
-              "name": "StatsRow",
-              "width": "fill_container",
-              "gap": 16,
-              "children": [
-                {
-                  "id": "VwiNk",
-                  "type": "ref",
-                  "ref": "Py1pK",
-                  "name": "stat1",
-                  "x": 0,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "xemOb": {
-                      "content": "自定义技能",
-                      "x": 20,
-                      "y": 20
-                    },
-                    "Uf1K3": {
-                      "content": "24",
-                      "x": 20,
-                      "y": 45
-                    },
-                    "KhnkX": {
-                      "content": "共 24 个自定义技能",
-                      "x": 20,
-                      "y": 95
-                    }
-                  }
-                },
-                {
-                  "id": "PbiAP",
-                  "type": "ref",
-                  "ref": "Py1pK",
-                  "name": "stat2",
-                  "x": 196,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "xemOb": {
-                      "content": "已启用",
-                      "x": 20,
-                      "y": 20
-                    },
-                    "Uf1K3": {
-                      "content": "18",
-                      "fill": "$success",
-                      "x": 20,
-                      "y": 45
-                    },
-                    "KhnkX": {
-                      "content": "75% 启用率",
-                      "x": 20,
-                      "y": 95
-                    }
-                  }
-                },
-                {
-                  "id": "YvUWT",
-                  "type": "ref",
-                  "ref": "Py1pK",
-                  "name": "stat3",
-                  "x": 392,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "xemOb": {
-                      "content": "插件技能",
-                      "x": 20,
-                      "y": 20
-                    },
-                    "Uf1K3": {
-                      "content": "36",
-                      "x": 20,
-                      "y": 45
-                    },
-                    "KhnkX": {
-                      "content": "来自 6 个插件",
-                      "x": 20,
-                      "y": 95
-                    }
-                  }
-                },
-                {
-                  "id": "vyN9h",
-                  "type": "ref",
-                  "ref": "Py1pK",
-                  "name": "stat4",
-                  "x": 588,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "xemOb": {
-                      "content": "总计",
-                      "x": 20,
-                      "y": 20
-                    },
-                    "Uf1K3": {
-                      "content": "60",
-                      "x": 20,
-                      "y": 45
-                    },
-                    "KhnkX": {
-                      "content": "所有技能总数",
-                      "x": 20,
-                      "y": 95
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "u1NqJ",
-              "name": "SectionHeader",
-              "width": "fill_container",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "1fv3H",
-                  "name": "sectionTitle",
-                  "fill": "$foreground-primary",
-                  "content": "superpowers",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "frame",
-                  "id": "vJDUm",
-                  "name": "sectionCount",
-                  "fill": "$surface-tertiary",
-                  "cornerRadius": "$radius-full",
-                  "padding": [
-                    2,
-                    8
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "pbND3",
-                      "name": "sectionCountText",
-                      "fill": "$foreground-secondary",
-                      "content": "5 个技能",
-                      "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "500"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "F7rVc",
-                  "name": "sectionSpacer",
-                  "width": "fill_container",
-                  "height": 1
-                },
-                {
-                  "type": "text",
-                  "id": "dVXlM",
-                  "name": "batchEnable",
-                  "fill": "$accent-primary",
-                  "content": "全部启用",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "text",
-                  "id": "9gUbC",
-                  "name": "batchDivider",
-                  "fill": "$foreground-muted",
-                  "content": "|",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "KvL23",
-                  "name": "batchDisable",
-                  "fill": "$foreground-muted",
-                  "content": "全部禁用",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "500"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "4veKE",
-              "name": "SkillsGrid",
-              "width": "fill_container",
-              "gap": 16,
-              "children": [
-                {
-                  "id": "Etmst",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill1",
-                  "x": 0,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "width": "fill_container",
-                      "height": "fit_content",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "brainstorming",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "zIqB8",
-                      "type": "ref",
-                      "ref": "rdRmN",
-                      "name": "badge1",
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "x": 232,
-                      "descendants": {
-                        "Cp1X6": {
-                          "x": 8,
-                          "y": 7
-                        },
-                        "yON3A": {
-                          "x": 18,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "在创建新功能、构建组件或添加功能前，必须使用此技能进行头脑风暴和创意探索",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 48
-                    },
-                    "dVxZq": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 96,
-                      "children": [
-                        {
-                          "id": "M9NxJ",
-                          "type": "ref",
-                          "ref": "fg7JF",
-                          "name": "toggle1",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "d5TKa": {
-                              "x": 18,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "XhzFL",
-                          "name": "analyzeBtn",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "EoPFC",
-                              "name": "analyzeIcon1",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "1iQUU",
-                              "name": "analyzeText1",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "ITcWB",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "2wjhg",
-                              "name": "delIcon1",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "xTZne",
-                          "name": "spacer1",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "id": "IIYod",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill2",
-                  "x": 336,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "width": "fill_container",
-                      "height": "fit_content",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "test-driven-development",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "y9nlr",
-                      "type": "ref",
-                      "ref": "rdRmN",
-                      "name": "badge2",
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "x": 232,
-                      "descendants": {
-                        "Cp1X6": {
-                          "x": 8,
-                          "y": 7
-                        },
-                        "yON3A": {
-                          "x": 18,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "实现任何功能或修复 bug 时，在编写实现代码之前使用此技能进行测试驱动开发",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 48
-                    },
-                    "dVxZq": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 97,
-                      "children": [
-                        {
-                          "id": "6FvLa",
-                          "type": "ref",
-                          "ref": "fg7JF",
-                          "name": "toggle2",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "d5TKa": {
-                              "x": 18,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "EbG2V",
-                          "name": "analyzeBtn",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "MX6ob",
-                              "name": "analyzeIcon2",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "usXDf",
-                              "name": "analyzeText2",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Cp8E8",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "6qyJQ",
-                              "name": "delIcon2",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Pwizq",
-                          "name": "spacer2",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "id": "GJUCn",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill3",
-                  "x": 672,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "systematic-debugging",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "cdoGj",
-                      "type": "ref",
-                      "ref": "nwiUw",
-                      "name": "badge3",
-                      "x": 242,
-                      "y": 0,
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "descendants": {
-                        "GiZ1B": {
-                          "x": 8,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "遇到任何 bug、测试失败或意外行为时，在提出修复建议之前使用此技能",
-                      "y": 48,
-                      "width": "fill_container",
-                      "x": 16
-                    },
-                    "dVxZq": {
-                      "y": 97,
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "children": [
-                        {
-                          "id": "vL5DH",
-                          "type": "ref",
-                          "ref": "Wb13b",
-                          "name": "toggle3",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "eBcvf": {
-                              "x": 2,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "wgK1i",
-                          "name": "analyzeBtn",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "aiVUe",
-                              "name": "analyzeIcon3",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "y02sP",
-                              "name": "analyzeText3",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "YeTGf",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "gSWJX",
-                              "name": "delIcon3",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "obQip",
-                          "name": "spacer3",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "dW7AZ",
-              "name": "SectionHeader2",
-              "width": "fill_container",
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "tdGpA",
-                  "name": "section2Title",
-                  "fill": "$foreground-primary",
-                  "content": "document-skills",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "frame",
-                  "id": "Isbvi",
-                  "name": "section2Count",
-                  "fill": "$surface-tertiary",
-                  "cornerRadius": "$radius-full",
-                  "padding": [
-                    2,
-                    8
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "OOPYC",
-                      "name": "section2CountText",
-                      "fill": "$foreground-secondary",
-                      "content": "8 个技能",
-                      "fontFamily": "Inter",
-                      "fontSize": 11,
-                      "fontWeight": "500"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "8NLuY",
-                  "name": "section2Spacer",
-                  "width": "fill_container",
-                  "height": 1
-                },
-                {
-                  "type": "text",
-                  "id": "H6DEj",
-                  "name": "batch2Enable",
-                  "fill": "$accent-primary",
-                  "content": "全部启用",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "text",
-                  "id": "TEsCT",
-                  "name": "batch2Divider",
-                  "fill": "$foreground-muted",
-                  "content": "|",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "5T4KG",
-                  "name": "batch2Disable",
-                  "fill": "$foreground-muted",
-                  "content": "全部禁用",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "500"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "M0wjA",
-              "name": "SkillsGrid2",
-              "width": "fill_container",
-              "gap": 16,
-              "children": [
-                {
-                  "id": "1R7fm",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill4",
-                  "x": 0,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "width": "fill_container",
-                      "height": "fit_content",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "frontend-design",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "fornL",
-                      "type": "ref",
-                      "ref": "rdRmN",
-                      "name": "badge4",
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "x": 232,
-                      "descendants": {
-                        "Cp1X6": {
-                          "x": 8,
-                          "y": 7
-                        },
-                        "yON3A": {
-                          "x": 18,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "创建独特的、生产级的前端界面，具有高设计质量，适用于 Web 应用和着陆页",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 48
-                    },
-                    "dVxZq": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 97,
-                      "children": [
-                        {
-                          "id": "oGiub",
-                          "type": "ref",
-                          "ref": "fg7JF",
-                          "name": "t4",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "d5TKa": {
-                              "x": 18,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Aghvi",
-                          "name": "ab4",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "2EzaB",
-                              "name": "ab4i",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "gOAH9",
-                              "name": "ab4t",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "uYY6z",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "m8hfM",
-                              "name": "delIcon4",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "J4FTL",
-                          "name": "spacer4",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "id": "gnMHc",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill5",
-                  "x": 336,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "width": "fill_container",
-                      "height": "fit_content",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "mcp-builder",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "Isgzp",
-                      "type": "ref",
-                      "ref": "rdRmN",
-                      "name": "badge5",
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "x": 232,
-                      "descendants": {
-                        "Cp1X6": {
-                          "x": 8,
-                          "y": 7
-                        },
-                        "yON3A": {
-                          "x": 18,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "创建高质量 MCP 服务器指南，使 LLM 能与外部系统交互",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 48
-                    },
-                    "dVxZq": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 97,
-                      "children": [
-                        {
-                          "id": "hiffy",
-                          "type": "ref",
-                          "ref": "fg7JF",
-                          "name": "t5",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "d5TKa": {
-                              "x": 18,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "tm5LU",
-                          "name": "ab5",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "7AKJp",
-                              "name": "ab5i",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "TMBEw",
-                              "name": "ab5t",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "qKPvG",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "TLYf8",
-                              "name": "delIcon5",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Uv8XB",
-                          "name": "spacer5",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "id": "ar43r",
-                  "type": "ref",
-                  "ref": "eAKHq",
-                  "name": "skill6",
-                  "x": 672,
-                  "y": 0,
-                  "height": "fit_content",
-                  "descendants": {
-                    "sht8C": {
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "y": 16
-                    },
-                    "Pxsn2": {
-                      "content": "pdf",
-                      "y": 1.5
-                    },
-                    "A4B4f": {
-                      "id": "ksMSR",
-                      "type": "ref",
-                      "ref": "nwiUw",
-                      "name": "badge6",
-                      "x": 242,
-                      "y": 0,
-                      "width": "fit_content",
-                      "height": "fit_content",
-                      "descendants": {
-                        "GiZ1B": {
-                          "x": 8,
-                          "y": 3
-                        }
-                      }
-                    },
-                    "HF3Zn": {
-                      "content": "综合 PDF 处理工具包，支持提取文本和表格、创建新 PDF、合并拆分文档",
-                      "y": 48,
-                      "width": "fill_container",
-                      "x": 16
-                    },
-                    "dVxZq": {
-                      "y": 98,
-                      "height": "fit_content",
-                      "width": "fill_container",
-                      "x": 16,
-                      "children": [
-                        {
-                          "id": "avEL9",
-                          "type": "ref",
-                          "ref": "Wb13b",
-                          "name": "t6",
-                          "x": 0,
-                          "y": 2,
-                          "descendants": {
-                            "eBcvf": {
-                              "x": 2,
-                              "y": 2
-                            }
-                          }
-                        },
-                        {
-                          "type": "frame",
-                          "id": "R48Ow",
-                          "name": "ab6",
-                          "cornerRadius": "$radius-md",
-                          "stroke": {
-                            "thickness": 1,
-                            "fill": "$border-default"
-                          },
-                          "gap": 4,
-                          "padding": [
-                            4,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "JtkMJ",
-                              "name": "ab6i",
-                              "width": 12,
-                              "height": 12,
-                              "iconFontName": "sparkles",
-                              "iconFontFamily": "lucide",
-                              "fill": "$accent-primary"
-                            },
-                            {
-                              "type": "text",
-                              "id": "D2m0i",
-                              "name": "ab6t",
-                              "fill": "$accent-primary",
-                              "content": "分析",
-                              "fontFamily": "Inter",
-                              "fontSize": 11,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "p5w7o",
-                          "name": "deleteBtn",
-                          "cornerRadius": "$radius-md",
-                          "padding": [
-                            4,
-                            8
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon_font",
-                              "id": "VwsY8",
-                              "name": "delIcon6",
-                              "width": 14,
-                              "height": 14,
-                              "iconFontName": "trash-2",
-                              "iconFontFamily": "lucide",
-                              "fill": "$danger"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "FzMkI",
-                          "name": "spacer6",
-                          "width": "fill_container",
-                          "height": 1
-                        }
-                      ]
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "9C4sY",
       "x": 3058,
       "y": 0,
@@ -1981,7 +681,30 @@
                       "id": "QVzt4",
                       "name": "pTabInactiveText",
                       "fill": "$foreground-secondary",
-                      "content": "自定义技能",
+                      "content": "全局 Skill 管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "1mBxX",
+                  "name": "pTabMid",
+                  "cornerRadius": "$radius-sm",
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XP4bb",
+                      "name": "midTabT",
+                      "fill": "$foreground-secondary",
+                      "content": "项目级 Skill 管理",
                       "fontFamily": "Inter",
                       "fontSize": 12,
                       "fontWeight": "500"
@@ -2015,7 +738,7 @@
                       "id": "I5C2x",
                       "name": "pTabActiveText",
                       "fill": "$foreground-primary",
-                      "content": "插件管理",
+                      "content": "插件技能管理",
                       "fontFamily": "Inter",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -3060,49 +1783,184 @@
                 },
                 {
                   "type": "frame",
-                  "id": "impGe",
-                  "name": "Field2",
+                  "id": "kP04v",
+                  "name": "DirField",
                   "width": "fill_container",
                   "layout": "vertical",
                   "gap": 6,
                   "children": [
                     {
-                      "type": "text",
-                      "id": "vVN1C",
-                      "name": "field2Label",
-                      "fill": "$foreground-primary",
-                      "content": "自定义技能仓库目录",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "500"
-                    },
-                    {
                       "type": "frame",
-                      "id": "lSwTe",
-                      "name": "field2Input",
+                      "id": "dg27j",
+                      "name": "dirLabelRow",
                       "width": "fill_container",
-                      "fill": "$surface-primary",
-                      "cornerRadius": "$radius-md",
-                      "stroke": {
-                        "thickness": 1,
-                        "fill": "$border-default"
-                      },
                       "gap": 8,
-                      "padding": [
-                        10,
-                        14
-                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "x1gaa",
-                          "name": "field2Value",
+                          "id": "p33J0",
+                          "name": "dirLabelText",
                           "fill": "$foreground-primary",
-                          "content": "~/Projects/my-skills",
-                          "fontFamily": "Geist Mono",
+                          "content": "自定义技能目录",
+                          "fontFamily": "Inter",
                           "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "dFFg1",
+                          "name": "dirLabelCount",
+                          "fill": "$foreground-muted",
+                          "content": "（支持添加多个目录）",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
                           "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "3aoMw",
+                      "name": "DirList",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "z7ZFH",
+                          "name": "dir1",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "zqXYA",
+                              "name": "dir1Icon",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "folder",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "QOZFs",
+                              "name": "dir1Path",
+                              "fill": "$foreground-primary",
+                              "content": "~/Projects/superpowers-skills",
+                              "fontFamily": "Geist Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "RnuE4",
+                              "name": "dir1Sp",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "kBmrb",
+                              "name": "dir1Del",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "x",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Roje0",
+                          "name": "dir2",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "MiRiT",
+                              "name": "dir2Icon",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "folder",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "8EDJ5",
+                              "name": "dir2Path",
+                              "fill": "$foreground-primary",
+                              "content": "~/Projects/document-skills",
+                              "fontFamily": "Geist Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "yDQ0q",
+                              "name": "dir2Sp",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "uLZzw",
+                              "name": "dir2Del",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "x",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pNxzx",
+                          "name": "addDirBtn",
+                          "width": "fill_container",
+                          "cornerRadius": "$radius-md",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border-default"
+                          },
+                          "gap": 6,
+                          "padding": [
+                            8,
+                            14
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "fIvSt",
+                              "name": "addDirIcon",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "folder-plus",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-primary"
+                            },
+                            {
+                              "type": "text",
+                              "id": "klpYj",
+                              "name": "addDirText",
+                              "fill": "$accent-primary",
+                              "content": "添加目录",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -3262,6 +2120,1973 @@
                       "y": 8
                     }
                   }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jAruc",
+      "x": 4398,
+      "y": 0,
+      "name": "项目级 Skill 管理",
+      "clip": true,
+      "width": 1280,
+      "height": 900,
+      "fill": "$surface-secondary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Np5Ke",
+          "name": "Header",
+          "width": "fill_container",
+          "fill": "$surface-primary",
+          "stroke": {
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-default"
+          },
+          "gap": 16,
+          "padding": [
+            16,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ZcDwi",
+              "name": "Logo",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZgQac",
+                  "name": "logoIcon",
+                  "width": 28,
+                  "height": 28,
+                  "fill": "$accent-primary",
+                  "cornerRadius": "$radius-md"
+                },
+                {
+                  "type": "text",
+                  "id": "eNifB",
+                  "name": "logoText",
+                  "fill": "$foreground-primary",
+                  "content": "SkillPanel",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bLDMg",
+              "name": "TabBar",
+              "fill": "$surface-tertiary",
+              "cornerRadius": "$radius-md",
+              "gap": 4,
+              "padding": [
+                6,
+                4
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "A968I",
+                  "name": "TabGlobal",
+                  "cornerRadius": "$radius-sm",
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RVyui",
+                      "name": "t1t",
+                      "fill": "$foreground-secondary",
+                      "content": "全局 Skill 管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IJSNF",
+                  "name": "TabProjectActive",
+                  "fill": "$surface-primary",
+                  "cornerRadius": "$radius-sm",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000000a",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 2
+                  },
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SEj8y",
+                      "name": "t2t",
+                      "fill": "$foreground-primary",
+                      "content": "项目级 Skill 管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LY3zr",
+                  "name": "TabPlugin",
+                  "cornerRadius": "$radius-sm",
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CTFf1",
+                      "name": "t3t",
+                      "fill": "$foreground-secondary",
+                      "content": "插件技能管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pcNRK",
+              "name": "spacer",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "LH60b",
+              "name": "ConfigBtn",
+              "cornerRadius": "$radius-md",
+              "padding": 8,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "qAGGe",
+                  "name": "configIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "settings",
+                  "iconFontFamily": "lucide",
+                  "fill": "$foreground-secondary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "SYTtt",
+          "name": "Body",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "QoThS",
+              "name": "Sidebar",
+              "width": 260,
+              "height": "fill_container",
+              "fill": "$surface-primary",
+              "stroke": {
+                "thickness": {
+                  "right": 1
+                },
+                "fill": "$border-default"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lL1iE",
+                  "name": "SideTitle",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cZ4Ra",
+                      "name": "sideTitleText",
+                      "fill": "$foreground-primary",
+                      "content": "项目列表",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "4upOW",
+                      "name": "spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l6OcX",
+                      "name": "AddProjBtn",
+                      "cornerRadius": "$radius-md",
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$border-default"
+                      },
+                      "gap": 4,
+                      "padding": [
+                        4,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "zjsNL",
+                          "name": "addProjIcon",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "plus",
+                          "iconFontFamily": "lucide",
+                          "fill": "$foreground-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "70Mjh",
+                          "name": "addProjText",
+                          "fill": "$foreground-secondary",
+                          "content": "添加",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Fs1Cn",
+                  "name": "ProjectList",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "oHpTn",
+                      "name": "ProjCard1Active",
+                      "width": "fill_container",
+                      "fill": "$accent-light",
+                      "cornerRadius": "$radius-md",
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$accent-primary"
+                      },
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "77uSH",
+                          "name": "p1Top",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "LlMVd",
+                              "name": "p1Icon",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "folder-open",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-primary"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Fg5jc",
+                              "name": "p1Name",
+                              "fill": "$foreground-primary",
+                              "content": "SkillPanel",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Uhfef",
+                              "name": "p1Sp",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "SPxWY",
+                              "name": "p1Del",
+                              "width": 12,
+                              "height": 12,
+                              "iconFontName": "x",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "rDmd9",
+                          "name": "p1Path",
+                          "fill": "$foreground-muted",
+                          "content": "~/Projects/SkillPanel",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "0UaOV",
+                          "name": "p1Stats",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "SfIuI",
+                              "name": "p1Dot",
+                              "fill": "$accent-primary",
+                              "width": 5,
+                              "height": 5
+                            },
+                            {
+                              "type": "text",
+                              "id": "C2wNd",
+                              "name": "p1Stat",
+                              "fill": "$foreground-secondary",
+                              "content": "3 项目级 + 5 全局",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jF16p",
+                      "name": "ProjCard2",
+                      "width": "fill_container",
+                      "fill": "$surface-primary",
+                      "cornerRadius": "$radius-md",
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$border-default"
+                      },
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "34ytc",
+                          "name": "p2Top",
+                          "width": "fill_container",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "j6PKB",
+                              "name": "p2Icon",
+                              "width": 14,
+                              "height": 14,
+                              "iconFontName": "folder",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-secondary"
+                            },
+                            {
+                              "type": "text",
+                              "id": "u9wiD",
+                              "name": "p2Name",
+                              "fill": "$foreground-primary",
+                              "content": "Digital-Life",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "V5aEq",
+                              "name": "p2Sp",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "mth10",
+                              "name": "p2Del",
+                              "width": 12,
+                              "height": 12,
+                              "iconFontName": "x",
+                              "iconFontFamily": "lucide",
+                              "fill": "$foreground-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "SDYpE",
+                          "name": "p2Path",
+                          "fill": "$foreground-muted",
+                          "content": "~/Projects/Digital-Life",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "PsPXG",
+                          "name": "p2Stats",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "Ek943",
+                              "name": "p2Dot",
+                              "fill": "$success",
+                              "width": 5,
+                              "height": 5
+                            },
+                            {
+                              "type": "text",
+                              "id": "6GVnR",
+                              "name": "p2Stat",
+                              "fill": "$foreground-secondary",
+                              "content": "1 项目级 + 5 全局",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UnaBO",
+              "name": "Content",
+              "clip": true,
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 20,
+              "padding": [
+                24,
+                32
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "QudLW",
+                  "name": "ContentHeader",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "WhOaz",
+                      "name": "chLabel",
+                      "fill": "$accent-light",
+                      "cornerRadius": "$radius-sm",
+                      "gap": 6,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Ls51P",
+                          "name": "chIcon",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "folder-open",
+                          "iconFontFamily": "lucide",
+                          "fill": "$accent-primary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zZYFU",
+                          "name": "chText",
+                          "fill": "$accent-primary",
+                          "content": "SkillPanel",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qsHpa",
+                      "name": "chTitle",
+                      "fill": "$foreground-primary",
+                      "content": "已生效技能",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NKxo3",
+                      "name": "chCount",
+                      "fill": "$surface-tertiary",
+                      "cornerRadius": "$radius-full",
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "fNbqO",
+                          "name": "chCountT",
+                          "fill": "$foreground-secondary",
+                          "content": "8 个技能",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WMFvk",
+                      "name": "chSp",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sOSUP",
+                      "name": "AddSkillBtn",
+                      "fill": "$accent-primary",
+                      "cornerRadius": "$radius-md",
+                      "gap": 6,
+                      "padding": [
+                        6,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "YwyLN",
+                          "name": "addSkillIcon",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "plus",
+                          "iconFontFamily": "lucide",
+                          "fill": "$foreground-inverse"
+                        },
+                        {
+                          "type": "text",
+                          "id": "eK8yA",
+                          "name": "addSkillText",
+                          "fill": "$foreground-inverse",
+                          "content": "添加技能",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WOMb4",
+                  "name": "GlobalSection",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "r5FLp",
+                      "name": "GlobalSecHeader",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "F5eM1",
+                          "name": "globalIcon",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "globe",
+                          "iconFontFamily": "lucide",
+                          "fill": "$foreground-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wjKbt",
+                          "name": "globalLabel",
+                          "fill": "$foreground-secondary",
+                          "content": "全局技能（只读）",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pxgTL",
+                          "name": "globalBadge",
+                          "fill": "$foreground-muted",
+                          "content": "5",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "4gnS8",
+                      "name": "GlobalGrid",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "1HIg5",
+                          "name": "GCard1",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$success"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "zuNli",
+                              "name": "g1Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "3b3BI",
+                                  "name": "g1Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "brainstorming",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "T5gH0",
+                                  "name": "g1Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "WNRBG",
+                                  "name": "g1Badge",
+                                  "fill": "$success-light",
+                                  "cornerRadius": "$radius-full",
+                                  "gap": 3,
+                                  "padding": [
+                                    2,
+                                    6
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "8ZsVh",
+                                      "name": "g1BadgeDot",
+                                      "fill": "$success",
+                                      "width": 5,
+                                      "height": 5
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "q3KMP",
+                                      "name": "g1BadgeT",
+                                      "fill": "$success",
+                                      "content": "全局",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "13zVq",
+                              "name": "g1Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "在创建新功能前进行头脑风暴和创意探索",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iNUix",
+                          "name": "GCard2",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$success"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "HM2kS",
+                              "name": "g2Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "bhc54",
+                                  "name": "g2Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "test-driven-development",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Ayj3n",
+                                  "name": "g2Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "1DmGO",
+                                  "name": "g2Badge",
+                                  "fill": "$success-light",
+                                  "cornerRadius": "$radius-full",
+                                  "gap": 3,
+                                  "padding": [
+                                    2,
+                                    6
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "KLKyz",
+                                      "name": "g2BDot",
+                                      "fill": "$success",
+                                      "width": 5,
+                                      "height": 5
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "CUvJK",
+                                      "name": "g2BT",
+                                      "fill": "$success",
+                                      "content": "全局",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "kUxnK",
+                              "name": "g2Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "实现功能或修复 bug 时，先写测试再写实现代码",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "7qArV",
+                          "name": "GCard3",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$success"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "4d9Vq",
+                              "name": "g3Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "61QXw",
+                                  "name": "g3Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "systematic-debugging",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Kd8Qk",
+                                  "name": "g3Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "oDA1f",
+                                  "name": "g3Badge",
+                                  "fill": "$success-light",
+                                  "cornerRadius": "$radius-full",
+                                  "gap": 3,
+                                  "padding": [
+                                    2,
+                                    6
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "xulSV",
+                                      "name": "g3BDot",
+                                      "fill": "$success",
+                                      "width": 5,
+                                      "height": 5
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "crn9n",
+                                      "name": "g3BT",
+                                      "fill": "$success",
+                                      "content": "全局",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "Ex5f6",
+                              "name": "g3Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "遇到 bug 或测试失败时，系统性排查问题",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IAcgE",
+                  "name": "ProjectSection",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FF9jQ",
+                      "name": "ProjSecHeader",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Yo91M",
+                          "name": "projIcon",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "folder",
+                          "iconFontFamily": "lucide",
+                          "fill": "$accent-primary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "UuAOO",
+                          "name": "projLabel",
+                          "fill": "$foreground-primary",
+                          "content": "项目级技能",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PGgg1",
+                          "name": "projBadge",
+                          "fill": "$foreground-muted",
+                          "content": "3",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FELuW",
+                      "name": "ProjGrid",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZJ9pF",
+                          "name": "PCard1",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$accent-primary"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Ka2D6",
+                              "name": "pc1Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "8PTcp",
+                                  "name": "pc1Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "pdf",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ITMkP",
+                                  "name": "pc1Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "9ou3s",
+                                  "name": "pc1Del",
+                                  "cornerRadius": "$radius-sm",
+                                  "padding": 3,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "aZxSE",
+                                      "name": "pc1DelI",
+                                      "width": 12,
+                                      "height": 12,
+                                      "iconFontName": "x",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$foreground-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "oXIpF",
+                              "name": "pc1Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "PDF 处理工具包，提取文本表格、创建合并拆分文档",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "XAJ1P",
+                              "name": "pc1Bottom",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "Ugbjf",
+                                  "type": "ref",
+                                  "ref": "fg7JF",
+                                  "name": "pc1Toggle"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "pPI9H",
+                                  "name": "pc1OnLabel",
+                                  "fill": "$success",
+                                  "content": "已启用",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TlaQO",
+                          "name": "PCard2",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$accent-primary"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "hMcqO",
+                              "name": "pc2Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "C39jY",
+                                  "name": "pc2Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "frontend-design",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "yjbdw",
+                                  "name": "pc2Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "hIlLP",
+                                  "name": "pc2Del",
+                                  "cornerRadius": "$radius-sm",
+                                  "padding": 3,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "xI8sO",
+                                      "name": "pc2DelI",
+                                      "width": 12,
+                                      "height": 12,
+                                      "iconFontName": "x",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$foreground-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "2AduD",
+                              "name": "pc2Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "创建生产级前端界面，适用于 Web 应用和着陆页",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "klJ5n",
+                              "name": "pc2Bottom",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "x1cj0",
+                                  "type": "ref",
+                                  "ref": "fg7JF",
+                                  "name": "pc2Toggle"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "hbdy5",
+                                  "name": "pc2OnLabel",
+                                  "fill": "$success",
+                                  "content": "已启用",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CF8ez",
+                          "name": "PCard3",
+                          "width": "fill_container",
+                          "fill": "$surface-primary",
+                          "cornerRadius": "$radius-lg",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "$border-default"
+                          },
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            12,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "kKz9b",
+                              "name": "pc3Top",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "OBHdX",
+                                  "name": "pc3Name",
+                                  "fill": "$foreground-primary",
+                                  "content": "mcp-builder",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "wAO2R",
+                                  "name": "pc3Sp",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "6g30n",
+                                  "name": "pc3Del",
+                                  "cornerRadius": "$radius-sm",
+                                  "padding": 3,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "t9Naw",
+                                      "name": "pc3DelI",
+                                      "width": 12,
+                                      "height": 12,
+                                      "iconFontName": "x",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$foreground-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "TIhGO",
+                              "name": "pc3Desc",
+                              "fill": "$foreground-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "创建 MCP 服务器指南，使 LLM 与外部系统交互",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "PQed2",
+                              "name": "pc3Bottom",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "Di6ne",
+                                  "type": "ref",
+                                  "ref": "Wb13b",
+                                  "name": "pc3Toggle"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "1FySh",
+                                  "name": "pc3OffLabel",
+                                  "fill": "$foreground-muted",
+                                  "content": "未启用",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nwfbu",
+      "x": 4398,
+      "y": 960,
+      "name": "全局 Skill 管理",
+      "clip": true,
+      "width": 1280,
+      "height": 900,
+      "fill": "$surface-secondary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "pi99w",
+          "name": "Header",
+          "width": "fill_container",
+          "fill": "$surface-primary",
+          "stroke": {
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$border-default"
+          },
+          "gap": 16,
+          "padding": [
+            16,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Jz6p4",
+              "name": "gLogo",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "YsjZp",
+                  "name": "gLogoIcon",
+                  "width": 28,
+                  "height": 28,
+                  "fill": "$accent-primary",
+                  "cornerRadius": "$radius-md"
+                },
+                {
+                  "type": "text",
+                  "id": "KkRCU",
+                  "name": "gLogoText",
+                  "fill": "$foreground-primary",
+                  "content": "SkillPanel",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fn0rb",
+              "name": "gTabBar",
+              "fill": "$surface-tertiary",
+              "cornerRadius": "$radius-md",
+              "gap": 4,
+              "padding": [
+                6,
+                4
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9UPVz",
+                  "name": "gt1",
+                  "fill": "$surface-primary",
+                  "cornerRadius": "$radius-sm",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000000a",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 2
+                  },
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0tH1i",
+                      "name": "gt1t",
+                      "fill": "$foreground-primary",
+                      "content": "全局 Skill 管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bruN0",
+                  "name": "gt2",
+                  "cornerRadius": "$radius-sm",
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rwDMN",
+                      "name": "gt2t",
+                      "fill": "$foreground-secondary",
+                      "content": "项目级 Skill 管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uGnKU",
+                  "name": "gt3",
+                  "cornerRadius": "$radius-sm",
+                  "padding": [
+                    6,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mHbBd",
+                      "name": "gt3t",
+                      "fill": "$foreground-secondary",
+                      "content": "插件技能管理",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dApjT",
+              "name": "gSp",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "l6m1J",
+              "name": "gConfigBtn",
+              "cornerRadius": "$radius-md",
+              "padding": 8,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "TtdT3",
+                  "name": "gConfigIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "settings",
+                  "iconFontFamily": "lucide",
+                  "fill": "$foreground-secondary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Tl1KH",
+          "name": "MainContent",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            24,
+            32
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "smxjg",
+              "name": "DirSection1",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hiOVk",
+                  "name": "DirHeader1",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "V8Tvd",
+                      "name": "dir1Icon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "folder",
+                      "iconFontFamily": "lucide",
+                      "fill": "$foreground-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KSfqw",
+                      "name": "dir1Name",
+                      "fill": "$foreground-primary",
+                      "content": "superpowers",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KMe6R",
+                      "name": "dir1Count",
+                      "fill": "$surface-tertiary",
+                      "cornerRadius": "$radius-full",
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UtKXD",
+                          "name": "dir1CountT",
+                          "fill": "$foreground-secondary",
+                          "content": "5 个技能",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NBnJj",
+                      "name": "dir1Sp",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "IMPnf",
+                      "name": "dir1BatchEn",
+                      "fill": "$accent-primary",
+                      "content": "全部启用",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EEbYl",
+                      "name": "dir1BatchDiv",
+                      "fill": "$foreground-muted",
+                      "content": "|",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZLPFX",
+                      "name": "dir1BatchDis",
+                      "fill": "$foreground-muted",
+                      "content": "全部禁用",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qyNzp",
+                  "name": "Dir1Grid",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "ggBKr",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill1",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "brainstorming"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)",
+                          "children": []
+                        },
+                        "HF3Zn": {
+                          "content": "在创建新功能前进行头脑风暴和创意探索"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "xlEIz",
+                              "type": "ref",
+                              "ref": "fg7JF",
+                              "name": "toggle1",
+                              "x": 0,
+                              "y": 0
+                            },
+                            {
+                              "type": "frame",
+                              "id": "8Q527",
+                              "name": "enabledBadge",
+                              "fill": "$success-light",
+                              "cornerRadius": "$radius-full",
+                              "gap": 3,
+                              "padding": [
+                                2,
+                                6
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "7M3ej",
+                                  "name": "badgeDot1",
+                                  "fill": "$success",
+                                  "width": 5,
+                                  "height": 5
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "LsGTO",
+                                  "name": "badgeText1",
+                                  "fill": "$success",
+                                  "content": "已启用",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 9,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "id": "F4xsQ",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill2",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "test-driven-development"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)"
+                        },
+                        "HF3Zn": {
+                          "content": "实现功能或修复 bug 时，先写测试再写实现代码"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "01d49",
+                              "type": "ref",
+                              "ref": "fg7JF",
+                              "name": "toggle2"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "id": "ZjY9b",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill3",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "systematic-debugging"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)"
+                        },
+                        "HF3Zn": {
+                          "content": "遇到 bug 或测试失败时，系统性排查问题"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "dIb04",
+                              "type": "ref",
+                              "ref": "Wb13b",
+                              "name": "toggle3"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oiOw8",
+              "name": "DirSection2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "eFlGe",
+                  "name": "DirHeader2",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "J2N0M",
+                      "name": "dir2Icon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "folder",
+                      "iconFontFamily": "lucide",
+                      "fill": "$foreground-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KKGpf",
+                      "name": "dir2Name",
+                      "fill": "$foreground-primary",
+                      "content": "document-skills",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BF8tX",
+                      "name": "dir2Count",
+                      "fill": "$surface-tertiary",
+                      "cornerRadius": "$radius-full",
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kopDe",
+                          "name": "dir2CountT",
+                          "fill": "$foreground-secondary",
+                          "content": "8 个技能",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fu0SE",
+                      "name": "dir2Sp",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "zNTcg",
+                      "name": "dir2BatchEn",
+                      "fill": "$accent-primary",
+                      "content": "全部启用",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jTCH9",
+                      "name": "dir2BatchDiv",
+                      "fill": "$foreground-muted",
+                      "content": "|",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BPmg9",
+                      "name": "dir2BatchDis",
+                      "fill": "$foreground-muted",
+                      "content": "全部禁用",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "irHfQ",
+                  "name": "Dir2Grid",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "DJmEE",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill4",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "frontend-design"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)"
+                        },
+                        "HF3Zn": {
+                          "content": "创建生产级前端界面，适用于 Web 应用和着陆页"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "icfTa",
+                              "type": "ref",
+                              "ref": "fg7JF",
+                              "name": "toggle4"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "id": "piYee",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill5",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "mcp-builder"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)"
+                        },
+                        "HF3Zn": {
+                          "content": "创建高质量 MCP 服务器指南"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "oYKTv",
+                              "type": "ref",
+                              "ref": "fg7JF",
+                              "name": "toggle5"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "id": "a3Kxh",
+                      "type": "ref",
+                      "ref": "eAKHq",
+                      "name": "skill6",
+                      "descendants": {
+                        "Pxsn2": {
+                          "content": "pdf"
+                        },
+                        "A4B4f": {
+                          "width": "fit_content(0)",
+                          "height": "fit_content(0)"
+                        },
+                        "HF3Zn": {
+                          "content": "PDF 处理工具包，提取文本表格、创建合并拆分文档"
+                        },
+                        "dVxZq": {
+                          "children": [
+                            {
+                              "id": "IgWO8",
+                              "type": "ref",
+                              "ref": "Wb13b",
+                              "name": "toggle6"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }

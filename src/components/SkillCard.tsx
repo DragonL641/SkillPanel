@@ -1,7 +1,6 @@
-import { useState, useRef } from 'react';
-import { Sparkles, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { FileText, Trash2, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import AnalysisPanel, { type AnalysisPanelHandle } from './AnalysisPanel';
 import type { SkillMeta } from '../types';
 
 type SkillCardMeta = Pick<SkillMeta, 'name' | 'description' | 'enabled' | 'absolutePath'>;
@@ -12,21 +11,46 @@ interface Props {
   source: 'custom' | 'plugin';
   onToggle?: (path: string, enable: boolean) => void;
   onDelete?: (path: string) => void;
+  onDetail?: (path: string) => void;
+  onAnalyze?: (path: string) => void;
+  groupLabel?: { name: string; color: string };
+  selectable?: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
 }
 
-export default function SkillCard({ skill, path, source, onToggle, onDelete }: Props) {
+export default function SkillCard({ skill, path, source, onToggle, onDelete, onDetail, onAnalyze, groupLabel, selectable, selected, onSelect }: Props) {
   const isPlugin = source === 'plugin';
-  const [analyzing, setAnalyzing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const analysisRef = useRef<AnalysisPanelHandle>(null);
   const { t } = useTranslation();
 
+  // Escape key to close delete confirmation dialog
+  useEffect(() => {
+    if (!confirmDelete) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirmDelete(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [confirmDelete]);
+
   return (
-    <div className={`flex flex-col gap-3 p-4 bg-surface-primary rounded-[var(--radius-lg)] border transition-shadow hover:shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${!isPlugin && skill.enabled ? 'border-success' : 'border-border'}`}>
+    <div className={`relative flex flex-col gap-3 p-4 bg-surface-primary rounded-[var(--radius-lg)] border transition-shadow hover:shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${!isPlugin && skill.enabled ? 'border-success' : 'border-border'} ${selectable && selected ? 'ring-2 ring-accent' : ''}`}>
+      {/* Checkbox overlay for selectable mode */}
+      {selectable && (
+        <label className="absolute top-3 left-3 cursor-pointer z-10">
+          <input
+            type="checkbox"
+            checked={selected ?? false}
+            onChange={() => onSelect?.()}
+            className="w-4 h-4 accent-[var(--color-accent)]"
+          />
+        </label>
+      )}
       {/* Top: name + badge */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-fg-primary">{skill.name}</span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm font-semibold text-fg-primary truncate" title={skill.name}>{skill.name}</span>
           {!isPlugin && (
             skill.enabled ? (
               <span className="flex items-center gap-1 px-2 py-0.5 bg-success-light text-success text-[10px] font-semibold rounded-full">
@@ -43,14 +67,26 @@ export default function SkillCard({ skill, path, source, onToggle, onDelete }: P
       </div>
 
       {/* Description */}
-      {skill.description && (
-        <p className="text-xs text-fg-secondary leading-relaxed line-clamp-2">
-          {skill.description}
-        </p>
+      <div className="min-h-[2.5rem]">
+        {skill.description && (
+          <p className="text-xs text-fg-secondary leading-relaxed line-clamp-2">
+            {skill.description}
+          </p>
+        )}
+      </div>
+
+      {/* Group label badge */}
+      {groupLabel && (
+        <span
+          className="self-start text-[9px] px-1.5 py-0.5 rounded-full font-medium"
+          style={{ backgroundColor: `${groupLabel.color}20`, color: groupLabel.color }}
+        >
+          {groupLabel.name}
+        </span>
       )}
 
       {/* Actions row */}
-      <div className="flex items-center gap-2">
+      <div className="mt-auto flex items-center gap-2">
         {!isPlugin && onToggle && (
           <button
             onClick={() => onToggle(path, !skill.enabled)}
@@ -62,47 +98,81 @@ export default function SkillCard({ skill, path, source, onToggle, onDelete }: P
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-fg-inverse transition-transform ${skill.enabled ? 'left-[18px]' : 'left-0.5'}`} />
           </button>
         )}
-        <button
-          onClick={() => analysisRef.current?.triggerAnalysis()}
-          disabled={analyzing}
-          className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-accent border border-border rounded-[var(--radius-md)] transition-colors shrink-0 ${analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-light'}`}
-        >
-          <Sparkles size={12} className={analyzing ? 'animate-pulse' : ''} />
-          {analyzing ? t('skill.analyzing') : t('skill.analyze')}
-        </button>
         <div className="flex-1" />
+        {!isPlugin && onAnalyze && (
+          <div className="relative group">
+            <button
+              onClick={() => onAnalyze(path)}
+              aria-label={t('skill.analyzeAria')}
+              className="p-1.5 text-accent rounded-[var(--radius-md)] hover:bg-accent-light transition-colors shrink-0"
+            >
+              <Sparkles size={14} />
+            </button>
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 text-[10px] text-fg-inverse bg-fg-primary rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+              {t('skill.analyzeAria')}
+            </span>
+          </div>
+        )}
+        {!isPlugin && onDetail && (
+          <div className="relative group">
+            <button
+              onClick={() => onDetail(path)}
+              aria-label={t('skill.detailAria')}
+              className="p-1.5 text-accent rounded-[var(--radius-md)] hover:bg-accent-light transition-colors shrink-0"
+            >
+              <FileText size={14} />
+            </button>
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 text-[10px] text-fg-inverse bg-fg-primary rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+              {t('skill.detailAria')}
+            </span>
+          </div>
+        )}
         {!isPlugin && onDelete && (
-          <button
-            onClick={() => setConfirmDelete(true)}
-            aria-label={t('skill.deleteAria')}
-            className="p-1.5 text-danger rounded-[var(--radius-md)] hover:bg-danger-light transition-colors shrink-0"
-          >
-            <Trash2 size={14} />
-          </button>
+          <div className="relative group">
+            <button
+              onClick={() => setConfirmDelete(true)}
+              aria-label={t('skill.deleteAria')}
+              className="p-1.5 text-danger rounded-[var(--radius-md)] hover:bg-danger-light transition-colors shrink-0"
+            >
+              <Trash2 size={14} />
+            </button>
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 text-[10px] text-fg-inverse bg-fg-primary rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+              {t('skill.deleteAria')}
+            </span>
+          </div>
         )}
       </div>
 
-      {/* Confirm delete */}
+      {/* Confirm delete dialog */}
       {confirmDelete && (
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-danger">{t('skill.confirmDelete', { name: skill.name })}</span>
-          <button
-            onClick={() => { onDelete?.(path); setConfirmDelete(false); }}
-            className="px-2 py-1 text-white bg-danger rounded hover:bg-red-600 transition-colors"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setConfirmDelete(false)}
+        >
+          <div
+            className="bg-surface-primary rounded-[var(--radius-lg)] shadow-[0_4px_24px_rgba(0,0,0,0.1)] p-6 max-w-sm mx-4"
+            onClick={(e) => e.stopPropagation()}
           >
-            {t('skill.deleteLabel')}
-          </button>
-          <button
-            onClick={() => setConfirmDelete(false)}
-            className="px-2 py-1 text-fg-secondary border border-border rounded hover:bg-surface-hover transition-colors"
-          >
-            {t('skill.cancel')}
-          </button>
+            <p className="text-sm text-fg-primary mb-4">
+              {t('skill.confirmDelete', { name: skill.name })}
+            </p>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="px-3 py-1.5 text-sm text-fg-secondary border border-border rounded-[var(--radius-md)] hover:bg-surface-hover transition-colors"
+              >
+                {t('skill.cancel')}
+              </button>
+              <button
+                onClick={() => { onDelete?.(path); setConfirmDelete(false); }}
+                className="px-3 py-1.5 text-sm text-white bg-danger rounded-[var(--radius-md)] hover:bg-red-600 transition-colors"
+              >
+                {t('skill.deleteLabel')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Analysis panel */}
-      <AnalysisPanel ref={analysisRef} source={source} name={skill.name} onLoadingChange={setAnalyzing} />
     </div>
   );
 }

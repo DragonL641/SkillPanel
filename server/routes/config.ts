@@ -4,9 +4,10 @@ import { invalidateByPrefix } from '../services/cache.js';
 
 const router = Router();
 
-router.get('/config', (_req, res) => {
+router.get('/config', (req, res) => {
   const config = loadConfig();
-  res.json(buildConfigResponse(config));
+  const detectDir = typeof req.query.detectDir === 'string' && req.query.detectDir.trim() ? req.query.detectDir : undefined;
+  res.json(buildConfigResponse(config, detectDir));
 });
 
 router.put('/config', async (req, res) => {
@@ -22,9 +23,15 @@ router.put('/config', async (req, res) => {
     res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Claude root directory must be a non-empty string' } });
     return;
   }
-  if (customSkillDir !== undefined && (typeof customSkillDir !== 'string' || !customSkillDir.trim())) {
-    res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Custom skill directory must be a non-empty string' } });
-    return;
+  if (customSkillDir !== undefined) {
+    if (typeof customSkillDir !== 'string') {
+      res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Custom skill directory must be a string' } });
+      return;
+    }
+    if (customSkillDir.length > 0 && !customSkillDir.trim()) {
+      res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Custom skill directory must not be whitespace-only' } });
+      return;
+    }
   }
   if (customSkillDirs !== undefined) {
     if (!Array.isArray(customSkillDirs) || customSkillDirs.some((d: any) => typeof d !== 'string' || !d.trim())) {

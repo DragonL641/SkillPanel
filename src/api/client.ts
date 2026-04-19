@@ -1,4 +1,4 @@
-import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse, SearchResult, SearchResponse, ProjectInfo, ProjectSkillsResponse } from '../types';
+import type { TreeNode, PluginInfo, Summary, AnalysisResponse, AppConfig, AppConfigResponse, SearchResult, SearchResponse, ProjectInfo, ProjectSkillsResponse, SkillGroup, GroupedSkills } from '../types';
 
 const BASE = '/api';
 
@@ -6,11 +6,21 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options);
   if (!res.ok) {
     let message = `HTTP ${res.status}: ${res.statusText}`;
+    let code: string | undefined;
     try {
       const data = await res.json();
-      if (data.error) message = typeof data.error === 'string' ? data.error : data.error.message || message;
+      if (data.error) {
+        if (typeof data.error === 'string') {
+          message = data.error;
+        } else {
+          message = data.error.message || message;
+          code = data.error.code;
+        }
+      }
     } catch { /* response body not JSON, use default message */ }
-    throw new Error(message);
+    const err = new Error(message);
+    (err as any).code = code;
+    throw err;
   }
   const ct = res.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
@@ -37,11 +47,11 @@ export const disableSkill = (skillPath: string) =>
 export const deleteSkill = (skillPath: string) =>
   apiFetch<{ ok: boolean; path: string }>(`${BASE}/skills/custom/delete/${skillPath}`, { method: 'DELETE' });
 
-export const fetchAnalysis = (source: string, name: string) =>
-  apiFetch<AnalysisResponse>(`${BASE}/analysis/${source}/${name}`);
+export const fetchAnalysis = (source: string, name: string, lang?: string) =>
+  apiFetch<AnalysisResponse>(`${BASE}/analysis/${source}/${name}${lang ? `?lang=${lang}` : ''}`);
 
-export const triggerAnalysis = (source: string, name: string) =>
-  apiFetch<AnalysisResponse>(`${BASE}/analysis/${source}/${name}`, { method: 'POST' });
+export const triggerAnalysis = (source: string, name: string, lang?: string) =>
+  apiFetch<AnalysisResponse>(`${BASE}/analysis/${source}/${name}${lang ? `?lang=${lang}` : ''}`, { method: 'POST' });
 
 export const fetchConfig = () =>
   apiFetch<AppConfigResponse>(`${BASE}/config`);
@@ -52,6 +62,9 @@ export const saveConfig = (config: AppConfig) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config),
   });
+
+export const detectApiConfig = (claudeRootDir: string) =>
+  apiFetch<AppConfigResponse>(`${BASE}/config?detectDir=${encodeURIComponent(claudeRootDir)}`);
 
 export const checkPluginUpdate = (pluginName: string) =>
   apiFetch<{ hasUpdate: boolean; behindBy: number; currentCommit: string; isGitRepo?: boolean; error?: string }>(
@@ -141,3 +154,45 @@ export const batchDisableProjectSkills = (projectName: string, paths: string[]) 
     `${BASE}/projects/${projectName}/skills/batch-disable`,
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paths }) },
   );
+
+export const fetchGroups = () =>
+  apiFetch<GroupedSkills>(`${BASE}/groups`);
+
+export interface SkillContentResponse {
+  content: string;
+  path: string;
+}
+
+export const fetchSkillContent = (skillPath: string) =>
+  apiFetch<SkillContentResponse>(`${BASE}/skills/custom/content/${skillPath}`);
+
+export const createGroup = (name: string, color: string) =>
+  apiFetch<SkillGroup>(`${BASE}/groups`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, color }),
+  });
+
+export const updateGroup = (id: string, updates: { name?: string; color?: string }) =>
+  apiFetch<SkillGroup>(`${BASE}/groups/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+
+export const deleteGroup = (id: string) =>
+  apiFetch<{ ok: boolean }>(`${BASE}/groups/${id}`, { method: 'DELETE' });
+
+export const addGroupSkills = (groupId: string, skillPaths: string[]) =>
+  apiFetch<SkillGroup>(`${BASE}/groups/${groupId}/skills`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ skillPaths }),
+  });
+
+export const removeGroupSkills = (groupId: string, skillPaths: string[]) =>
+  apiFetch<SkillGroup>(`${BASE}/groups/${groupId}/skills`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ skillPaths }),
+  });

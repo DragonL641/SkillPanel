@@ -7,3 +7,5 @@ skillpanel.config.json
 /automation-logs/
 /.harness/
 /docs/superpowers/
+/.superpowers/
+/.playwright-cli/

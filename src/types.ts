@@ -110,3 +110,21 @@ export interface AppConfigResponse extends AppConfig {
   apiConfigDetected: boolean;
   apiModel: string | null;
 }
+
+/** A skill group */
+export interface SkillGroup {
+  id: string;
+  name: string;
+  color: string;
+  skills: string[];
+}
+
+/** Grouped skills response */
+export interface GroupedSkills {
+  groups: SkillGroup[];
+  other: {
+    name: string;
+    color: string;
+    skills: string[];
+  };
+}

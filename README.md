@@ -10,6 +10,40 @@ A lightweight Web UI for managing [Claude Code](https://claude.ai/code) skills. 
 - **Batch Operations** — Enable or disable multiple skills at once
 - **Auto Analysis** — Skills are automatically analyzed on server startup when content changes
 
+## Screenshots
+
+### Global Skills Management
+
+Browse all custom skills in a directory tree, toggle enable/disable with one click, trigger AI analysis, or perform batch operations.
+
+<p align="center">
+  <img src="docs/images/global-skills-page.png" width="800" alt="Global Skills Page" />
+</p>
+
+### Project Skills
+
+Register multiple projects, each with its own set of enabled skills. The sidebar provides quick navigation between projects.
+
+<p align="center">
+  <img src="docs/images/project-skills-page.png" width="800" alt="Project Skills Page" />
+</p>
+
+### Plugin Skills
+
+View skills installed via Claude Code plugins, organized by plugin group with version info and update checking.
+
+<p align="center">
+  <img src="docs/images/plugin-skills-page.png" width="800" alt="Plugin Skills Page" />
+</p>
+
+### Settings
+
+Configure directories, port, and API key — all through a clean modal UI. API configuration is auto-detected from Claude Code settings.
+
+<p align="center">
+  <img src="docs/images/settings-page.png" width="300" alt="Settings Page" />
+</p>
+
 ## Installation
 
 > **Note**: SkillPanel is published to [GitHub Packages](https://github.com/DragonL641/SkillPanel/pkgs/npm/skillpanel). You need to configure npm to use the GitHub registry for the `@dragonl641` scope.

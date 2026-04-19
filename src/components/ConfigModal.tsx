@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, CheckCircle, AlertTriangle, Folder, FolderPlus } from 'lucide-react';
+import { X, CheckCircle, AlertTriangle, Folder, FolderPlus, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { fetchConfig, saveConfig } from '../api/client';
+import { fetchConfig, saveConfig, pickFolder, detectApiConfig } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
-import DirPicker from './DirPicker';
 import type { AppConfig, AppConfigResponse } from '../types';
 
 interface Props {
@@ -19,8 +18,8 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
   const [apiModel, setApiModel] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [addingDir, setAddingDir] = useState(false);
-  const [newDirPath, setNewDirPath] = useState('');
+  const [pickingDir, setPickingDir] = useState(false);
+  const [detecting, setDetecting] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -86,24 +85,39 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
     setConfig((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleDetect = async () => {
+    if (!config.claudeRootDir?.trim()) return;
+    setDetecting(true);
+    try {
+      const data = await detectApiConfig(config.claudeRootDir);
+      setApiConfigDetected(data.apiConfigDetected);
+      setApiModel(data.apiModel);
+    } catch { /* ignore */ }
+    finally { setDetecting(false); }
+  };
+
   const removeDir = (index: number) => {
     const dirs = [...(config.customSkillDirs || [])];
     dirs.splice(index, 1);
     setConfig((prev) => ({ ...prev, customSkillDirs: dirs }));
   };
 
-  const addDir = (dirPath: string) => {
-    if (!dirPath) {
-      setAddingDir(false);
-      return;
+  const handleAddDir = async () => {
+    setPickingDir(true);
+    try {
+      const result = await pickFolder(t('config.selectDir'));
+      if (result.path) {
+        const dirs = [...(config.customSkillDirs || [])];
+        if (!dirs.includes(result.path)) {
+          dirs.push(result.path);
+          setConfig((prev) => ({ ...prev, customSkillDirs: dirs }));
+        }
+      }
+    } catch {
+      // Native dialog unavailable
+    } finally {
+      setPickingDir(false);
     }
-    const dirs = [...(config.customSkillDirs || [])];
-    if (!dirs.includes(dirPath)) {
-      dirs.push(dirPath);
-      setConfig((prev) => ({ ...prev, customSkillDirs: dirs }));
-    }
-    setAddingDir(false);
-    setNewDirPath('');
   };
 
   const handleSave = async () => {
@@ -151,13 +165,23 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
         <div className="flex flex-col gap-5 p-6">
           <div className="flex flex-col gap-1.5">
             <label className="text-[13px] font-medium text-fg-primary">{t('config.claudeDir')}</label>
-            <input
-              type="text"
-              value={config.claudeRootDir ?? ''}
-              onChange={(e) => handleChange('claudeRootDir', e.target.value)}
-              placeholder={t('config.claudeDirPlaceholder')}
-              className="w-full px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={config.claudeRootDir ?? ''}
+                onChange={(e) => handleChange('claudeRootDir', e.target.value)}
+                placeholder={t('config.claudeDirPlaceholder')}
+                className="flex-1 px-3.5 py-2.5 text-[13px] bg-surface-primary border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent font-mono"
+              />
+              <button
+                onClick={handleDetect}
+                disabled={detecting || !config.claudeRootDir?.trim()}
+                className="px-3 py-2.5 text-[13px] font-medium text-accent bg-accent-light border border-accent/20 rounded-[var(--radius-md)] hover:bg-accent/20 disabled:opacity-50 transition-colors flex items-center gap-1.5"
+              >
+                <RefreshCw size={14} className={detecting ? 'animate-spin' : ''} />
+                {t('config.detect', { defaultValue: 'Sync' })}
+              </button>
+            </div>
             <p className="text-[11px] text-fg-muted">{t('config.claudeDirHint')}</p>
           </div>
 
@@ -174,18 +198,10 @@ export default function ConfigModal({ open, onClose, onSaved }: Props) {
                   </button>
                 </div>
               ))}
-              {addingDir ? (
-                <DirPicker
-                  value={newDirPath}
-                  onChange={addDir}
-                  label={t('config.selectDir')}
-                />
-              ) : (
-                <button onClick={() => setAddingDir(true)} className="flex items-center justify-center gap-1.5 py-2 border border-dashed border-border rounded-[var(--radius-md)] text-accent hover:bg-accent-light transition-colors">
-                  <FolderPlus size={14} />
-                  <span className="text-[12px] font-medium">{t('config.addDir')}</span>
-                </button>
-              )}
+              <button onClick={handleAddDir} disabled={pickingDir} className="flex items-center justify-center gap-1.5 py-2 border border-dashed border-border rounded-[var(--radius-md)] text-accent hover:bg-accent-light transition-colors disabled:opacity-50">
+                <FolderPlus size={14} />
+                <span className="text-[12px] font-medium">{pickingDir ? t('config.picking', { defaultValue: 'Opening...' }) : t('config.addDir')}</span>
+              </button>
             </div>
           </div>
 

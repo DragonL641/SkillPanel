@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { loadConfig } from '../config.js';
 import { scanCustomSkills } from '../services/skill-scanner.js';
 import { enableSkill, disableSkill, deleteSkill, batchToggleSkills } from '../services/skill-manager.js';
@@ -79,6 +81,29 @@ router.delete('/skills/custom/delete/{*skillPath}', (req, res) => {
   deleteSkill(config, skillRelativePath);
   invalidateByPrefix('skills:');
   res.json({ ok: true, path: skillRelativePath });
+});
+
+router.get('/skills/custom/content/{*skillPath}', (req, res) => {
+  const raw = req.params.skillPath;
+  const skillRelativePath = Array.isArray(raw) ? raw.join('/') : raw;
+  if (!skillRelativePath) {
+    res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Skill path is required' } });
+    return;
+  }
+
+  const config = loadConfig();
+  // Try each customSkillDir to find the skill
+  for (const dir of config.customSkillDirs) {
+    const skillDir = path.join(dir, skillRelativePath);
+    const skillMdPath = path.join(skillDir, 'SKILL.md');
+    if (fs.existsSync(skillMdPath)) {
+      const content = fs.readFileSync(skillMdPath, 'utf-8');
+      res.json({ content, path: skillRelativePath });
+      return;
+    }
+  }
+
+  res.status(404).json({ error: { code: 'NOT_FOUND', message: `SKILL.md not found for: ${skillRelativePath}` } });
 });
 
 export default router;

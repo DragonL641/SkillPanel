@@ -1,18 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Search, Settings, RefreshCw } from 'lucide-react';
+import { Search, Settings, RefreshCw, Folder, Tag, CheckSquare } from 'lucide-react';
 import TabSwitch, { type TabKey } from './components/TabSwitch';
 import StatsRow from './components/StatsRow';
 import DirTree from './components/DirTree';
+import GroupView from './components/GroupView';
+import BatchActionBar from './components/BatchActionBar';
 import PluginPanel from './components/PluginPanel';
 import ConfigModal from './components/ConfigModal';
 import ProjectSidebar from './components/ProjectSidebar';
 import ProjectSkillView from './components/ProjectSkillView';
 import AddSkillModal from './components/AddSkillModal';
+import SkillDetailModal from './components/SkillDetailModal';
+import AnalysisModal from './components/AnalysisModal';
 import LangSwitch from './components/LangSwitch';
 import { useTranslation } from 'react-i18next';
 import { useSkills } from './hooks/useSkills';
 import { usePlugins } from './hooks/usePlugins';
 import { useProjects } from './hooks/useProjects';
+import { useGroups } from './hooks/useGroups';
 import { fetchConfig } from './api/client';
 
 export default function App() {
@@ -22,6 +27,13 @@ export default function App() {
   const [configOpen, setConfigOpen] = useState(false);
   const [apiConfigDetected, setApiConfigDetected] = useState(false);
   const [addSkillModalOpen, setAddSkillModalOpen] = useState(false);
+
+  const [detailSkill, setDetailSkill] = useState<{ name: string; path: string } | null>(null);
+  const [analysisSkill, setAnalysisSkill] = useState<string | null>(null);
+
+  const [viewMode, setViewMode] = useState<'folder' | 'group'>('folder');
+  const [batchMode, setBatchMode] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
 
   const {
     tree, summary, loading: skillsLoading, error,
@@ -37,6 +49,11 @@ export default function App() {
     loadProjects, loadProjectSkills, setSelectedProject,
     addProject, removeProject, toggleProjectSkill,
   } = useProjects();
+
+  const {
+    groupedSkills, loading: groupsLoading,
+    loadGroups, createGroup, updateGroup, deleteGroup, addSkills: addGroupSkillsAction, removeSkills: removeGroupSkillsAction,
+  } = useGroups();
 
   // Fetch config on mount
   useEffect(() => {
@@ -62,6 +79,13 @@ export default function App() {
     }
   }, [tab, selectedProject]);
 
+  // Load groups when switching to group view
+  useEffect(() => {
+    if (tab === 'global' && viewMode === 'group') {
+      loadGroups(true);
+    }
+  }, [tab, viewMode]);
+
   const handleSelectProject = useCallback((name: string) => {
     setSelectedProject(name);
   }, [setSelectedProject]);
@@ -75,6 +99,28 @@ export default function App() {
     }
     await loadSummary();
   };
+
+  // Find skill name from tree by path
+  function findSkillName(skillPath: string): string {
+    function search(nodes: typeof tree): string | undefined {
+      for (const node of nodes) {
+        if (node.path === skillPath && node.skill) return node.skill.name;
+        if (node.children) {
+          const found = search(node.children);
+          if (found) return found;
+        }
+      }
+    }
+    return search(tree) || skillPath;
+  }
+
+  const handleDetail = useCallback((skillPath: string) => {
+    setDetailSkill({ name: findSkillName(skillPath), path: skillPath });
+  }, [tree]);
+
+  const handleAnalyze = useCallback((skillPath: string) => {
+    setAnalysisSkill(findSkillName(skillPath));
+  }, [tree]);
 
   return (
     <div className="min-h-screen bg-surface-secondary">
@@ -142,14 +188,64 @@ export default function App() {
           {/* Stats — only relevant on global tab */}
           {tab === 'global' && <StatsRow data={summary} />}
 
+          {/* View Toggle - only on global tab */}
+          {tab === 'global' && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 bg-surface-tertiary rounded-[var(--radius-md)] p-0.5">
+                <button
+                  onClick={() => setViewMode('folder')}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-[var(--radius-sm)] text-[11px] font-medium transition-colors ${viewMode === 'folder' ? 'bg-accent text-fg-inverse' : 'text-fg-secondary'}`}
+                >
+                  <Folder size={12} /> {t('group.folder')}
+                </button>
+                <button
+                  onClick={() => setViewMode('group')}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-[var(--radius-sm)] text-[11px] font-medium transition-colors ${viewMode === 'group' ? 'bg-accent text-fg-inverse' : 'text-fg-secondary'}`}
+                >
+                  <Tag size={12} /> {t('group.group')}
+                </button>
+              </div>
+              <div className="flex-1" />
+              <button
+                onClick={() => { setBatchMode(!batchMode); setSelectedSkills(new Set()); }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[var(--radius-sm)] border transition-colors ${batchMode ? 'border-accent text-accent bg-accent-light' : 'border-border text-fg-secondary'}`}
+              >
+                <CheckSquare size={14} /> {t('group.batchManage')}
+              </button>
+            </div>
+          )}
+
           {/* Loading */}
           {skillsLoading && (
             <div className="text-fg-muted text-sm py-4 text-center">{t('app.loading')}</div>
           )}
 
           {/* Content */}
-          {!skillsLoading && tab === 'global' && (
-            <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} filter={search} />
+          {!skillsLoading && tab === 'global' && viewMode === 'folder' && (
+            <DirTree nodes={tree} onToggle={handleToggleSkill} onBatchToggle={handleBatchToggle} onDelete={handleDeleteSkill} onDetail={handleDetail} onAnalyze={handleAnalyze} filter={search} />
+          )}
+          {!skillsLoading && tab === 'global' && viewMode === 'group' && (
+            <GroupView
+              groupedSkills={groupedSkills}
+              tree={tree}
+              onToggle={handleToggleSkill}
+              onDelete={handleDeleteSkill}
+              onDetail={handleDetail}
+              onAnalyze={handleAnalyze}
+              filter={search}
+              batchMode={batchMode}
+              selectedSkills={selectedSkills}
+              onToggleSelect={(path) => {
+                setSelectedSkills(prev => {
+                  const next = new Set(prev);
+                  if (next.has(path)) next.delete(path); else next.add(path);
+                  return next;
+                });
+              }}
+              onRenameGroup={async (id, name) => { await updateGroup(id, { name }); }}
+              onChangeColor={async (id, color) => { await updateGroup(id, { color }); }}
+              onDeleteGroup={async (id) => { await deleteGroup(id); }}
+            />
           )}
           {!skillsLoading && tab === 'plugin' && <PluginPanel plugins={plugins} filter={search} apiConfigDetected={apiConfigDetected} />}
         </main>
@@ -208,6 +304,52 @@ export default function App() {
         onClose={() => setConfigOpen(false)}
         onSaved={handleRefresh}
       />
+
+      {/* Skill Detail Modal */}
+      {detailSkill && (
+        <SkillDetailModal
+          open={!!detailSkill}
+          name={detailSkill.name}
+          skillPath={detailSkill.path}
+          onClose={() => setDetailSkill(null)}
+        />
+      )}
+
+      {/* Analysis Modal */}
+      {analysisSkill && (
+        <AnalysisModal
+          open={!!analysisSkill}
+          name={analysisSkill}
+          onClose={() => setAnalysisSkill(null)}
+        />
+      )}
+
+      {/* Batch Action Bar */}
+      {tab === 'global' && batchMode && selectedSkills.size > 0 && (
+        <BatchActionBar
+          selectedCount={selectedSkills.size}
+          groups={groupedSkills?.groups || []}
+          onMoveToGroup={async (groupId) => {
+            await addGroupSkillsAction(groupId, [...selectedSkills]);
+            setSelectedSkills(new Set());
+            loadCustomSkills(true);
+          }}
+          onNewGroup={async (name, color) => {
+            const group = await createGroup(name, color);
+            await addGroupSkillsAction(group.id, [...selectedSkills]);
+            setSelectedSkills(new Set());
+            loadCustomSkills(true);
+          }}
+          onRemoveFromGroups={async () => {
+            for (const g of groupedSkills?.groups || []) {
+              const toRemove = g.skills.filter(s => selectedSkills.has(s));
+              if (toRemove.length > 0) await removeGroupSkillsAction(g.id, toRemove);
+            }
+            setSelectedSkills(new Set());
+            loadCustomSkills(true);
+          }}
+        />
+      )}
     </div>
   );
 }

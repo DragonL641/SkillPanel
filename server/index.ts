@@ -17,6 +17,7 @@ import analysisRoutes from './routes/analysis.js';
 import searchRoutes from './routes/search.js';
 import fsRoutes from './routes/fs.js';
 import projectsRoutes from './routes/projects.js';
+import groupsRoutes from './routes/groups.js';
 import { analyzeAllSkills } from './services/analyzer.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +44,7 @@ app.use('/api', analysisRoutes);
 app.use('/api', searchRoutes);
 app.use('/api', fsRoutes);
 app.use('/api', projectsRoutes);
+app.use('/api', groupsRoutes);
 
 app.get('/api/health', (_req, res) => {
   const config = loadConfig();

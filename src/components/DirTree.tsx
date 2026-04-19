@@ -9,6 +9,8 @@ interface Props {
   onToggle: (path: string, enable: boolean) => void;
   onBatchToggle?: (paths: string[], enable: boolean) => void;
   onDelete?: (path: string) => void;
+  onDetail?: (path: string) => void;
+  onAnalyze?: (path: string) => void;
   filter?: string;
 }
 
@@ -36,12 +38,16 @@ function TreeNodeItem({
   onToggle,
   onBatchToggle,
   onDelete,
+  onDetail,
+  onAnalyze,
   filter,
 }: {
   node: TreeNode;
   onToggle: (path: string, enable: boolean) => void;
   onBatchToggle?: (paths: string[], enable: boolean) => void;
   onDelete?: (path: string) => void;
+  onDetail?: (path: string) => void;
+  onAnalyze?: (path: string) => void;
   filter?: string;
 }) {
   const { t } = useTranslation();
@@ -64,6 +70,8 @@ function TreeNodeItem({
         source="custom"
         onToggle={onToggle}
         onDelete={onDelete}
+        onDetail={onDetail}
+        onAnalyze={onAnalyze}
       />
     );
   }
@@ -116,6 +124,8 @@ function TreeNodeItem({
             onToggle={onToggle}
             onBatchToggle={onBatchToggle}
             onDelete={onDelete}
+            onDetail={onDetail}
+            onAnalyze={onAnalyze}
             filter={filter}
           />
         ))}
@@ -130,6 +140,8 @@ function TreeNodeItem({
           onToggle={onToggle}
           onBatchToggle={onBatchToggle}
           onDelete={onDelete}
+          onDetail={onDetail}
+          onAnalyze={onAnalyze}
           filter={filter}
         />
       ))}
@@ -137,7 +149,7 @@ function TreeNodeItem({
   );
 }
 
-export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filter }: Props) {
+export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, onDetail, onAnalyze, filter }: Props) {
   const { t } = useTranslation();
 
   if (!nodes.length) {
@@ -157,6 +169,8 @@ export default function DirTree({ nodes, onToggle, onBatchToggle, onDelete, filt
           onToggle={onToggle}
           onBatchToggle={onBatchToggle}
           onDelete={onDelete}
+          onDetail={onDetail}
+          onAnalyze={onAnalyze}
           filter={filter}
         />
       ))}

@@ -26,6 +26,7 @@ function makeConfig(tmpRoot: string): AppConfig {
     claudeSkillsDir: path.join(claudeRootDir, 'skills'),
     claudePluginsDir: path.join(claudeRootDir, 'plugins'),
     projects: [],
+    groups: [],
   };
 }
 

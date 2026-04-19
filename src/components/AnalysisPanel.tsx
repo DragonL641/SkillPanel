@@ -1,6 +1,8 @@
-import { useState, useImperativeHandle, forwardRef } from 'react';
+import { useState, useImperativeHandle, forwardRef, useCallback } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { fetchAnalysis, triggerAnalysis } from '../api/client';
 import { getErrorMessage } from '../utils/getErrorMessage';
 
@@ -26,20 +28,27 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
   const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
 
+  const getLang = useCallback(() => i18n.language === 'en' ? 'en' : 'zh', [i18n.language]);
+
   const handleAnalyze = async () => {
+    if (loading) return;
     setLoading(true);
     onLoadingChange?.(true);
     setError(null);
     const start = Date.now();
     try {
-      const data = await triggerAnalysis(source, name);
-      // Ensure loading state is visible for at least MIN_LOADING_MS
+      const data = await triggerAnalysis(source, name, getLang());
       const remaining = MIN_LOADING_MS - (Date.now() - start);
       if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
       setSummary(data.summary);
       setAnalyzedAt(data.analyzedAt);
     } catch (err: unknown) {
-      setError(getErrorMessage(err) || t('analysis.failed'));
+      const code = (err as any)?.code;
+      if (code === 'ANALYSIS_ERROR') {
+        setError(t('analysis.apiNotConfigured'));
+      } else {
+        setError(getErrorMessage(err) || t('analysis.failed'));
+      }
     } finally {
       setLoading(false);
       onLoadingChange?.(false);
@@ -49,7 +58,6 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
   useImperativeHandle(ref, () => ({
     triggerAnalysis: () => {
       setExpanded(true);
-      // Defer to next tick so React commits loading UI before the async work begins
       setTimeout(handleAnalyze, 0);
     },
   }));
@@ -58,15 +66,18 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
     if (!expanded) {
       setExpanded(true);
       if (!loaded) {
+        setLoading(true);
         try {
-          const data = await fetchAnalysis(source, name);
+          const data = await fetchAnalysis(source, name, getLang());
           if (data.summary) {
             setSummary(data.summary);
             setAnalyzedAt(data.analyzedAt);
           }
-          setLoaded(true);
         } catch {
+          // Cache fetch failure is non-critical
+        } finally {
           setLoaded(true);
+          setLoading(false);
         }
       }
     } else {
@@ -104,9 +115,9 @@ const AnalysisPanel = forwardRef<AnalysisPanelHandle, Props>(function AnalysisPa
 
       {!loading && summary && (
         <div>
-          <p className="text-fg-primary text-xs leading-relaxed whitespace-pre-wrap">
-            {summary}
-          </p>
+          <div className="prose prose-xs prose-neutral max-w-none [&_h1]:text-sm [&_h1]:text-fg-primary [&_h2]:text-[13px] [&_h2]:text-fg-primary [&_h3]:text-xs [&_h3]:text-fg-primary [&_p]:text-[12px] [&_p]:leading-relaxed [&_p]:text-fg-secondary [&_li]:text-[12px] [&_li]:text-fg-secondary [&_code]:text-[11px] [&_code]:text-fg-primary [&_pre]:bg-surface-tertiary [&_pre]:rounded-[var(--radius-md)] [&_pre]:p-3 [&_pre]:text-[11px] [&_a]:text-accent [&_blockquote]:text-fg-secondary [&_table]:w-full [&_table]:text-[12px] [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:bg-surface-tertiary [&_th]:text-fg-primary [&_th]:text-left [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_td]:text-fg-secondary">
+            <Markdown remarkPlugins={[remarkGfm]}>{summary}</Markdown>
+          </div>
           {analyzedAt && (
             <p className="text-fg-muted text-[10px] mt-1 font-mono">
               {t('analysis.timestamp', { date: new Date(analyzedAt).toLocaleString(i18n.language) })}

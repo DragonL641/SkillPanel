@@ -44,11 +44,14 @@
     "deleteLabel": "Delete",
     "cancel": "Cancel",
     "deleteFailed": "Failed to delete",
+    "detailAria": "View skill details",
+    "analyzeAria": "Analyze skill",
     "batchFailed": "{{count}} skill(s) failed",
     "batchFailedFallback": "Batch operation failed",
     "loadFailed": "Failed to load"
   },
   "analysis": {
+    "title": "AI Analysis",
     "failed": "Analysis failed",
     "expand": "How it works",
     "collapse": "Collapse",
@@ -56,7 +59,8 @@
     "timestamp": "Analyzed: {{date}}",
     "reanalyze": "Re-analyze",
     "notAnalyzed": "Not analyzed",
-    "startAnalysis": "Start analysis"
+    "startAnalysis": "Start analysis",
+    "apiNotConfigured": "API key not detected. Please check Settings → Claude Code Directory → ~/.claude/settings.json contains ANTHROPIC_API_KEY."
   },
   "plugin": {
     "noMatch": "No matching plugins",
@@ -78,6 +82,7 @@
     "customDirHint": "Supports multiple directories",
     "selectDir": "Select directory",
     "addDir": "Add directory",
+    "picking": "Opening...",
     "port": "Port",
     "apiDetected": "API configuration detected",
     "apiNotDetected": "API configuration not detected",
@@ -139,5 +144,23 @@
   "langSwitch": {
     "zh": "中",
     "en": "EN"
+  },
+  "group": {
+    "folder": "Folder",
+    "group": "Group",
+    "batchManage": "Batch Manage",
+    "selected": "{{count}} selected",
+    "moveTo": "Move to",
+    "newGroup": "New Group",
+    "removeGroup": "Remove Group",
+    "other": "Other",
+    "editGroup": "Edit Group",
+    "deleteGroup": "Delete Group",
+    "rename": "Rename",
+    "changeColor": "Change Color",
+    "groupName": "Group Name",
+    "createGroup": "Create",
+    "confirmDelete": "Delete group \"{{name}}\"? Skills will be moved to \"Other\".",
+    "emptyGroup": "No skills in this group"
   }
 }

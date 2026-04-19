@@ -35,6 +35,7 @@ function setupConfig(tmpRoot: string) {
       customSkillDirs: [customSkillDir],
       port: 3210,
       projects: [],
+      groups: [],
     }),
     'utf-8',
   );
@@ -487,7 +488,7 @@ describe('API Routes — Integration Tests', () => {
       const cacheDir = path.join(os.homedir(), '.skillpanel');
       fs.mkdirSync(cacheDir, { recursive: true });
       const cacheData = {
-        'custom/cached-skill': {
+        'custom/cached-skill:zh': {
           name: 'cached-skill',
           hash: 'abc123',
           summary: 'Test analysis summary',

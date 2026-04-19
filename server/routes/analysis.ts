@@ -5,10 +5,16 @@ import { getCachedAnalysis, analyzeSkill } from '../services/analyzer.js';
 
 const router = Router();
 
+function getLang(req: { query: { lang?: string } }): string {
+  const lang = req.query.lang;
+  return lang === 'en' ? 'en' : 'zh';
+}
+
 // GET /api/analysis/:source/:name — get cached analysis
 router.get('/analysis/:source/:name', (req, res) => {
   const { source, name } = req.params;
-  const key = `${source}/${name}`;
+  const lang = getLang(req);
+  const key = `${source}/${name}:${lang}`;
   const config = loadConfig();
   const cached = getCachedAnalysis(config, key);
 
@@ -25,7 +31,8 @@ router.get('/analysis/:source/:name', (req, res) => {
 // POST /api/analysis/:source/:name — trigger (re)analysis
 router.post('/analysis/:source/:name', async (req, res) => {
   const { source, name } = req.params;
-  const key = `${source}/${name}`;
+  const lang = getLang(req);
+  const key = `${source}/${name}:${lang}`;
 
   const config = loadConfig();
   const skillDir = findSkillDir(config, source, name);
@@ -34,7 +41,7 @@ router.post('/analysis/:source/:name', async (req, res) => {
     return;
   }
 
-  const analysis = await analyzeSkill(config, skillDir, key, true, undefined);
+  const analysis = await analyzeSkill(config, skillDir, key, true, undefined, lang);
   res.json({
     name: analysis.name,
     source,
