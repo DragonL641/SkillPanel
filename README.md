@@ -68,7 +68,19 @@ npm install -g @dragonl641/skillpanel
 skillpanel
 ```
 
-Open http://localhost:3210 in your browser. Press `Ctrl+C` to stop.
+Open http://localhost:3210 in your browser.
+
+#### CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `skillpanel` | Start in background (same as `skillpanel start`) |
+| `skillpanel start` | Start in background, stream startup logs, return to terminal |
+| `skillpanel stop` | Stop background process |
+| `skillpanel status` | Show running status, PID, URL |
+| `skillpanel logs` | Tail application logs (`Ctrl+C` to stop) |
+| `skillpanel serve` | Run in foreground (`Ctrl+C` to stop) |
+| `skillpanel --help` | Show help |
 
 ### Configuration
 
@@ -107,7 +119,7 @@ npm install
 npm run dev        # Start dev server (tsx + Vite HMR)
 npm run build      # Build frontend to dist/
 npm run start      # Production mode
-npm test           # Run tests (vitest)
+npx vitest         # Run tests (vitest)
 ```
 
 ## Tech Stack
@@ -121,12 +133,15 @@ npm test           # Run tests (vitest)
 Single-process Node.js app — Express serves both the REST API and the React frontend.
 
 ```
+cli.js              # CLI entry point (subcommand dispatch)
+cli/
+  daemon.js         # PID/log management, process utils
+  commands/         # start, stop, status, logs, serve
 server/
   index.ts          # Express entry point
   config.ts         # Config load/save
   routes/           # REST API handlers
-  services/         # Business logic (scanning, symlinks, analysis)
-
+  services/         # Business logic (scanning, symlinks, analysis, groups)
 src/
   App.tsx           # Main React shell
   api/client.ts     # API client

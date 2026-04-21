@@ -92,7 +92,10 @@ const server = app.listen(config.port, () => {
   }
 });
 
-viteExpress.config({ ignorePaths: /^\/api/ });
+viteExpress.config({
+  ignorePaths: /^\/api/,
+  viteConfigFile: path.join(__dirname, '..', 'vite.config.ts'),
+});
 viteExpress.bind(app, server);
 
 // Graceful shutdown: abort background analysis + close server

@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
+const SKIP_DIRS = new Set(['node_modules', '__pycache__', '.git', 'dist', 'build']);
+
 export function computeContentHash(skillDir: string): string {
   const hash = crypto.createHash('md5');
 
@@ -18,6 +20,7 @@ export function computeContentHash(skillDir: string): string {
         const fullPath = path.join(dir, entry);
         const stat = fs.statSync(fullPath);
         if (stat.isDirectory()) {
+          if (SKIP_DIRS.has(entry)) continue;
           walkDir(fullPath);
         } else {
           hash.update(fs.readFileSync(fullPath));
@@ -46,6 +49,7 @@ export function collectSkillContent(skillDir: string): string {
         const fullPath = path.join(dir, entry);
         const stat = fs.statSync(fullPath);
         if (stat.isDirectory()) {
+          if (SKIP_DIRS.has(entry)) continue;
           walkDir(fullPath);
         } else {
           const relPath = path.relative(scriptsDir, fullPath);

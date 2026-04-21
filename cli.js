@@ -1,32 +1,43 @@
 #!/usr/bin/env node
-import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
-import path from 'path';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const serverPath = path.join(__dirname, 'server', 'index.ts');
+const COMMANDS = {
+  start: './cli/commands/start.js',
+  stop: './cli/commands/stop.js',
+  status: './cli/commands/status.js',
+  serve: './cli/commands/serve.js',
+  logs: './cli/commands/logs.js',
+};
 
-// Resolve tsx from the package's own node_modules (not system PATH)
-const tsxBin = path.join(__dirname, 'node_modules', '.bin', 'tsx');
+const HELP = `
+Usage: skillpanel <command>
 
-const child = spawn(tsxBin, [serverPath], {
-  stdio: 'inherit',
-  env: { ...process.env },
-  shell: process.platform === 'win32',
-});
+Commands:
+  start   Start SkillPanel in background (default)
+  stop    Stop background process
+  status  Show running status
+  serve   Run in foreground (for development)
+  logs    Tail application logs
+`;
 
-child.on('error', (err) => {
-  console.error('Failed to start server:', err.message);
-  process.exit(1);
-});
+async function main() {
+  const command = process.argv[2] || 'start';
 
-child.on('exit', (code) => {
-  process.exit(code ?? 1);
-});
+  if (command === '--help' || command === '-h') {
+    console.log(HELP.trim());
+    process.exit(0);
+  }
 
-// Forward terminal signals to the server process
-function relay(signal) {
-  return () => child.kill(signal);
+  const modulePath = COMMANDS[command];
+  if (!modulePath) {
+    console.error(`Unknown command: ${command}`);
+    console.log(HELP.trim());
+    process.exit(1);
+  }
+
+  const __dirname = fileURLToPath(new URL('.', import.meta.url));
+  const mod = await import(new URL(modulePath, `file://${__dirname}`).href);
+  mod.run();
 }
-process.on('SIGINT', relay('SIGINT'));
-process.on('SIGTERM', relay('SIGTERM'));
+
+main();

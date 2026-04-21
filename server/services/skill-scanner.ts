@@ -37,14 +37,19 @@ function isEnabled(skillsDir: string, skillDir: string, skillName: string): bool
   return false;
 }
 
+const SKIP_ENTRIES = new Set([
+  'node_modules', '__pycache__', 'dist', 'build', 'coverage',
+  '.git', '.svn', '.hg', '.venv', 'venv', 'env', '.idea', '.vscode',
+]);
+
 function scanDirectory(config: AppConfig, dirPath: string, basePath: string): TreeNode[] {
   const entries = fs.readdirSync(dirPath);
   const dirs: TreeNode[] = [];
   const skills: TreeNode[] = [];
 
   for (const entry of entries) {
-    // Skip hidden dirs and node_modules
-    if (entry.startsWith('.') || entry === 'node_modules') continue;
+    // Skip hidden dirs, VCS, build artifacts, and virtual environments
+    if (entry.startsWith('.') || SKIP_ENTRIES.has(entry)) continue;
 
     const fullPath = path.join(dirPath, entry);
     const stat = fs.statSync(fullPath);
