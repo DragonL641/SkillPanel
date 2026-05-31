@@ -105,11 +105,12 @@ export async function run() {
 
   if (started) {
     console.log(`\n[skillpanel] Started (PID ${pid})`);
+    console.log(`[skillpanel] Opening ${url}`);
+    await open(url);
+    process.exit(0);
   } else {
     console.log(`\n[skillpanel] Timeout waiting for startup (PID ${pid})`);
     console.log(`[skillpanel] Logs: ${LOG_FILE}`);
+    process.exit(1);
   }
-  console.log(`[skillpanel] Opening ${url}`);
-  await open(url);
-  process.exit(0);
 }
