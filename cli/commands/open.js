@@ -9,13 +9,16 @@ import {
 const START_TIMEOUT = 10_000;
 const HEALTH_TIMEOUT = 5_000;
 
-async function checkHealth(port) {
+async function checkReady(port) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), HEALTH_TIMEOUT);
   try {
-    const res = await fetch(`http://localhost:${port}/api/health`, { signal: controller.signal });
+    const [healthRes, rootRes] = await Promise.all([
+      fetch(`http://localhost:${port}/api/health`, { signal: controller.signal }),
+      fetch(`http://localhost:${port}/`, { signal: controller.signal }),
+    ]);
     clearTimeout(timer);
-    return res.ok;
+    return healthRes.ok && rootRes.ok;
   } catch {
     clearTimeout(timer);
     return false;
@@ -34,7 +37,7 @@ function waitForStartup(port, shouldAbort) {
         return;
       }
 
-      if (await checkHealth(port)) {
+      if (await checkReady(port)) {
         clearInterval(interval);
         resolve(true);
         return;
@@ -62,7 +65,7 @@ export async function run() {
 
   if (existingPid !== null) {
     console.log(`[skillpanel] Already running (PID ${existingPid}), checking readiness...`);
-    const ready = await checkHealth(port);
+    const ready = await checkReady(port);
     if (ready) {
       console.log(`[skillpanel] Opening ${url}`);
       await open(url);
