@@ -17,7 +17,7 @@ A lightweight Web UI for managing [Claude Code](https://claude.ai/code) skills. 
 Browse all custom skills in a directory tree, toggle enable/disable with one click, trigger AI analysis, or perform batch operations.
 
 <p align="center">
-  <img src="docs/images/global-skills-page.png" width="800" alt="Global Skills Page" />
+  <img src="https://raw.githubusercontent.com/DragonL641/SkillPanel/master/docs/images/global-skills-page.png" width="800" alt="Global Skills Page" />
 </p>
 
 ### Project Skills
@@ -25,7 +25,7 @@ Browse all custom skills in a directory tree, toggle enable/disable with one cli
 Register multiple projects, each with its own set of enabled skills. The sidebar provides quick navigation between projects.
 
 <p align="center">
-  <img src="docs/images/project-skills-page.png" width="800" alt="Project Skills Page" />
+  <img src="https://raw.githubusercontent.com/DragonL641/SkillPanel/master/docs/images/project-skills-page.png" width="800" alt="Project Skills Page" />
 </p>
 
 ### Plugin Skills
@@ -33,7 +33,7 @@ Register multiple projects, each with its own set of enabled skills. The sidebar
 View skills installed via Claude Code plugins, organized by plugin group with version info and update checking.
 
 <p align="center">
-  <img src="docs/images/plugin-skills-page.png" width="800" alt="Plugin Skills Page" />
+  <img src="https://raw.githubusercontent.com/DragonL641/SkillPanel/master/docs/images/plugin-skills-page.png" width="800" alt="Plugin Skills Page" />
 </p>
 
 ### Settings
@@ -41,7 +41,7 @@ View skills installed via Claude Code plugins, organized by plugin group with ve
 Configure directories, port, and API key — all through a clean modal UI. API configuration is auto-detected from Claude Code settings.
 
 <p align="center">
-  <img src="docs/images/settings-page.png" width="300" alt="Settings Page" />
+  <img src="https://raw.githubusercontent.com/DragonL641/SkillPanel/master/docs/images/settings-page.png" width="300" alt="Settings Page" />
 </p>
 
 ## Installation
