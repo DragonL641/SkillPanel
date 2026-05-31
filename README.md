@@ -150,6 +150,32 @@ src/
 
 Skills are directories containing a `SKILL.md` file. Enabling a skill creates a symlink in `~/.claude/skills/`.
 
+## Changelog Automation
+
+This project uses [git-cliff](https://git-cliff.org/) for automatic changelog generation.
+
+### Installing git-cliff
+
+**macOS:**
+```bash
+brew install git-cliff
+```
+
+**Windows:**
+```powershell
+scoop install git-cliff
+```
+
+### Release Workflow
+
+1. Update version number in `package.json`
+2. Generate changelog: `git-cliff --tag v1.2.3 --unreleased --prepend CHANGELOG.md`
+3. Commit changes: `git commit -m "chore: bump version to v1.2.3 and update changelog"`
+4. Create tag: `git tag v1.2.3`
+5. Push: `git push && git push origin v1.2.3`
+
+For automated releases, use: `/release [major|minor|patch|auto]`
+
 ## License
 
 MIT
