@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/DragonL641/SkillPanel.git"
   },
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "A lightweight Web UI for managing Claude Code skills",
   "license": "MIT",
   "type": "module",
