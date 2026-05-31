@@ -7,21 +7,24 @@ const COMMANDS = {
   status: './cli/commands/status.js',
   serve: './cli/commands/serve.js',
   logs: './cli/commands/logs.js',
+  open: './cli/commands/open.js',
 };
 
 const HELP = `
 Usage: skillpanel <command>
 
 Commands:
-  start   Start SkillPanel in background (default)
+  (none)  Open SkillPanel in browser (start if needed) (default)
+  start   Start SkillPanel in background
   stop    Stop background process
   status  Show running status
   serve   Run in foreground (for development)
   logs    Tail application logs
+  open    Open SkillPanel in browser (start if needed)
 `;
 
 async function main() {
-  const command = process.argv[2] || 'start';
+  const command = process.argv[2] || 'open';
 
   if (command === '--help' || command === '-h') {
     console.log(HELP.trim());
