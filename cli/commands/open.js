@@ -22,12 +22,18 @@ async function checkHealth(port) {
   }
 }
 
-function waitForStartup(port) {
+function waitForStartup(port, shouldAbort) {
   return new Promise((resolve) => {
     const startTime = Date.now();
     let offset = 0;
 
     const interval = setInterval(async () => {
+      if (shouldAbort && shouldAbort()) {
+        clearInterval(interval);
+        resolve(false);
+        return;
+      }
+
       if (await checkHealth(port)) {
         clearInterval(interval);
         resolve(true);
@@ -73,6 +79,8 @@ export async function run() {
     process.exit(0);
   }
 
+  let exited = false;
+
   ensureRuntimeDir();
   try { fs.truncateSync(LOG_FILE, 0); } catch { /* file may not exist */ }
 
@@ -101,7 +109,9 @@ export async function run() {
     process.exit(1);
   });
 
-  const started = await waitForStartup(port);
+  child.on('exit', () => { exited = true; });
+
+  const started = await waitForStartup(port, () => exited);
 
   if (started) {
     console.log(`\n[skillpanel] Started (PID ${pid})`);
