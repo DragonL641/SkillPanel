@@ -3,20 +3,20 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DragonL641/SkillPanel.git"
+  },
+  "version": "0.3.2",
   "description": "A lightweight Web UI for managing Claude Code skills",
   "license": "MIT",
   "type": "module",
-  "keywords": [
-    "claude",
-    "claude-code",
-    "skills",
-    "cli"
-  ],
   "files": [
     "cli.js",
-    "server/",
-    "dist/"
+    "cli/",
+    "dist/",
+    "server/**/*.ts",
+    "!server/**/__tests__/"
   ],
   "bin": {
     "skillpanel": "./cli.js"
